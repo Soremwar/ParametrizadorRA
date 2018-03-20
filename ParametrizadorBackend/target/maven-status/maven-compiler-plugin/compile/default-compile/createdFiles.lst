@@ -1,0 +1,10 @@
+co/com/claro/service/rest/ConfiguracionRest.class
+co/com/claro/ejb/dao/PoliticaDAO.class
+co/com/claro/model/entity/Conciliacion.class
+co/com/claro/model/entity/Politica_.class
+co/com/claro/service/rest/ConciliacionRest.class
+co/com/claro/model/entity/Politica.class
+co/com/claro/model/entity/Conciliacion_.class
+co/com/claro/service/rest/PoliticaRest.class
+co/com/claro/ejb/dao/AbstractJpaDAO.class
+co/com/claro/ejb/dao/ConciliacionDAO.class
