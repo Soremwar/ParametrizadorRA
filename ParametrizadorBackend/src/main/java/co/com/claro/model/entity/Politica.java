@@ -6,11 +6,13 @@
 package co.com.claro.model.entity;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Converter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,16 +33,19 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author andres
  */
 @Entity
+@Converter(autoApply = true)
 @Table(name = "TBL_POLITICA")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Politica.findAll", query = "SELECT t FROM Politica t")
     , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT t FROM Politica t WHERE t.codPolitica = :codPolitica")
-    , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT t FROM Politica t WHERE t.nombrePolitica = :nombrePolitica")
+    , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT t FROM Politica t WHERE t.nombrePolitica LIKE :nombrePolitica")
     , @NamedQuery(name = "Politica.findByDescripcion", query = "SELECT t FROM Politica t WHERE t.descripcion = :descripcion")
     , @NamedQuery(name = "Politica.findByObjetivo", query = "SELECT t FROM Politica t WHERE t.objetivo = :objetivo")
     , @NamedQuery(name = "Politica.findByFechaCreacion", query = "SELECT t FROM Politica t WHERE t.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Politica.findByFechaActualizacion", query = "SELECT t FROM Politica t WHERE t.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "Politica.findByColumn", query = "SELECT t FROM Politica t WHERE lower(t.nombrePolitica) LIKE lower(:nombrePolitica) and lower(t.descripcion) LIKE lower(:descripcion) and lower(t.objetivo) LIKE lower(:objetivo)")
+    , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT t FROM Politica t WHERE lower(t.nombrePolitica) LIKE lower(:nombrePolitica) or lower(t.descripcion) LIKE lower(:descripcion) or lower(t.objetivo) LIKE lower(:objetivo)")
     , @NamedQuery(name = "Politica.findByUsuario", query = "SELECT t FROM Politica t WHERE t.usuario = :usuario")})
 public class Politica implements Serializable {
 
@@ -66,16 +71,17 @@ public class Politica implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "OBJETIVO")
     private String objetivo;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
-    @Basic(optional = false)
-    @NotNull
+
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
@@ -91,13 +97,13 @@ public class Politica implements Serializable {
         this.codPolitica = codPolitica;
     }
 
-    public Politica(Integer codPolitica, String nombrePolitica, String descripcion, String objetivo, Date fechaCreacion, Date fechaActualizacion, String usuario) {
+    public Politica(Integer codPolitica, String nombrePolitica, String descripcion, String objetivo, String usuario) {
         this.codPolitica = codPolitica;
         this.nombrePolitica = nombrePolitica;
         this.descripcion = descripcion;
         this.objetivo = objetivo;
-        this.fechaCreacion = fechaCreacion;
-        this.fechaActualizacion = fechaActualizacion;
+        this.fechaCreacion = Date.from(Instant.now()); //Date.now();
+        this.fechaActualizacion = Date.from(Instant.now());
         this.usuario = usuario;
     }
 
