@@ -7,12 +7,10 @@ co/com/claro/ejb/dao/LocalDateTimeConverter.class
 co/com/claro/service/rest/PoliticaRest.class
 co/com/claro/ejb/dao/AbstractJpaDAO.class
 co/com/claro/ejb/dao/ConciliacionDAO.class
-co/com/claro/ejb/dao/NewClass.class
-co/com/claro/ejb/dao/service/PoliticaFacadeREST.class
 co/com/claro/service/rest/ConfiguracionRest.class
-co/com/claro/ejb/dao/service/AbstractFacade.class
 co/com/claro/ejb/dao/PoliticaDAO.class
 co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.class
+co/com/claro/model/dto/PoliticaDTO.class
 co/com/claro/model/entity/Conciliacion.class
 co/com/claro/model/entity/Politica_.class
 co/com/claro/service/rest/excepciones/DatosNoEncontradosMapper.class

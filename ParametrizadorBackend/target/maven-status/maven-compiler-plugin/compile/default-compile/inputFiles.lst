@@ -1,3 +1,4 @@
+/Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/PoliticaDTO.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/ConciliacionDAO.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/LocalDateConverter.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/ConfiguracionRest.java
@@ -5,11 +6,8 @@
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/Conciliacion.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/PoliticaRest.java
-/Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/service/AbstractFacade.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/AbstractJpaDAO.java
-/Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/NewClass.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/Politica.java
-/Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/service/PoliticaFacadeREST.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/PoliticaDAO.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/LocalDateTimeConverter.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/ConciliacionRest.java

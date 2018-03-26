@@ -5,6 +5,7 @@
  */
 package co.com.claro.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
@@ -33,7 +34,6 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author andres
  */
 @Entity
-@Converter(autoApply = true)
 @Table(name = "TBL_POLITICA")
 @XmlRootElement
 @NamedQueries({
@@ -50,21 +50,25 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Politica implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "COD_POLITICA")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer codPolitica;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "NOMBRE_POLITICA")
     private String nombrePolitica;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 400)
     @Column(name = "DESCRIPCION")
+    
     private String descripcion;
     @Basic(optional = false)
     @NotNull
@@ -76,10 +80,12 @@ public class Politica implements Serializable {
     @NotNull
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Date fechaCreacion;
 
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Date fechaActualizacion;
     
     @Basic(optional = false)
@@ -91,20 +97,11 @@ public class Politica implements Serializable {
     private Collection<Conciliacion> tblConciliacionCollection;
 
     public Politica() {
+        this.fechaCreacion = Date.from(Instant.now());
     }
 
     public Politica(Integer codPolitica) {
         this.codPolitica = codPolitica;
-    }
-
-    public Politica(Integer codPolitica, String nombrePolitica, String descripcion, String objetivo, String usuario) {
-        this.codPolitica = codPolitica;
-        this.nombrePolitica = nombrePolitica;
-        this.descripcion = descripcion;
-        this.objetivo = objetivo;
-        this.fechaCreacion = Date.from(Instant.now()); //Date.now();
-        this.fechaActualizacion = Date.from(Instant.now());
-        this.usuario = usuario;
     }
 
     public Integer getCodPolitica() {

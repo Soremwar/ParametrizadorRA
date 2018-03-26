@@ -19,7 +19,12 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
 
     @Override
     public Response toResponse(Throwable exception) {
-        MensajeError mensaje = new MensajeError(500, exception.getMessage(), exception.getCause().toString());
+        MensajeError mensaje = null;
+        if (exception != null) {
+            mensaje = new MensajeError(500, exception.getMessage(), exception.getCause().toString());
+        } else {
+            mensaje = new MensajeError(500, "Excepcion Generica", "Ocurrio un error...");
+        }
         return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
     }
     

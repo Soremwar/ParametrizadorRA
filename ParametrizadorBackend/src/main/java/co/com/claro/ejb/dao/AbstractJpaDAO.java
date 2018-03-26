@@ -6,8 +6,15 @@
 package co.com.claro.ejb.dao;
 
 import co.com.claro.service.rest.excepciones.DatosNoEncontrados;
+import static java.lang.Math.log;
 import java.util.List;
+import java.util.Set;
+import javax.faces.validator.Validator;
 import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 
 /**
  * It will have basic implementation of all the methods in the standard Dao
@@ -26,8 +33,11 @@ public abstract class AbstractJpaDAO<T>{
     protected abstract EntityManager getEntityManager();
 
     public void create(T entity) {
-        getEntityManager().persist(entity);
-        //return Response.status(Response.Status.CREATED).entity(this).build();
+        try {
+            getEntityManager().persist(entity);
+        } catch (ConstraintViolationException e) {
+            System.out.println("co.com.claro.ejb.dao.AbstractJpaDAO.create()" + e.getStackTrace());
+        }
     }
 
     public void edit(T entity) {

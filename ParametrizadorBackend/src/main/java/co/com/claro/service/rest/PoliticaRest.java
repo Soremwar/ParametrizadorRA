@@ -1,19 +1,22 @@
 package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.PoliticaDAO;
+import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.entity.Politica;
-import static java.util.Collections.list;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.logging.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ejb.EJB;
+import javax.persistence.Transient;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 /**
  * Clase que maneja el API Rest de Politicas
@@ -22,6 +25,8 @@ import javax.ws.rs.QueryParam;
  */
 @Path("politicas")
 public class PoliticaRest {
+    @Transient
+    private static final Logger logger = Logger.getLogger(PoliticaRest.class.getSimpleName());
 
     @EJB
     protected PoliticaDAO managerDAO;
@@ -89,31 +94,34 @@ public class PoliticaRest {
         return lst;
     }
 
-    /*
+    
+    /**
+     * 
+     * @param entidadDTO
+     * @param entity
+     * @return 
+     */
+    /*@POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response create(Politica entity) {
+        managerDAO.create(entity);
+        return Response.status(Response.Status.CREATED).entity(entity).build();
+    }*/
     
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response create(Politica entity) {
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response create(PoliticaDTO entidadDTO) {
+        Politica entity = new Politica();
+        entity.setNombrePolitica(entidadDTO.getNombrePolitica());
+        entity.setDescripcion(entidadDTO.getDescripcion());
+        entity.setObjetivo(entidadDTO.getObjetivo());
+        entity.setUsuario(entidadDTO.getUsuario());
+       
         managerDAO.create(entity);
-        return Response.status(Response.Status.CREATED).entity(this).build();
-    }*/
- /*
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPolitica()
-    {
-        
-        return Response.ok(lstPolitica).build();
-        
+        entidadDTO.setCodPolitica(entity.getCodPolitica());
+        entidadDTO.setFechaCreacion(entity.getFechaCreacion());
+        return Response.status(Response.Status.CREATED).entity(entidadDTO).build();
     }
-    
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response guardarPolitica(Politica politica) 
-    {
-        //lista.add(politica);
-        return Response.status(Response.Status.CREATED).build();
-        
-    }
-     */
 }
