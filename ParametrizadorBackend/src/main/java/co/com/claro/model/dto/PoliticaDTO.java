@@ -6,7 +6,6 @@
 package co.com.claro.model.dto;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 

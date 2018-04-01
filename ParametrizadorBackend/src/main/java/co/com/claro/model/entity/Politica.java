@@ -5,29 +5,23 @@
  */
 package co.com.claro.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Converter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -80,12 +74,10 @@ public class Politica implements Serializable {
     @NotNull
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Date fechaCreacion;
 
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Date fechaActualizacion;
     
     @Basic(optional = false)
@@ -93,11 +85,13 @@ public class Politica implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "USUARIO")
     private String usuario;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "codPolitica")
-    private Collection<Conciliacion> tblConciliacionCollection;
+    
+    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "codPolitica")
+    //private Collection<Conciliacion> tblConciliacionCollection;
 
     public Politica() {
-        this.fechaCreacion = Date.from(Instant.now());
+        this.fechaCreacion = Date.from(Instant.now()); //Date.now();
+        //this.fechaActualizacion = Date.from(Instant.now());
     }
 
     public Politica(Integer codPolitica) {
@@ -160,7 +154,7 @@ public class Politica implements Serializable {
         this.usuario = usuario;
     }
 
-    @XmlTransient
+    /*@XmlTransient
     public Collection<Conciliacion> getTblConciliacionCollection() {
         return tblConciliacionCollection;
     }
@@ -168,7 +162,7 @@ public class Politica implements Serializable {
     public void setTblConciliacionCollection(Collection<Conciliacion> tblConciliacionCollection) {
         this.tblConciliacionCollection = tblConciliacionCollection;
     }
-
+*/
     @Override
     public int hashCode() {
         int hash = 0;

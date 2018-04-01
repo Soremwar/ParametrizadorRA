@@ -6,7 +6,7 @@
 package co.com.claro.ejb.dao;
 
 import co.com.claro.model.entity.Politica;
-import co.com.claro.service.rest.excepciones.DatosNoEncontrados;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -38,14 +38,14 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
      * @param busqueda Campo por el cual va a buscar en todos los campos descriptivos
      * @return Lista de Politicas que cumplan con el criterio
      */
-    public List<Politica> findByAnyColumn(String busqueda) {
+    public List<Politica> findByAnyColumn(String busqueda){
         TypedQuery<Politica> query = em.createNamedQuery("Politica.findByAnyColumn", Politica.class);
         query.setParameter("nombrePolitica", "%" + busqueda + "%");
         query.setParameter("descripcion", "%" + busqueda + "%");
         query.setParameter("objetivo", "%" + busqueda + "%");
         List<Politica> results = query.getResultList();
         if (results == null || results.isEmpty()) {
-            throw new DatosNoEncontrados("No se encontraron datos de Busqueda");
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
         return results;
     }
@@ -58,26 +58,33 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
      * @param objetivo Campo objetivo
      * @return Lista de Politicas que cumplan con el criterio
      */
-    public List<Politica> findByColumn(String nombre, String descripcion, String objetivo) {
+    public List<Politica> findByColumn(String nombre, String descripcion, String objetivo){
         TypedQuery<Politica> query = em.createNamedQuery("Politica.findByColumn", Politica.class);
         query.setParameter("nombrePolitica", "%" + nombre + "%");
         query.setParameter("descripcion", "%" + descripcion + "%");
         query.setParameter("objetivo", "%" + objetivo + "%");
         List<Politica> results = query.getResultList();
         if (results == null || results.isEmpty()) {
-            throw new DatosNoEncontrados("No se encontraron datos de Busqueda");
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
         return results;
     }
         
-    public List<Politica> findByAnyColumn(String busqueda, int offset, int limit) {
+    /**
+     * Buscar el texto en todas columnas con paginado
+     * @param busqueda
+     * @param offset
+     * @param limit
+     * @return Lista de Politicas que cumplan con el criterio
+     */
+    public List<Politica> findByAnyColumn(String busqueda, int offset, int limit){
         TypedQuery<Politica> query = em.createNamedQuery("Politica.findByAnyColumn", Politica.class);
         query.setParameter("nombrePolitica", "%" + busqueda + "%");
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         List<Politica> results = query.getResultList();
         if (results == null || results.isEmpty()) {
-            throw new DatosNoEncontrados("No se encontraron datos de Busqueda");
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
         return results;
     }

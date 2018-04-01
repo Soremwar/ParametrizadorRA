@@ -30,7 +30,7 @@ public class ConciliacionRest {
     
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Politica> findAll() {
+    public List<Politica> findAll(){
         List<Politica> lstPrueba = managerDAO.findAll();
         return lstPrueba;
     }        

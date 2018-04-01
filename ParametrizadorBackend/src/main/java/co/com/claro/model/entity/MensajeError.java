@@ -5,6 +5,7 @@
  */
 package co.com.claro.model.entity;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -13,11 +14,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 
 @XmlRootElement
-public class MensajeError {
+public class MensajeError implements Serializable{
     private int codigo;
     private String mensaje;
     private String descripcion; 
 
+    public MensajeError() {
+        
+    }
     public MensajeError(int codigo, String mensaje, String descripcion) {
         this.codigo = codigo;
         this.mensaje = mensaje;

@@ -9,10 +9,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
 import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 
 /**
- *
+ * Conversor de LocalDate a Date
  * @author andres
  */
 public class LocalDateConverter implements AttributeConverter<LocalDate, Date>{

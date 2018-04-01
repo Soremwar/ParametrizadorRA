@@ -5,24 +5,16 @@
  */
 package co.com.claro.ejb.dao;
 
-import co.com.claro.service.rest.excepciones.DatosNoEncontrados;
-import static java.lang.Math.log;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
-import java.util.Set;
-import javax.faces.validator.Validator;
 import javax.persistence.EntityManager;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
 
 /**
- * It will have basic implementation of all the methods in the standard Dao
+ * Contiene toda la implementacion generica de todos los metodos estandar de DAO
  * @author andres
  * @param <T>
  */
 public abstract class AbstractJpaDAO<T>{
-
 
     private final Class<T> entityClass;
 
@@ -33,15 +25,15 @@ public abstract class AbstractJpaDAO<T>{
     protected abstract EntityManager getEntityManager();
 
     public void create(T entity) {
-        try {
-            getEntityManager().persist(entity);
-        } catch (ConstraintViolationException e) {
-            System.out.println("co.com.claro.ejb.dao.AbstractJpaDAO.create()" + e.getStackTrace());
-        }
+        getEntityManager().persist(entity);
     }
 
-    public void edit(T entity) {
+    public T edit(T entity) {
         getEntityManager().merge(entity);
+        if (entity == null) {
+            throw new DataNotFoundException("No se encontro la entidad " + entity);
+        }
+        return entity;
     }
 
     public void remove(T entity) {
@@ -51,17 +43,17 @@ public abstract class AbstractJpaDAO<T>{
     public T find(Object id) {
         Object item = getEntityManager().find(entityClass, id);
         if (item == null) {
-            throw new DatosNoEncontrados("No se encontro el Registro " + id);
+            throw new DataNotFoundException("No se encontro el Registro " + id);
         }
         return getEntityManager().find(entityClass, id);
     }
 
-    public List<T> findAll() {
+    public List<T> findAll(){
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
         List<T> lst = getEntityManager().createQuery(cq).getResultList();
         if (lst == null || lst.isEmpty()) {
-            throw new DatosNoEncontrados("No se encontraron datos");
+            throw new DataNotFoundException("No se encontraron datos");
         }
         return lst;
     }
@@ -72,6 +64,10 @@ public abstract class AbstractJpaDAO<T>{
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         q.setMaxResults(range[1]);// - range[0] + 1);
         q.setFirstResult(range[0]);
+        List<T> lst = q.getResultList();
+        if (lst == null || lst.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos");
+        }        
         return q.getResultList();
     }
 

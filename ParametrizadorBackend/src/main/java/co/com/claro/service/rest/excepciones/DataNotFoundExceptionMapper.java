@@ -15,10 +15,10 @@ import javax.ws.rs.ext.Provider;
  * @author andres
  */
 @Provider
-public class DatosNoEncontradosMapper implements ExceptionMapper<DatosNoEncontrados>{
+public class DataNotFoundExceptionMapper implements ExceptionMapper<DataNotFoundException>{
 
     @Override
-    public Response toResponse(DatosNoEncontrados exception) {
+    public Response toResponse(DataNotFoundException exception) {
         MensajeError mensaje = new MensajeError(404, "No se encontraron datos", exception.getCause().toString());
         return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
     }

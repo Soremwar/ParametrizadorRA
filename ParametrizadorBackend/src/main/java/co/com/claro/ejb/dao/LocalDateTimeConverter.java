@@ -6,14 +6,13 @@
 package co.com.claro.ejb.dao;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 /**
- *
+ * Conversor de LocalDateTime a Date
  * @author andres
  */
 @Converter(autoApply = true)
