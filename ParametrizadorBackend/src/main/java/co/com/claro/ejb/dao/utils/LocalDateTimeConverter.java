@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package co.com.claro.ejb.dao;
+package co.com.claro.ejb.dao.utils;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

@@ -5,7 +5,7 @@
  */
 package co.com.claro.service.rest.excepciones;
 
-import co.com.claro.model.entity.MensajeError;
+import co.com.claro.service.rest.utils.MensajeError;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;

@@ -1,8 +1,13 @@
 package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.PoliticaDAO;
+import co.com.claro.ejb.dao.utils.UtilListas;
+import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.entity.Politica;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,19 +42,27 @@ public class PoliticaRest {
      * Obtiene las Politicas Paginadas
      * @param offset Desde cual item se retorna
      * @param limit Limite de items a retornar
+     * @param orderby Indica por cual campo descriptivo va a guardar (id, nombre, fechaCreacion)
      * @return Toda la lista de politicas que corresponden con el criterio
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Politica> findPoliticas(
+    public List<PoliticaDTO> find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
         List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
-        return lst;
+        List<PadreDTO> lstDTO = new ArrayList<>();
+        
+        for(Politica entidad : lst) {
+            lstDTO.add(entidad.toDTO());
+        }
+        lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
+        List<PoliticaDTO> variable = (List<PoliticaDTO>)(List<?>) lstDTO;
+        return variable;
     }
-
+    
     /**
      * Obtiene una Politica por id
      * @param id Identificador de politica
@@ -58,10 +71,10 @@ public class PoliticaRest {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Politica getPoliticaById(@PathParam("id") int id){
+    public PoliticaDTO getById(@PathParam("id") int id){
         logger.log(Level.INFO, "id:{0}", id);
-        Politica item = managerDAO.find(id);
-        return item;
+        Politica entidad = managerDAO.find(id);
+        return entidad.toDTO();
 
     }
 
@@ -73,12 +86,59 @@ public class PoliticaRest {
     @GET
     @Path("/findByAnyColum")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Politica> findPoliticasByAnyColumn(@QueryParam("texto") String texto){
+    public List<Politica> findByAnyColumn(@QueryParam("texto") String texto){
         logger.log(Level.INFO, "texto:{0}", texto);      
         List<Politica> lst = managerDAO.findByAnyColumn(texto);
         return lst;
     }
    
+    
+    /**
+     * Crea una nueva politica
+     * @param entidad Entidad que se va a agregar
+     * @return el la entidad recien creada
+     */
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response add(Politica entidad) {
+        logger.log(Level.INFO, "entidad:{0}", entidad);    
+        entidad.setFechaCreacion(Date.from(Instant.now()));
+        managerDAO.create(entidad);
+        return Response.status(Response.Status.CREATED).entity(entidad).build();
+    }
+    
+    /**
+     * Actualiza una politica por su Id
+     * @param entidad
+     * @return el resultado de la operacion
+     */
+    @PUT
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response update(Politica entidad) {
+        logger.log(Level.INFO, "entidad:{0}", entidad);  
+        PoliticaDTO entidadActual = getById(entidad.getCodigo());
+        if (entidadActual != null) {
+            entidad.setFechaCreacion(entidadActual.getFechaCreacion());
+            entidad.setFechaActualizacion(Date.from(Instant.now()));
+            managerDAO.edit(entidad);
+            return Response.status(Response.Status.OK).entity(entidad).build();
+            
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    
+     /**
+     * Borra una politica por su Id
+     * @param id Identificador de la entidad
+     * @return El resultado de la operacion en codigo HTTP
+     */
+    @DELETE
+    @Path("{id}")
+    public Response remove(@PathParam("id") Integer id) {
+        managerDAO.remove(managerDAO.find(id));
+        return Response.status(Response.Status.OK).build();
+    }
     
     /**
      * Busca las politicas por una columna de texto especifica
@@ -90,7 +150,7 @@ public class PoliticaRest {
     @GET
     @Path("/findBySpecificColum")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Politica> findPoliticasBySpecificColumn(
+    public List<Politica> findBySpecificColumn(
             @DefaultValue("") @QueryParam("nombre") String nombre,
             @DefaultValue("") @QueryParam("descripcion") String descripcion,
             @DefaultValue("") @QueryParam("objetivo") String objetivo
@@ -98,65 +158,12 @@ public class PoliticaRest {
         List<Politica> lst = managerDAO.findByColumn(nombre, descripcion, objetivo);
         return lst;
     }
-
     
-    /**
-     * Crea una nueva politica
-     * @param entidadDTO
-     * @return el DTO recien creado
-     */
-    @POST
-    @Consumes({MediaType.APPLICATION_JSON})
+    @GET
+    @Path("/count")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response addPolitica(PoliticaDTO entidadDTO) {
-        logger.log(Level.INFO, "entidadDTO:{0}", entidadDTO);    
-        Politica entity = new Politica();
-        entity.setNombrePolitica(entidadDTO.getNombrePolitica());
-        entity.setDescripcion(entidadDTO.getDescripcion());
-        entity.setObjetivo(entidadDTO.getObjetivo());
-        entity.setUsuario(entidadDTO.getUsuario());
-       
-        managerDAO.create(entity);
-        entidadDTO.setCodPolitica(entity.getCodPolitica());
-        entidadDTO.setFechaCreacion(entity.getFechaCreacion());
-        return Response.status(Response.Status.CREATED).entity(entidadDTO).build();
+    public int count(){
+        return managerDAO.count();
     }
-    
-    /**
-     * Actualiza una politica por su Id
-     * @param entidadDTO
-     * @return el resultado de la operacion
-     */
-    @PUT
-    @Consumes({MediaType.APPLICATION_JSON})
-    public Response updatePolitica(PoliticaDTO entidadDTO) {
-        logger.log(Level.INFO, "entidadDTO:{0}", entidadDTO);  
-        if (getPoliticaById(entidadDTO.getCodPolitica()) != null) {
-            Politica entity = new Politica();
-            entity.setCodPolitica(entidadDTO.getCodPolitica());
-            entity.setNombrePolitica(entidadDTO.getNombrePolitica());
-            entity.setDescripcion(entidadDTO.getDescripcion());
-            entity.setObjetivo(entidadDTO.getObjetivo());
-            entity.setUsuario(entidadDTO.getUsuario());
-            entity.setFechaActualizacion(entidadDTO.getFechaActualizacion());
-            managerDAO.edit(entity);
-        }
-        return Response.status(Response.Status.OK).build();
-    }
-    
-     /**
-     * Borra una politica por su Id
-     * @param entidadDTO
-     * @return el resultado de la operacion
-     */
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") Integer id) {
-        managerDAO.remove(getPoliticaById(id));
-        return Response.status(Response.Status.OK).build();
-    }
-
-    
-    
-    
+ 
 }

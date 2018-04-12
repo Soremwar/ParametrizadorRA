@@ -1,4 +1,4 @@
-package co.com.claro.service.rest;
+package co.com.claro.service.rest.config;
 
 
 import javax.ws.rs.ApplicationPath;

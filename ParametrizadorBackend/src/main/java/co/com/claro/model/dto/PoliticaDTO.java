@@ -5,8 +5,8 @@
  */
 package co.com.claro.model.dto;
 
+import co.com.claro.model.dto.parent.PadreDTO;
 import java.io.Serializable;
-import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -14,32 +14,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author andres
  */
 @XmlRootElement
-public class PoliticaDTO implements Serializable{
-    private Integer codPolitica;
-    private String nombrePolitica;
-    private String descripcion;
+public class PoliticaDTO extends PadreDTO implements Serializable{
+
     private String objetivo;
-    private String usuario;
-    private Date fechaCreacion;
-    private Date fechaActualizacion;
+    private String descripcion;
 
-  
-    
-    public Integer getCodPolitica() {
-        return codPolitica;
-    }
-
-    public void setCodPolitica(Integer codPolitica) {
-        this.codPolitica = codPolitica;
-    }
-
-    public String getNombrePolitica() {
-        return nombrePolitica;
-    }
-
-    public void setNombrePolitica(String nombrePolitica) {
-        this.nombrePolitica = nombrePolitica;
-    }
 
     public String getDescripcion() {
         return descripcion;
@@ -55,30 +34,5 @@ public class PoliticaDTO implements Serializable{
 
     public void setObjetivo(String objetivo) {
         this.objetivo = objetivo;
-    }
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
-      public Date getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
-    public Date getFechaActualizacion() {
-        return fechaActualizacion;
-    }
-
-    public void setFechaActualizacion(Date fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
-    }
-    
+    }    
 }

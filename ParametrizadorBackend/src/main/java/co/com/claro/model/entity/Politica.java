@@ -5,10 +5,13 @@
  */
 package co.com.claro.model.entity;
 
+import co.com.claro.model.dto.PoliticaDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
-import java.time.Instant;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,12 +19,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -31,32 +37,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "TBL_POLITICA")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Politica.findAll", query = "SELECT t FROM Politica t")
-    , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT t FROM Politica t WHERE t.codPolitica = :codPolitica")
-    , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT t FROM Politica t WHERE t.nombrePolitica LIKE :nombrePolitica")
+    @NamedQuery(name = "Politica.findNumRegistros", query = "SELECT COUNT(t) FROM Politica t")
+    , @NamedQuery(name = "Politica.findAll", query = "SELECT t FROM Politica t")
+    , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT t FROM Politica t WHERE t.codigo = :codPolitica")
+    , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT t FROM Politica t WHERE t.nombre LIKE :nombrePolitica")
     , @NamedQuery(name = "Politica.findByDescripcion", query = "SELECT t FROM Politica t WHERE t.descripcion = :descripcion")
     , @NamedQuery(name = "Politica.findByObjetivo", query = "SELECT t FROM Politica t WHERE t.objetivo = :objetivo")
     , @NamedQuery(name = "Politica.findByFechaCreacion", query = "SELECT t FROM Politica t WHERE t.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Politica.findByFechaActualizacion", query = "SELECT t FROM Politica t WHERE t.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "Politica.findByColumn", query = "SELECT t FROM Politica t WHERE lower(t.nombrePolitica) LIKE lower(:nombrePolitica) and lower(t.descripcion) LIKE lower(:descripcion) and lower(t.objetivo) LIKE lower(:objetivo)")
-    , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT t FROM Politica t WHERE lower(t.nombrePolitica) LIKE lower(:nombrePolitica) or lower(t.descripcion) LIKE lower(:descripcion) or lower(t.objetivo) LIKE lower(:objetivo)")
-    , @NamedQuery(name = "Politica.findByUsuario", query = "SELECT t FROM Politica t WHERE t.usuario = :usuario")})
-public class Politica implements Serializable {
+    , @NamedQuery(name = "Politica.findByColumn", query = "SELECT t FROM Politica t WHERE lower(t.nombre) LIKE lower(:nombrePolitica) and lower(t.descripcion) LIKE lower(:descripcion) and lower(t.objetivo) LIKE lower(:objetivo)")
+    , @NamedQuery(name = "Politica.findByUsuario", query = "SELECT t FROM Politica t WHERE t.usuario = :usuario")
+    , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT t FROM Politica t WHERE lower(t.nombre) LIKE lower(:nombrePolitica) or lower(t.descripcion) LIKE lower(:descripcion) or lower(t.objetivo) LIKE lower(:objetivo)")})
 
+public class Politica implements Serializable {
     private static final long serialVersionUID = 1L;
-    
     
     @Id
     @Basic(optional = false)
     @Column(name = "COD_POLITICA")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer codPolitica;
+    private Integer codigo;
     
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "NOMBRE_POLITICA")
-    private String nombrePolitica;
+    private String nombre;
     
     @Basic(optional = false)
     @NotNull
@@ -70,8 +76,6 @@ public class Politica implements Serializable {
     @Column(name = "OBJETIVO")
     private String objetivo;
     
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
@@ -86,32 +90,26 @@ public class Politica implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
     
-    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "codPolitica")
-    //private Collection<Conciliacion> tblConciliacionCollection;
+    @OneToOne(cascade = CascadeType.ALL,  mappedBy = "politica")
+    private Collection<Conciliacion> tblConciliacionCollection;
 
     public Politica() {
-        this.fechaCreacion = Date.from(Instant.now()); //Date.now();
-        //this.fechaActualizacion = Date.from(Instant.now());
     }
 
-    public Politica(Integer codPolitica) {
-        this.codPolitica = codPolitica;
+    public Integer getCodigo() {
+        return codigo;
     }
 
-    public Integer getCodPolitica() {
-        return codPolitica;
+    public void setCodigo(Integer codigo) {
+        this.codigo = codigo;
     }
 
-    public void setCodPolitica(Integer codPolitica) {
-        this.codPolitica = codPolitica;
+    public String getNombre() {
+        return nombre;
     }
 
-    public String getNombrePolitica() {
-        return nombrePolitica;
-    }
-
-    public void setNombrePolitica(String nombrePolitica) {
-        this.nombrePolitica = nombrePolitica;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getDescripcion() {
@@ -135,7 +133,9 @@ public class Politica implements Serializable {
     }
 
     public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+        if (fechaCreacion != null) {
+            this.fechaCreacion = fechaCreacion;
+        }
     }
 
     public Date getFechaActualizacion() {
@@ -154,7 +154,7 @@ public class Politica implements Serializable {
         this.usuario = usuario;
     }
 
-    /*@XmlTransient
+    @XmlTransient
     public Collection<Conciliacion> getTblConciliacionCollection() {
         return tblConciliacionCollection;
     }
@@ -162,11 +162,11 @@ public class Politica implements Serializable {
     public void setTblConciliacionCollection(Collection<Conciliacion> tblConciliacionCollection) {
         this.tblConciliacionCollection = tblConciliacionCollection;
     }
-*/
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (codPolitica != null ? codPolitica.hashCode() : 0);
+        hash += (codigo != null ? codigo.hashCode() : 0);
         return hash;
     }
 
@@ -177,15 +177,37 @@ public class Politica implements Serializable {
             return false;
         }
         Politica other = (Politica) object;
-        if ((this.codPolitica == null && other.codPolitica != null) || (this.codPolitica != null && !this.codPolitica.equals(other.codPolitica))) {
+        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
             return false;
         }
         return true;
     }
 
+    public PoliticaDTO toDTO() {
+        PoliticaDTO entidadDTO = new PoliticaDTO();
+        entidadDTO.setCodigo(this.getCodigo());
+        entidadDTO.setDescripcion(this.getDescripcion());
+        entidadDTO.setFechaCreacion(this.getFechaCreacion());
+        entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
+        entidadDTO.setNombre(this.getNombre());
+        entidadDTO.setObjetivo(this.getObjetivo());
+        entidadDTO.setUsuario(this.getUsuario());
+        return entidadDTO;
+    }
+    
     @Override
     public String toString() {
-        return "com.claro.parametrizador.Politica[ codPolitica=" + codPolitica + " ]";
+        return "com.claro.parametrizador.Politica[ codPolitica=" + codigo + " ]";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Collection<Conciliacion> getConciliacionCollection() {
+        return tblConciliacionCollection;
+    }
+
+    public void setConciliacionCollection(Collection<Conciliacion> tblConciliacionCollection) {
+        this.tblConciliacionCollection = tblConciliacionCollection;
     }
     
 }
