@@ -141,7 +141,8 @@ public class ConciliacionRest {
     @Consumes({MediaType.APPLICATION_JSON})
     public Response update(Conciliacion entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-       if (getById(entidad.getCodigo()) != null) {
+        ConciliacionDTO entidadActual = getById(entidad.getCodigo()); 
+        if (getById(entidad.getCodigo()) != null) {
             entidad.setFechaActualizacion(Date.from(Instant.now()));
             managerDAO.edit(entidad);
             return Response.status(Response.Status.OK).entity(entidad).build();
