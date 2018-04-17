@@ -2,6 +2,7 @@
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/ConciliacionDTO.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/FormatoIncorrectoMapper.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/ConciliacionDAO.java
+/Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/NewCrossOriginResourceSharingFilter.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/utils/UtilListas.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.java
 /Users/andres/NetBeansProjects/ParametrizadorRAClaro/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/utils/LocalDateTimeConverter.java
