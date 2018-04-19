@@ -19,7 +19,7 @@ public class PoliticaDTO extends PadreDTO implements Serializable{
 
     private String objetivo;
     private String descripcion;
-    private conciliacionDTO conciliacion;
+    private Collection<ConciliacionDTO> conciliacion;
 
 
     public String getDescripcion() {
@@ -38,11 +38,11 @@ public class PoliticaDTO extends PadreDTO implements Serializable{
         this.objetivo = objetivo;
     }
     
-    public String getConciliacion() {
+    public Collection<ConciliacionDTO> getConciliacion() {
         return conciliacion;
     }
 
-    public void setConciliacion(String conciliacion) {
+    public void setConciliacion(Collection<ConciliacionDTO> conciliacion) {
         this.conciliacion = conciliacion;
     } 
 }
