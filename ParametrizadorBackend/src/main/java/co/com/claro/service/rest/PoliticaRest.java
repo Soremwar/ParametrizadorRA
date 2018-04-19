@@ -115,6 +115,7 @@ public class PoliticaRest {
      */
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Response update(Politica entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
         PoliticaDTO entidadActual = getById(entidad.getCodigo());
@@ -135,6 +136,7 @@ public class PoliticaRest {
      */
     @DELETE
     @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         managerDAO.remove(managerDAO.find(id));
         return Response.status(Response.Status.OK).build();
