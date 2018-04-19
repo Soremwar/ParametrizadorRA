@@ -139,6 +139,7 @@ public class ConciliacionRest {
      */
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Response update(Conciliacion entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
         ConciliacionDTO entidadActual = getById(entidad.getCodigo()); 
@@ -160,6 +161,7 @@ public class ConciliacionRest {
      */
     @DELETE
     @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         managerDAO.remove(managerDAO.find(id));
         return Response.status(Response.Status.OK).build();
