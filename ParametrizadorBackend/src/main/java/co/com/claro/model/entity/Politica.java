@@ -201,14 +201,4 @@ public class Politica implements Serializable {
         return "com.claro.parametrizador.Politica[ codPolitica=" + codigo + " ]";
     }
 
-    @XmlTransient
-    @JsonIgnore
-    public Collection<Conciliacion> getConciliacionCollection() {
-        return tblConciliacionCollection;
-    }
-
-    public void setConciliacionCollection(Collection<Conciliacion> tblConciliacionCollection) {
-        this.tblConciliacionCollection = tblConciliacionCollection;
-    }
-    
 }
