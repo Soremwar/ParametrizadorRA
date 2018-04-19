@@ -192,6 +192,7 @@ public class Politica implements Serializable {
         entidadDTO.setNombre(this.getNombre());
         entidadDTO.setObjetivo(this.getObjetivo());
         entidadDTO.setUsuario(this.getUsuario());
+        entidadDTO.setConciliacion(this.getConciliacion());
         return entidadDTO;
     }
     
