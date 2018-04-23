@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -33,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Conciliacion.findAll", query = "SELECT t FROM Conciliacion t")
-    , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.codigo = :codConciliacion")
+    , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.id = :codConciliacion")
     , @NamedQuery(name = "Conciliacion.findByCamposTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.camposTablaDestino = :camposTablaDestino")
     , @NamedQuery(name = "Conciliacion.findByDescripcion", query = "SELECT t FROM Conciliacion t WHERE t.descripcion = :descripcion")
     , @NamedQuery(name = "Conciliacion.findByFechaActualizacion", query = "SELECT t FROM Conciliacion t WHERE t.fechaActualizacion = :fechaActualizacion")
@@ -50,7 +51,7 @@ public class Conciliacion implements Serializable {
     @Basic(optional = false)
     @Column(name = "COD_CONCILIACION")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer codigo;
+    private Integer id;
     
     @Column(name = "CAMPOS_TABLA_DESTINO")
     private String camposTablaDestino;
@@ -80,18 +81,18 @@ public class Conciliacion implements Serializable {
     private String usuario;
     
     @JoinColumn(name = "COD_POLITICA", referencedColumnName = "COD_POLITICA")
-    @OneToOne
+    @ManyToOne(optional = false)
     private Politica politica;
     
     public Conciliacion() {
     }
 
-    public Integer getCodigo() {
-        return codigo;
+    public Integer getId() {
+        return id;
     }
 
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getCamposTablaDestino() {
@@ -161,7 +162,7 @@ public class Conciliacion implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (codigo != null ? codigo.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -172,7 +173,7 @@ public class Conciliacion implements Serializable {
             return false;
         }
         Conciliacion other = (Conciliacion) object;
-        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -180,18 +181,17 @@ public class Conciliacion implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.Conciliacion[ codConciliacion=" + codigo + " ]";
+        return "co.com.claro.ejb.dao.Conciliacion[ codConciliacion=" + id + " ]";
     }
     
     public ConciliacionDTO toDTO(){
         ConciliacionDTO entidadDTO = new ConciliacionDTO();
-        entidadDTO.setCodigo(this.getCodigo());
+        entidadDTO.setId(this.getId());
         entidadDTO.setNombre(this.getNombre());            
         entidadDTO.setPolitica(this.getPolitica() != null ? this.getPolitica().toDTO() : null);
         entidadDTO.setDescripcion(this.getDescripcion());
         entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
         entidadDTO.setCamposTablaDestino(this.getCamposTablaDestino());
-
         entidadDTO.setTablaDestino(this.getTablaDestino());
         entidadDTO.setUsuario(this.getUsuario());
         

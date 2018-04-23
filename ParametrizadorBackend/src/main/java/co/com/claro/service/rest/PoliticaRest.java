@@ -118,7 +118,7 @@ public class PoliticaRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(Politica entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-        PoliticaDTO entidadActual = getById(entidad.getCodigo());
+        PoliticaDTO entidadActual = getById(entidad.getId());
         if (entidadActual != null) {
             entidad.setFechaCreacion(entidadActual.getFechaCreacion());
             entidad.setFechaActualizacion(Date.from(Instant.now()));

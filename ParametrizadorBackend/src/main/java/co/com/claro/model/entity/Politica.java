@@ -5,9 +5,11 @@
  */
 package co.com.claro.model.entity;
 
+import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -19,6 +21,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -39,7 +42,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "Politica.findNumRegistros", query = "SELECT COUNT(t) FROM Politica t")
     , @NamedQuery(name = "Politica.findAll", query = "SELECT t FROM Politica t")
-    , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT t FROM Politica t WHERE t.codigo = :codPolitica")
+    , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT t FROM Politica t WHERE t.id = :codPolitica")
     , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT t FROM Politica t WHERE t.nombre LIKE :nombrePolitica")
     , @NamedQuery(name = "Politica.findByDescripcion", query = "SELECT t FROM Politica t WHERE t.descripcion = :descripcion")
     , @NamedQuery(name = "Politica.findByObjetivo", query = "SELECT t FROM Politica t WHERE t.objetivo = :objetivo")
@@ -56,7 +59,7 @@ public class Politica implements Serializable {
     @Basic(optional = false)
     @Column(name = "COD_POLITICA")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer codigo;
+    private Integer id;
     
     @Basic(optional = false)
     @NotNull
@@ -90,18 +93,19 @@ public class Politica implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
     
-    @OneToOne(cascade = CascadeType.ALL,  mappedBy = "politica")
-    private Collection<Conciliacion> tblConciliacionCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "politica")
+    private Collection<Conciliacion> conciliacionCollection;
+
 
     public Politica() {
     }
 
-    public Integer getCodigo() {
-        return codigo;
+    public Integer getId() {
+        return id;
     }
 
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -155,18 +159,18 @@ public class Politica implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Conciliacion> getTblConciliacionCollection() {
-        return tblConciliacionCollection;
+    public Collection<Conciliacion> getConciliacionCollection() {
+        return conciliacionCollection;
     }
 
-    public void setTblConciliacionCollection(Collection<Conciliacion> tblConciliacionCollection) {
-        this.tblConciliacionCollection = tblConciliacionCollection;
+    public void setConciliacionCollection(Collection<Conciliacion> conciliacionCollection) {
+        this.conciliacionCollection = conciliacionCollection;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (codigo != null ? codigo.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -177,7 +181,7 @@ public class Politica implements Serializable {
             return false;
         }
         Politica other = (Politica) object;
-        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -185,20 +189,28 @@ public class Politica implements Serializable {
 
     public PoliticaDTO toDTO() {
         PoliticaDTO entidadDTO = new PoliticaDTO();
-        entidadDTO.setCodigo(this.getCodigo());
+        entidadDTO.setId(this.getId());
         entidadDTO.setDescripcion(this.getDescripcion());
         entidadDTO.setFechaCreacion(this.getFechaCreacion());
         entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
         entidadDTO.setNombre(this.getNombre());
         entidadDTO.setObjetivo(this.getObjetivo());
         entidadDTO.setUsuario(this.getUsuario());
-        entidadDTO.setConciliacion(this.getConciliacion());
+        entidadDTO.setConciliacion(convertirCollectionToDTO());
         return entidadDTO;
+    }
+    
+    private Collection<ConciliacionDTO> convertirCollectionToDTO(){
+        Collection<ConciliacionDTO> lstAux = new ArrayList<ConciliacionDTO>();
+        for (Conciliacion conciliacion : conciliacionCollection) {
+            lstAux.add(conciliacion.toDTO());    
+        }
+        return lstAux;
     }
     
     @Override
     public String toString() {
-        return "com.claro.parametrizador.Politica[ codPolitica=" + codigo + " ]";
+        return "com.claro.parametrizador.Politica[ codPolitica=" + id + " ]";
     }
 
 }

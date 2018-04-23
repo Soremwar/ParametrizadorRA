@@ -16,7 +16,7 @@ public class EntityIdComparator implements Comparator<PadreDTO>{
 
     @Override
     public int compare(PadreDTO o1, PadreDTO o2) {
-        return o1.getCodigo() != null ? o1.getCodigo().compareTo(o2.getCodigo()) : 0;
+        return o1.getId() != null ? o1.getId().compareTo(o2.getId()) : 0;
     }
 
 }

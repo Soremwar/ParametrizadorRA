@@ -37,12 +37,4 @@ public class PoliticaDTO extends PadreDTO implements Serializable{
     public void setObjetivo(String objetivo) {
         this.objetivo = objetivo;
     }
-    
-    public Collection<ConciliacionDTO> getConciliacion() {
-        return conciliacion;
-    }
-
-    public void setConciliacion(Collection<ConciliacionDTO> conciliacion) {
-        this.conciliacion = conciliacion;
-    } 
 }

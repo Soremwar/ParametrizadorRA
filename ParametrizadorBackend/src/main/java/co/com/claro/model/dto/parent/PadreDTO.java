@@ -13,7 +13,7 @@ import java.util.Date;
  * @author andres
  */
 public class PadreDTO implements Serializable {
-    private Integer codigo;
+    private Integer id;
     private String nombre;
     private String usuario;
     private Date fechaCreacion;
@@ -35,12 +35,12 @@ public class PadreDTO implements Serializable {
         this.usuario = usuario;
     }
 
-     public Integer getCodigo() {
-        return codigo;
+     public Integer getId() {
+        return id;
     }
 
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
+    public void setId(Integer id) {
+        this.id = id;
     }   
     
        public Date getFechaCreacion() {
