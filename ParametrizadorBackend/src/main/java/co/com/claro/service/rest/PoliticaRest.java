@@ -5,6 +5,7 @@ import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.entity.Politica;
+import co.com.claro.service.rest.utils.MensajeError;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -139,7 +140,8 @@ public class PoliticaRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         managerDAO.remove(managerDAO.find(id));
-        return Response.status(Response.Status.OK).build();
+        MensajeError mensaje = new MensajeError(Response.Status.OK.ordinal(), "OK", "Registro borrado exitosamente");
+        return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     
     /**
