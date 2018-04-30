@@ -7,17 +7,17 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-04-23T10:24:26")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-04-30T08:51:07")
 @StaticMetamodel(Politica.class)
 public class Politica_ { 
 
-    public static volatile SingularAttribute<Politica, Integer> id;
-    public static volatile SingularAttribute<Politica, String> nombre;
-    public static volatile CollectionAttribute<Politica, Conciliacion> conciliacionCollection;
-    public static volatile SingularAttribute<Politica, String> objetivo;
-    public static volatile SingularAttribute<Politica, String> usuario;
     public static volatile SingularAttribute<Politica, String> descripcion;
+    public static volatile SingularAttribute<Politica, String> objetivo;
+    public static volatile CollectionAttribute<Politica, Conciliacion> conciliaciones;
     public static volatile SingularAttribute<Politica, Date> fechaCreacion;
     public static volatile SingularAttribute<Politica, Date> fechaActualizacion;
+    public static volatile SingularAttribute<Politica, String> usuario;
+    public static volatile SingularAttribute<Politica, Integer> id;
+    public static volatile SingularAttribute<Politica, String> nombre;
 
 }

@@ -12,6 +12,7 @@ import java.util.Date;
  *
  * @author andres
  */
+
 public class PadreDTO implements Serializable {
     private Integer id;
     private String nombre;
@@ -19,6 +20,14 @@ public class PadreDTO implements Serializable {
     private Date fechaCreacion;
     private Date fechaActualizacion;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }   
+ 
     public String getNombre() {
         return nombre;
     }
@@ -35,22 +44,14 @@ public class PadreDTO implements Serializable {
         this.usuario = usuario;
     }
 
-     public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }   
-    
-       public Date getFechaCreacion() {
+    public Date getFechaCreacion() {
         return fechaCreacion;
     }
 
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-
+    
     public Date getFechaActualizacion() {
         return fechaActualizacion;
     }

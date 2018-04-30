@@ -6,9 +6,8 @@
 package co.com.claro.model.dto;
 
 import co.com.claro.model.dto.parent.PadreDTO;
-import co.com.claro.model.entity.Politica;
+import co.com.claro.model.entity.Conciliacion;
 import java.io.Serializable;
-import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -20,7 +19,6 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private String tablaDestino;
     private String camposTablaDestino;
     private String descripcion;
-
 
     private PoliticaDTO politica;
     
@@ -55,5 +53,25 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
 
     public void setPolitica(PoliticaDTO politica) {
         this.politica = politica;
+    }
+
+    public Conciliacion toEntity(){
+        Conciliacion p = new Conciliacion();
+        //campos padre
+        p.setId(this.getId());
+        p.setNombre(this.getNombre());
+        p.setUsuario(this.getUsuario());
+        p.setFechaCreacion(this.getFechaCreacion());
+        p.setFechaActualizacion(this.getFechaActualizacion());
+        
+        //campos propios de la entidad
+        p.setDescripcion(this.descripcion);
+        p.setTablaDestino(this.tablaDestino);
+        p.setCamposTablaDestino(this.camposTablaDestino);
+        if (this.politica != null) {
+            p.setPolitica(this.politica.toEntity());
+        }
+        return p;
+        
     }
 }

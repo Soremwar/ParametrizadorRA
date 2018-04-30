@@ -6,9 +6,12 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.ConciliacionDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,12 +21,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -42,6 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Conciliacion.findByNombreConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.nombre = :nombreConciliacion")
     , @NamedQuery(name = "Conciliacion.findByTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.tablaDestino = :tablaDestino")
     , @NamedQuery(name = "Conciliacion.findByUsuario", query = "SELECT t FROM Conciliacion t WHERE t.usuario = :usuario")
+    , @NamedQuery(name = "Conciliacion.findByPoliticaNull", query = "SELECT t FROM Conciliacion t WHERE t.politica IS null")
     , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT t FROM Conciliacion t WHERE lower(t.nombre) LIKE lower(:nombreConciliacion) or lower(t.descripcion) LIKE lower(:descripcion)")})
     
 public class Conciliacion implements Serializable {
@@ -80,9 +85,14 @@ public class Conciliacion implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
     
-    @JoinColumn(name = "COD_POLITICA", referencedColumnName = "COD_POLITICA")
-    @ManyToOne(optional = false)
+    @ManyToOne()
+    @JoinColumn(name = "COD_POLITICA")
     private Politica politica;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "conciliacion", cascade = CascadeType.PERSIST)
+    private Collection<Escenario> escenarios;
+
     
     public Conciliacion() {
     }
@@ -159,6 +169,15 @@ public class Conciliacion implements Serializable {
         this.politica = politica;
     }
 
+    @XmlTransient
+    public Collection<Escenario> getEscenarios() {
+        return escenarios;
+    }
+
+    public void setEscenarios(Collection<Escenario> escenarios) {
+        this.escenarios = escenarios;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -190,7 +209,8 @@ public class Conciliacion implements Serializable {
         entidadDTO.setNombre(this.getNombre());            
         entidadDTO.setPolitica(this.getPolitica() != null ? this.getPolitica().toDTO() : null);
         entidadDTO.setDescripcion(this.getDescripcion());
-        entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
+        entidadDTO.setFechaCreacion(fechaCreacion);
+        entidadDTO.setFechaActualizacion(fechaActualizacion);
         entidadDTO.setCamposTablaDestino(this.getCamposTablaDestino());
         entidadDTO.setTablaDestino(this.getTablaDestino());
         entidadDTO.setUsuario(this.getUsuario());

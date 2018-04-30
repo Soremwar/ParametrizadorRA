@@ -69,5 +69,18 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         }
         return results;
     }
+    
+    /**
+     * Encuentra las conciliaciaciones que no tienen asociada ninguna politica
+     * @return Listado con las conciliaciones
+     */
+    public List<Conciliacion> findByPoliticaNull(){
+        TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByPoliticaNull", Conciliacion.class);
+        List<Conciliacion> results = query.getResultList();
+        if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }
+        return results;
+    }
 }
 

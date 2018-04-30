@@ -1,13 +1,12 @@
 package co.com.claro.service.rest;
 
-import co.com.claro.ejb.dao.PoliticaDAO;
+import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
+import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
-import co.com.claro.model.dto.PoliticaDTO;
-import co.com.claro.model.entity.Politica;
+import co.com.claro.model.entity.Escenario;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +20,6 @@ import javax.ejb.EJB;
 import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
@@ -29,73 +27,76 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
- * Clase que maneja el API Rest de Politicas
+ * Clase que maneja el API Rest de Escenarios
  * @author Andres Bedoya
  */
-@Path("politicas")
-public class PoliticaRest {
+@Path("escenarios")
+public class EscenarioRest {
     @Transient
-    private static final Logger logger = Logger.getLogger(PoliticaRest.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(EscenarioRest.class.getSimpleName());
 
     @EJB
-    protected PoliticaDAO managerDAO;
+    protected EscenarioDAO managerDAO;
 
     /**
-     * Obtiene las Politicas Paginadas
+     * Obtiene las Escenarios Paginadas
      * @param offset Desde cual item se retorna
      * @param limit Limite de items a retornar
      * @param orderby Indica por cual campo descriptivo va a guardar (id, nombre, fechaCreacion)
-     * @return Toda la lista de politicas que corresponden con el criterio
+     * @return Toda la lista de escenarios que corresponden con el criterio
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public List<PoliticaDTO> find(
+    public List<EscenarioDTO> find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
-        List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
-        //List<Politica> lst = managerDAO.findAll();
+        List<Escenario> lst = managerDAO.findRange(new int[]{offset, limit});
         List<PadreDTO> lstDTO = new ArrayList<>();
-        
-        for(Politica entidad : lst) {
+        for(Escenario entidad : lst) {
             lstDTO.add(entidad.toDTO());
         }
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
-        List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
+        List<EscenarioDTO> lstFinal = (List<EscenarioDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
-     
+
+    /**
+     * Obtiene una Escenario por id
+     * @param id Identificador de conciliacion
+     * @return Una Escenario que coincide con el criterio
+     */
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public PoliticaDTO getById(@PathParam("id") int id){
+    public EscenarioDTO getById(@PathParam("id") int id){
         logger.log(Level.INFO, "id:{0}", id);
-        Politica entidad = managerDAO.find(id);
+        Escenario entidad = managerDAO.find(id);
         return entidad.toDTO();
 
     }
 
      /**
-     * Busca las politicas por cualquier columna
+     * Busca las escenarios por cualquier columna
      * @param texto Texto a buscar en cualquier texto
-     * @return Lista de Politicas que cumplen con el criterio
+     * @return Lista de Escenarios que cumplen con el criterio
      */
     @GET
     @Path("/findByAny")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<PoliticaDTO> findByAnyColumn(@QueryParam("texto") String texto){
-        logger.log(Level.INFO, "texto:{0}", texto);        
-        List<Politica> lst = managerDAO.findByAnyColumn(texto);
+    public List<EscenarioDTO> findByAnyColumn(@QueryParam("texto") String texto){
+        logger.log(Level.INFO, "texto:{0}", texto);      
+        List<Escenario> lst = managerDAO.findByAnyColumn(texto);
         List<PadreDTO> lstDTO = new ArrayList<>();        
-        for(Politica entidad : lst) {
+        for(Escenario entidad : lst) {
             lstDTO.add(entidad.toDTO());
         }
-        List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
-        return lstFinal;
+        List<EscenarioDTO> lstFinal = (List<EscenarioDTO>)(List<?>) lstDTO;
+        return lstFinal;        
     }
    
-    /**
+     /**
      * Crea una nueva politica
      * @param entidad Entidad que se va a agregar
      * @return el la entidad recien creada
@@ -103,29 +104,29 @@ public class PoliticaRest {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response add(PoliticaDTO entidad) {
+    public Response add(EscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Politica entidadAux = entidad.toEntity();
-        entidadAux.setFechaCreacion(Date.from(ZonedDateTime.now().toInstant()));
+        Escenario entidadAux = entidad.toEntity();
+        entidadAux.setFechaCreacion(Date.from(Instant.now()));
         managerDAO.create(entidadAux);
-        return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
-    }
-    
+        return Response.status(Response.Status.CREATED).entity(entidadAux).build();
+    }   
     /**
-     * Actualiza una politica por su Id
-     * @param entidad
+     * Actualiza una conciliacion por su Id
+     * @param entidad conciliacion con la cual se va a trabajar
      * @return el resultado de la operacion
      */
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response update(PoliticaDTO entidad) {
+    public Response update(EscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-        PoliticaDTO entidadActual = getById(entidad.getId());
-        Politica entidadAux = entidad.toEntity();
-        if (entidadActual != null) {
+        EscenarioDTO entidadActual = getById(entidad.getId());
+        Escenario entidadAux = entidad.toEntity();
+        if (getById(entidad.getId()) != null) {
             entidadAux.setFechaCreacion(entidadActual.getFechaCreacion());
             entidadAux.setFechaActualizacion(Date.from(Instant.now()));
+            entidadAux.setConciliacion(entidadActual.getConciliacion().toEntity());
             managerDAO.edit(entidadAux);
             return Response.status(Response.Status.OK).entity(entidadAux.toDTO()).build();
             
@@ -134,9 +135,10 @@ public class PoliticaRest {
     }
     
      /**
-     * Borra una politica por su Id
-     * @param id Identificador de la entidad
-     * @return El resultado de la operacion en codigo HTTP
+     * Borra una conciliacion por su Id
+     * @param id Identificador de la identidad
+     * @param entidadDTO
+     * @return el resultado de la operacion
      */
     @DELETE
     @Path("{id}")
@@ -147,30 +149,10 @@ public class PoliticaRest {
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     
-    /**
-     * Busca las politicas por una columna de texto especifica
-     * @param nombre Nombre de Politica
-     * @param descripcion Descripcion de Politica
-     * @param objetivo Objetivo de Politica
-     * @return Lista de todas las politicas que cumplen con el criterio
-     */
-    @GET
-    @Path("/findBySpecificColum")
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Politica> findBySpecificColumn(
-            @DefaultValue("") @QueryParam("nombre") String nombre,
-            @DefaultValue("") @QueryParam("descripcion") String descripcion,
-            @DefaultValue("") @QueryParam("objetivo") String objetivo
-    ){
-        List<Politica> lst = managerDAO.findByColumn(nombre, descripcion, objetivo);
-        return lst;
-    }
-    
     @GET
     @Path("/count")
     @Produces({MediaType.APPLICATION_JSON})
     public int count(){
         return managerDAO.count();
     }
- 
 }

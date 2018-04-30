@@ -5,11 +5,9 @@
  */
 package co.com.claro.model.entity;
 
-import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.PoliticaDTO;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -22,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,7 +27,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -81,10 +77,12 @@ public class Politica implements Serializable {
     
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
+    @XmlTransient
     private Date fechaCreacion;
 
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
+    @XmlTransient
     private Date fechaActualizacion;
     
     @Basic(optional = false)
@@ -93,8 +91,9 @@ public class Politica implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "politica")
-    private Collection<Conciliacion> conciliacionCollection;
+    @JsonIgnore
+    @OneToMany(mappedBy = "politica", cascade = CascadeType.REMOVE)
+    private Collection<Conciliacion> conciliaciones;
 
 
     public Politica() {
@@ -141,7 +140,7 @@ public class Politica implements Serializable {
             this.fechaCreacion = fechaCreacion;
         }
     }
-
+    
     public Date getFechaActualizacion() {
         return fechaActualizacion;
     }
@@ -159,12 +158,12 @@ public class Politica implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Conciliacion> getConciliacionCollection() {
-        return conciliacionCollection;
+    public Collection<Conciliacion> getConciliaciones() {
+        return conciliaciones;
     }
 
-    public void setConciliacionCollection(Collection<Conciliacion> conciliacionCollection) {
-        this.conciliacionCollection = conciliacionCollection;
+    public void setConciliaciones(Collection<Conciliacion> conciliaciones) {
+        this.conciliaciones = conciliaciones;
     }
 
     @Override
@@ -196,18 +195,23 @@ public class Politica implements Serializable {
         entidadDTO.setNombre(this.getNombre());
         entidadDTO.setObjetivo(this.getObjetivo());
         entidadDTO.setUsuario(this.getUsuario());
-        entidadDTO.setConciliacion(convertirCollectionToDTO());
+        //Collection<ConciliacionDTO> lstAux = convertirCollectionToDTO();
+        //entidadDTO.setConciliacion(this.conciliaciones);
         return entidadDTO;
     }
-    
+    /*
     private Collection<ConciliacionDTO> convertirCollectionToDTO(){
-        Collection<ConciliacionDTO> lstAux = new ArrayList<ConciliacionDTO>();
-        for (Conciliacion conciliacion : conciliacionCollection) {
-            lstAux.add(conciliacion.toDTO());    
+        Collection<ConciliacionDTO> lstAux = new ArrayList<>();
+        //Conciliacion concAux = new 
+        //Collection<Conciliacion> conciliacionesAux = conciliaciones.clone();
+        //conciliaciones.clone
+        //Collection<Conciliacion> conciliacionesAux = (Collection<Conciliacion>) conciliaciones.clone();
+        for (Conciliacion concAux : conciliacionesAux) {
+            lstAux.add(concAux.toDTO());    
         }
         return lstAux;
     }
-    
+    */
     @Override
     public String toString() {
         return "com.claro.parametrizador.Politica[ codPolitica=" + id + " ]";

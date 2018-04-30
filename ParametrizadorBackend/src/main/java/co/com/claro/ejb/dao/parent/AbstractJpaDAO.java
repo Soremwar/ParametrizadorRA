@@ -63,7 +63,7 @@ public abstract class AbstractJpaDAO<T>{
         cq.select(cq.from(entityClass));
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         q.setMaxResults(range[1]);// - range[0] + 1);
-        q.setFirstResult(range[0]);
+        q.setFirstResult(range[0]);           
         List<T> lst = q.getResultList();
         if (lst == null || lst.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos");

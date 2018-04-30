@@ -5,7 +5,6 @@
  */
 package co.com.claro.service.rest.excepciones;
 
-import co.com.claro.service.rest.utils.MensajeError;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -20,11 +19,10 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
     @Override
     public Response toResponse(Throwable exception) {
  
-        MensajeError mensaje = new MensajeError(500, exception.getCause().getMessage(), "Ocurrio un error interno en el servidor");
+        MensajeError mensaje = new MensajeError(500,  "Ocurrio un error interno en el servidor", exception.toString());
         if (exception.getCause() instanceof DataNotFoundException) {
             mensaje = new MensajeError(404, exception.getCause().getMessage(), Response.Status.NOT_FOUND.toString());
             return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
-        } else {
         }
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(mensaje).build();
     }

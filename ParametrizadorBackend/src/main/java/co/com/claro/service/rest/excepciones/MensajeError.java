@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package co.com.claro.service.rest.utils;
+package co.com.claro.service.rest.excepciones;
 
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
