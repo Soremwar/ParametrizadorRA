@@ -11,7 +11,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * DTO para escenario
  * @author andres
  */
 @XmlRootElement
@@ -40,7 +40,7 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
 
     public Escenario toEntity(){
         Escenario p = new Escenario();
-        //campos padre
+        //Campos comunes
         p.setId(this.getId());
         p.setNombre(this.getNombre());
         p.setUsuario(this.getUsuario());
@@ -49,9 +49,7 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
 
         //Campos de la entidad
         p.setImpacto(this.impacto);
-        if (this.conciliacion != null) {
-            p.setConciliacion(conciliacion.toEntity());
-        }
+        p.setConciliacion(conciliacion != null ? conciliacion.toEntity() : null);
         return p;
         
     }

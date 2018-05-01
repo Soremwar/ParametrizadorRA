@@ -9,6 +9,8 @@ import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,6 +24,7 @@ import javax.persistence.TypedQuery;
 
 @Stateless
 public class PoliticaDAO extends AbstractJpaDAO<Politica>{
+    private static final Logger logger = Logger.getLogger(PoliticaDAO.class.getSimpleName());
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
 
@@ -40,6 +43,7 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
      * @return Lista de Politicas que cumplan con el criterio
      */
     public List<Politica> findByAnyColumn(String busqueda){
+        logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});    
         TypedQuery<Politica> query = em.createNamedQuery("Politica.findByAnyColumn", Politica.class);
         query.setParameter("nombrePolitica", "%" + busqueda + "%");
         query.setParameter("descripcion", "%" + busqueda + "%");
@@ -60,6 +64,7 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
      * @return Lista de Politicas que cumplan con el criterio
      */
     public List<Politica> findByColumn(String nombre, String descripcion, String objetivo){
+        logger.log(Level.INFO, "nombre:{0}descripcion:{0}objetivo:{0}", new Object[]{nombre, descripcion, objetivo});
         TypedQuery<Politica> query = em.createNamedQuery("Politica.findByColumn", Politica.class);
         query.setParameter("nombrePolitica", "%" + nombre + "%");
         query.setParameter("descripcion", "%" + descripcion + "%");
@@ -73,12 +78,13 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
         
     /**
      * Buscar el texto en todas columnas con paginado
-     * @param busqueda
-     * @param offset
-     * @param limit
+     * @param busqueda cadena de texto por el cual va a buscar
+     * @param offset desde que registro va a buscar
+     * @param limit limite de registros
      * @return Lista de Politicas que cumplan con el criterio
      */
     public List<Politica> findByAnyColumn(String busqueda, int offset, int limit){
+        logger.log(Level.INFO, "busqueda:{0}offset:{0}limit:{0}", new Object[]{busqueda, offset, limit});
         TypedQuery<Politica> query = em.createNamedQuery("Politica.findByAnyColumn", Politica.class);
         query.setParameter("nombrePolitica", "%" + busqueda + "%");
         query.setFirstResult(offset);

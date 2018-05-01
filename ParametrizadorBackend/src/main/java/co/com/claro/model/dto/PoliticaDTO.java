@@ -12,7 +12,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * DTO para Politica
  * @author andres
  */
 @XmlRootElement
@@ -21,10 +21,6 @@ public class PoliticaDTO extends PadreDTO implements Serializable{
 
     private String objetivo;
     private String descripcion;
-
-
-    //private Collection<Conciliacion> conciliacion;
-
 
     public String getDescripcion() {
         return descripcion;
@@ -41,25 +37,20 @@ public class PoliticaDTO extends PadreDTO implements Serializable{
     public void setObjetivo(String objetivo) {
         this.objetivo = objetivo;
     }
-    
-    /*public Collection<Conciliacion> getConciliacion() {
-        return conciliacion;
-    }
-
-    public void setConciliacion(Collection<Conciliacion> conciliacion) {
-        this.conciliacion = conciliacion;
-    }*/
-    
+        
     public Politica toEntity(){
         Politica p = new Politica();
+        //Campos comunes
         p.setId(this.getId());
         p.setNombre(this.getNombre());
-        p.setDescripcion(this.getDescripcion());
-        p.setObjetivo(this.objetivo);
-        p.setDescripcion(this.descripcion);
         p.setUsuario(this.getUsuario());
         p.setFechaCreacion(this.getFechaCreacion());
         p.setFechaActualizacion(this.getFechaActualizacion());
+        
+        //Campos de la entidad
+        p.setDescripcion(this.getDescripcion());
+        p.setObjetivo(this.objetivo);
+       
         return p;
         
     }

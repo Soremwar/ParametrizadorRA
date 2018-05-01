@@ -11,7 +11,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * DTO para Conciliacion
  * @author andres
  */
 @XmlRootElement
@@ -57,20 +57,18 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
 
     public Conciliacion toEntity(){
         Conciliacion p = new Conciliacion();
-        //campos padre
+        //Campos Comunes
         p.setId(this.getId());
         p.setNombre(this.getNombre());
         p.setUsuario(this.getUsuario());
         p.setFechaCreacion(this.getFechaCreacion());
         p.setFechaActualizacion(this.getFechaActualizacion());
         
-        //campos propios de la entidad
+        //Campos de la entidad
         p.setDescripcion(this.descripcion);
         p.setTablaDestino(this.tablaDestino);
         p.setCamposTablaDestino(this.camposTablaDestino);
-        if (this.politica != null) {
-            p.setPolitica(this.politica.toEntity());
-        }
+        p.setPolitica(politica != null ? politica.toEntity() : null);
         return p;
         
     }

@@ -8,6 +8,7 @@ import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Politica;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -136,8 +137,9 @@ public class ConciliacionRest {
         if(politica.isPresent()) {
             Politica politicaAux = politicaDAO.find(entidad.getPolitica().getId());
             if (politicaAux == null) {
-                MensajeError mensaje = new MensajeError(404, "Politica no existe", "Esta politica no existe");
-                return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
+                throw new DataNotFoundException("No se encontraron datos asociados a la politica " + entidad.getPolitica().getId());
+                //MensajeError mensaje = new MensajeError(404, "Politica no existe", "Esta politica no existe");
+                //return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
             }
         }
         

@@ -11,7 +11,7 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
 
 /**
- *
+ * Clase que maneja el cors de la aplicacion.
  * @author andres
  */
 @Provider

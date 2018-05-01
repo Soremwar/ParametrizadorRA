@@ -9,6 +9,8 @@ import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,6 +24,7 @@ import javax.persistence.TypedQuery;
 
 @Stateless
 public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
+    private static final Logger logger = Logger.getLogger(EscenarioDAO.class.getSimpleName());
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
 
@@ -40,6 +43,7 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
      * @return Lista de Escenarios que cumplan con el criterio
      */
     public List<Escenario> findByAnyColumn(String busqueda){
+        logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});    
         TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findByAnyColumn", Escenario.class);
         query.setParameter("nombreEscenario", "%" + busqueda + "%");
         query.setParameter("impacto", "%" + busqueda + "%");
@@ -59,6 +63,7 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
      * @return Lista de Escenarios que cumplan con el criterio
      */
     public List<Escenario> findByColumn(String nombre, String descripcion, String objetivo){
+        logger.log(Level.INFO, "nombre:{0}descripcion:{0}objetivo:{0}", new Object[]{nombre, descripcion, objetivo});        
         TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findByColumn", Escenario.class);
         query.setParameter("nombreEscenario", "%" + nombre + "%");
         query.setParameter("impacto", "%" + descripcion + "%");
@@ -71,12 +76,13 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         
     /**
      * Buscar el texto en todas columnas con paginado
-     * @param busqueda
-     * @param offset
-     * @param limit
+     * @param busqueda cadena de texto por el cual va a buscar
+     * @param offset desde que registro va a buscar
+     * @param limit limite de registros
      * @return Lista de Escenarios que cumplan con el criterio
      */
     public List<Escenario> findByAnyColumn(String busqueda, int offset, int limit){
+        logger.log(Level.INFO, "busqueda:{0}offset:{0}limit:{0}", new Object[]{busqueda, offset, limit}); 
         TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findByAnyColumn", Escenario.class);
         query.setParameter("nombreEscenario", "%" + busqueda + "%");
         query.setFirstResult(offset);
@@ -87,5 +93,18 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         }
         return results;
     }
+
+    /**
+     * Encuentra los escenarios que no tienen asociada ninguna Conciliacion
+     * @return Listado con las conciliaciones
+     */
+    public List<Escenario> findByPoliticaNull(){
+        TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findByConciliacionNull", Escenario.class);
+        List<Escenario> results = query.getResultList();
+        if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }
+        return results;
+    }    
 }
 

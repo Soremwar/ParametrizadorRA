@@ -9,6 +9,8 @@ import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,6 +24,7 @@ import javax.persistence.TypedQuery;
 
 @Stateless
 public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
+    private static final Logger logger = Logger.getLogger(ConciliacionDAO.class.getSimpleName());
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
 
@@ -40,6 +43,7 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
      * @return Lista de Conciliacions que cumplan con el criterio
      */
     public List<Conciliacion> findByAnyColumn(String busqueda){
+        logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});     
         TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByAnyColumn", Conciliacion.class);
         query.setParameter("nombreConciliacion", "%" + busqueda + "%");
         query.setParameter("descripcion", "%" + busqueda + "%");
@@ -53,12 +57,13 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         
     /**
      * Buscar el texto en todas columnas con paginado
-     * @param busqueda
-     * @param offset
-     * @param limit
+     * @param busqueda cadena de texto por el cual va a buscar
+     * @param offset desde que registro va a buscar
+     * @param limit limite de registros
      * @return Lista de Conciliacions que cumplan con el criterio
      */
     public List<Conciliacion> findByAnyColumn(String busqueda, int offset, int limit){
+        logger.log(Level.INFO, "busqueda:{0}offset:{0}offset:{0}", new Object[]{busqueda, offset, limit});  
         TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByAnyColumn", Conciliacion.class);
         query.setParameter("nombreConciliacion", "%" + busqueda + "%");
         query.setFirstResult(offset);

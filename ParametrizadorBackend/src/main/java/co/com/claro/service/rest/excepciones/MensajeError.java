@@ -9,7 +9,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Esta clase maneja todos los mensajes de error
+ * Esta clase maneja todos los mensajes de error en un formato estandar
  * @author andres bedoya
  */
 

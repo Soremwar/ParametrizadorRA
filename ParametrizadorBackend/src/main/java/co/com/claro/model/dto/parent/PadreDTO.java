@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
+ * DTO padre que tiene los campos que son comunes a todos los DTOs
  * @author andres
  */
 

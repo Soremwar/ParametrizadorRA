@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Escenario.findByImpacto", query = "SELECT e FROM Escenario e WHERE e.impacto = :impacto")
     , @NamedQuery(name = "Escenario.findByFechaCreacion", query = "SELECT e FROM Escenario e WHERE e.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Escenario.findByFechaActualizacion", query = "SELECT e FROM Escenario e WHERE e.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "Escenario.findByConciliacionNull", query = "SELECT t FROM Escenario t WHERE t.conciliacion IS null")
     , @NamedQuery(name = "Escenario.findByUsuario", query = "SELECT e FROM Escenario e WHERE e.usuario = :usuario")})
 public class Escenario implements Serializable {
 

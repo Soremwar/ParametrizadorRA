@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package co.com.claro.ejb.dao.parent;
 
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
@@ -11,7 +6,7 @@ import javax.persistence.EntityManager;
 
 /**
  * Contiene toda la implementacion generica de todos los metodos estandar de DAO
- * @author andres
+ * @author andres bedoya
  * @param <T>
  */
 public abstract class AbstractJpaDAO<T>{

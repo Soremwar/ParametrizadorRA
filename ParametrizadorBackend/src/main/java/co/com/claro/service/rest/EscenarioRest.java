@@ -1,15 +1,22 @@
 package co.com.claro.service.rest;
 
+import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
+import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
+import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
+import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
+import co.com.claro.model.entity.Politica;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.GET;
@@ -37,6 +44,9 @@ public class EscenarioRest {
 
     @EJB
     protected EscenarioDAO managerDAO;
+    
+    @EJB
+    protected ConciliacionDAO conciliacionDAO;
 
     /**
      * Obtiene las Escenarios Paginadas
@@ -106,6 +116,17 @@ public class EscenarioRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(EscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
+        Optional<ConciliacionDTO> conciliacion = Optional.ofNullable(entidad.getConciliacion());
+        if(conciliacion.isPresent()) {
+            Conciliacion conciliacionAux = conciliacionDAO.find(entidad.getConciliacion().getId());
+            if (conciliacionAux == null) {
+                throw new DataNotFoundException("No se encontraron datos asociados a la conciliacion " + entidad.getConciliacion().getId());
+
+                //MensajeError mensaje = new MensajeError(404, "Conciliacion no existe", "Esta conciliacion no existe");
+                //return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
+            }
+        }
+        
         Escenario entidadAux = entidad.toEntity();
         entidadAux.setFechaCreacion(Date.from(Instant.now()));
         managerDAO.create(entidadAux);
