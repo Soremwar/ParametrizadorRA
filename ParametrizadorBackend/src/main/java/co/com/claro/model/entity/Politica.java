@@ -188,13 +188,17 @@ public class Politica implements Serializable {
 
     public PoliticaDTO toDTO() {
         PoliticaDTO entidadDTO = new PoliticaDTO();
+        //Campos padre
         entidadDTO.setId(this.getId());
-        entidadDTO.setDescripcion(this.getDescripcion());
+
         entidadDTO.setFechaCreacion(this.getFechaCreacion());
         entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
         entidadDTO.setNombre(this.getNombre());
-        entidadDTO.setObjetivo(this.getObjetivo());
-        entidadDTO.setUsuario(this.getUsuario());
+        
+        //Campos de la entidad
+        entidadDTO.setObjetivo(objetivo);
+        entidadDTO.setUsuario(usuario);
+        entidadDTO.setDescripcion(descripcion);
         //Collection<ConciliacionDTO> lstAux = convertirCollectionToDTO();
         //entidadDTO.setConciliacion(this.conciliaciones);
         return entidadDTO;

@@ -25,7 +25,7 @@ public class UtilListas {
         } else if (orderby != null && orderby.equals("codigo")) {
             EntityIdComparator  comparator = new EntityIdComparator();
             Collections.sort(lstDTO, comparator);
-        } else if (orderby != null && orderby.equals("fechaact")) {
+        } else if (orderby != null && orderby.equals("fechacre")) {
             EntityFechaCreacionComparator  comparator = new EntityFechaCreacionComparator();
             Collections.sort(lstDTO, comparator);
         }       

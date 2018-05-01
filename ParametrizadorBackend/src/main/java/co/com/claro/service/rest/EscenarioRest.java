@@ -127,6 +127,11 @@ public class EscenarioRest {
             entidadAux.setFechaCreacion(entidadActual.getFechaCreacion());
             entidadAux.setFechaActualizacion(Date.from(Instant.now()));
             entidadAux.setConciliacion(entidadActual.getConciliacion().toEntity());
+           if (entidadActual.getConciliacion()== null) {
+                entidadAux.setConciliacion(entidad.getConciliacion().toEntity());
+            } else {
+                entidadAux.setConciliacion(entidadActual.getConciliacion().toEntity());
+            }
             managerDAO.edit(entidadAux);
             return Response.status(Response.Status.OK).entity(entidadAux.toDTO()).build();
             
@@ -137,7 +142,6 @@ public class EscenarioRest {
      /**
      * Borra una conciliacion por su Id
      * @param id Identificador de la identidad
-     * @param entidadDTO
      * @return el resultado de la operacion
      */
     @DELETE

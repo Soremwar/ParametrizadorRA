@@ -5,7 +5,6 @@
  */
 package co.com.claro.model.entity;
 
-import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
 import java.io.Serializable;
 import java.util.Date;
@@ -22,8 +21,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -34,12 +31,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "TBL_ESCENARIO")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Escenario.findAll", query = "SELECT t FROM Escenario t")
-    , @NamedQuery(name = "Escenario.findByCodEscenario", query = "SELECT t FROM Escenario t WHERE t.id = :id")
-    , @NamedQuery(name = "Escenario.findByNombreEscenario", query = "SELECT t FROM Escenario t WHERE t.nombre = :nombre")
-    , @NamedQuery(name = "Escenario.findByImpacto", query = "SELECT t FROM Escenario t WHERE t.impacto = :impacto")
-    , @NamedQuery(name = "Escenario.findByFechaCreacion", query = "SELECT t FROM Escenario t WHERE t.fechaCreacion = :fechaCreacion")
-    , @NamedQuery(name = "Escenario.findByFechaActualizacion", query = "SELECT t FROM Escenario t WHERE t.fechaActualizacion = :fechaActualizacion")})
+    @NamedQuery(name = "Escenario.findAll", query = "SELECT e FROM Escenario e")
+    , @NamedQuery(name = "Escenario.findByCodEscenario", query = "SELECT e FROM Escenario e WHERE e.id = :codEscenario")
+    , @NamedQuery(name = "Escenario.findByNombreEscenario", query = "SELECT e FROM Escenario e WHERE e.nombre = :nombreEscenario")
+    , @NamedQuery(name = "Escenario.findByImpacto", query = "SELECT e FROM Escenario e WHERE e.impacto = :impacto")
+    , @NamedQuery(name = "Escenario.findByFechaCreacion", query = "SELECT e FROM Escenario e WHERE e.fechaCreacion = :fechaCreacion")
+    , @NamedQuery(name = "Escenario.findByFechaActualizacion", query = "SELECT e FROM Escenario e WHERE e.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "Escenario.findByUsuario", query = "SELECT e FROM Escenario e WHERE e.usuario = :usuario")})
 public class Escenario implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,39 +48,33 @@ public class Escenario implements Serializable {
     private Integer id;
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
     @Column(name = "NOMBRE_ESCENARIO")
     private String nombre;
-    
-    @Size(max = 100)
     @Column(name = "IMPACTO")
     private String impacto;
-    
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 200)
-    @Column(name = "USUARIO")
-    private String usuario;
-    
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.DATE)
     private Date fechaCreacion;
-    
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.DATE)
     private Date fechaActualizacion;
+    @Column(name = "USUARIO")
+    private String usuario;
     
-    @ManyToOne()
-    @JoinColumn(name = "COD_CONCILIACION")
+    @JoinColumn(name = "COD_CONCILIACION", referencedColumnName = "COD_CONCILIACION")
+    @ManyToOne
     private Conciliacion conciliacion;
-
 
     public Escenario() {
     }
 
     public Escenario(Integer id) {
         this.id = id;
+    }
+
+    public Escenario(Integer id, String nombreEscenario) {
+        this.id = id;
+        this.nombre = nombreEscenario;
     }
 
     public Integer getId() {
@@ -108,14 +100,6 @@ public class Escenario implements Serializable {
     public void setImpacto(String impacto) {
         this.impacto = impacto;
     }
-    
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
 
     public Date getFechaCreacion() {
         return fechaCreacion;
@@ -133,6 +117,14 @@ public class Escenario implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
     public Conciliacion getConciliacion() {
         return conciliacion;
     }
@@ -140,7 +132,7 @@ public class Escenario implements Serializable {
     public void setConciliacion(Conciliacion conciliacion) {
         this.conciliacion = conciliacion;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -163,20 +155,22 @@ public class Escenario implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.model.entity.Escenario[ id=" + id + " ]";
+        return "com.entities.Escenario[ codEscenario=" + id + " ]";
     }
-    
     
     public EscenarioDTO toDTO(){
         EscenarioDTO entidadDTO = new EscenarioDTO();
+        //Campos comunes
         entidadDTO.setId(this.getId());
-        entidadDTO.setNombre(nombre);           
-        entidadDTO.setConciliacion(this.getConciliacion() != null ? this.getConciliacion().toDTO() : null);
-        entidadDTO.setFechaCreacion(fechaCreacion);
-        entidadDTO.setFechaActualizacion(fechaActualizacion);
-        entidadDTO.setImpacto(this.getImpacto());
-        entidadDTO.setUsuario(this.getUsuario());
+        entidadDTO.setFechaCreacion(this.getFechaCreacion());
+        entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
+        entidadDTO.setNombre(this.getNombre());
+        entidadDTO.setUsuario(usuario);
         
+        //Campos de la entidad
+        entidadDTO.setImpacto(impacto);
+        entidadDTO.setConciliacion(this.getConciliacion() != null ? this.getConciliacion().toDTO() : null);
         return entidadDTO;
     }
+    
 }
