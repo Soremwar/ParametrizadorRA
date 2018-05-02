@@ -6,6 +6,7 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.ConciliacionDTO;
+import co.com.claro.model.dto.parent.ConciliacionTreeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
@@ -47,6 +48,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Conciliacion.findByTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.tablaDestino = :tablaDestino")
     , @NamedQuery(name = "Conciliacion.findByUsuario", query = "SELECT t FROM Conciliacion t WHERE t.usuario = :usuario")
     , @NamedQuery(name = "Conciliacion.findByPoliticaNull", query = "SELECT t FROM Conciliacion t WHERE t.politica IS null")
+    , @NamedQuery(name = "Conciliacion.findByPolitica", query = "SELECT t FROM Conciliacion t WHERE t.politica.id = :codPolitica")
     , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT t FROM Conciliacion t WHERE lower(t.nombre) LIKE lower(:nombreConciliacion) or lower(t.descripcion) LIKE lower(:descripcion)")})
     
 public class Conciliacion implements Serializable {
@@ -217,5 +219,22 @@ public class Conciliacion implements Serializable {
         
         return entidadDTO;
     }
-  
+    
+    /**
+     *
+     * @return
+     */
+    public ConciliacionTreeDTO toTreeDTO(){
+            ConciliacionTreeDTO entidadDTO = new ConciliacionTreeDTO();
+            entidadDTO.setId(this.getId());
+            entidadDTO.setNombre(this.getNombre());            
+            entidadDTO.setDescripcion(this.getDescripcion());
+            entidadDTO.setFechaCreacion(fechaCreacion);
+            entidadDTO.setFechaActualizacion(fechaActualizacion);
+            entidadDTO.setCamposTablaDestino(this.getCamposTablaDestino());
+            entidadDTO.setTablaDestino(this.getTablaDestino());
+            entidadDTO.setUsuario(this.getUsuario());
+
+        return entidadDTO;
+    }
 }

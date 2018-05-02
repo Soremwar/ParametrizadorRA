@@ -105,7 +105,7 @@ public class ConciliacionRest {
     
     
     /**
-     * Encuentra las conciliaciaciones que no tienen asociada ninguna politica
+     * Encuentra las conciliaciones que no tienen asociada ninguna politica
      * @return Listado con las conciliaciones
      */   
     @GET

@@ -6,6 +6,7 @@
 package co.com.claro.ejb.dao;
 
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
+import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
@@ -95,5 +96,7 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
         }
         return results;
     }
+    
+
 }
 

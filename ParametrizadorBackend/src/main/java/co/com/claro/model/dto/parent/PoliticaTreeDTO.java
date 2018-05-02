@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package co.com.claro.model.dto;
+package co.com.claro.model.dto.parent;
 
+import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Politica;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -18,17 +19,17 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @JsonPropertyOrder({ "id", "nombre", "usuario", "fechaCreacion", "fechaActualizacion","objetivo", "descripcion"})
-public class PoliticaDTO extends PadreDTO implements Serializable{
+public class PoliticaTreeDTO extends PadreDTO implements Serializable{
 
     private String objetivo;
     private String descripcion;
-    private List<ConciliacionDTO> conciliaciones;
+    private List<ConciliacionTreeDTO> conciliaciones;
 
-    public List<ConciliacionDTO> getConciliaciones() {
+    public List<ConciliacionTreeDTO> getConciliaciones() {
         return conciliaciones;
     }
 
-    public void setConciliaciones(List<ConciliacionDTO> conciliaciones) {
+    public void setConciliaciones(List<ConciliacionTreeDTO> conciliaciones) {
         this.conciliaciones = conciliaciones;
     }
 

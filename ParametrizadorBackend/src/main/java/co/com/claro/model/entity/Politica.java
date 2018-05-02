@@ -6,6 +6,7 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.PoliticaDTO;
+import co.com.claro.model.dto.parent.PoliticaTreeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
@@ -203,7 +204,25 @@ public class Politica implements Serializable {
         //entidadDTO.setConciliacion(this.conciliaciones);
         return entidadDTO;
     }
-    /*
+    
+    public PoliticaTreeDTO toTreeDTO() {
+        PoliticaTreeDTO entidadDTO = new PoliticaTreeDTO();
+        //Campos padre
+        entidadDTO.setId(this.getId());
+
+        entidadDTO.setFechaCreacion(this.getFechaCreacion());
+        entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
+        entidadDTO.setNombre(this.getNombre());
+
+        //Campos de la entidad
+        entidadDTO.setObjetivo(objetivo);
+        entidadDTO.setUsuario(usuario);
+        entidadDTO.setDescripcion(descripcion);
+        //Collection<ConciliacionDTO> lstAux = convertirCollectionToDTO();
+        //entidadDTO.setConciliacion(this.conciliaciones);
+        return entidadDTO;
+    }
+        /*
     private Collection<ConciliacionDTO> convertirCollectionToDTO(){
         Collection<ConciliacionDTO> lstAux = new ArrayList<>();
         //Conciliacion concAux = new 

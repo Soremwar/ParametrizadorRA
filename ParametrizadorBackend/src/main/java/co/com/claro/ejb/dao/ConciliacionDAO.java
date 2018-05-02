@@ -7,6 +7,7 @@ package co.com.claro.ejb.dao;
 
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
 import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
@@ -85,6 +86,17 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
+        return results;
+    }
+    
+    public List<Conciliacion> findByPolitica(int politica){
+        //logger.log(Level.INFO, "busqueda:{0}offset:{0}limit:{0}", new Object[]{busqueda, offset, limit});
+        TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByPolitica", Conciliacion.class);
+        query.setParameter("codPolitica", politica);
+        List<Conciliacion> results = query.getResultList();
+        /*if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }*/
         return results;
     }
 }
