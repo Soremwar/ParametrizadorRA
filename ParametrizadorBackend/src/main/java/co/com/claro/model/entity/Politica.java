@@ -6,7 +6,7 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.PoliticaDTO;
-import co.com.claro.model.dto.parent.PoliticaTreeDTO;
+import co.com.claro.model.dto.PoliticaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
@@ -100,6 +100,10 @@ public class Politica implements Serializable {
     public Politica() {
     }
 
+    public Politica(Integer id) {
+        this.id = id;
+    }
+    
     public Integer getId() {
         return id;
     }
@@ -189,9 +193,8 @@ public class Politica implements Serializable {
 
     public PoliticaDTO toDTO() {
         PoliticaDTO entidadDTO = new PoliticaDTO();
-        //Campos padre
+        //Campos comunes
         entidadDTO.setId(this.getId());
-
         entidadDTO.setFechaCreacion(this.getFechaCreacion());
         entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
         entidadDTO.setNombre(this.getNombre());
@@ -200,41 +203,10 @@ public class Politica implements Serializable {
         entidadDTO.setObjetivo(objetivo);
         entidadDTO.setUsuario(usuario);
         entidadDTO.setDescripcion(descripcion);
-        //Collection<ConciliacionDTO> lstAux = convertirCollectionToDTO();
-        //entidadDTO.setConciliacion(this.conciliaciones);
+
         return entidadDTO;
     }
     
-    public PoliticaTreeDTO toTreeDTO() {
-        PoliticaTreeDTO entidadDTO = new PoliticaTreeDTO();
-        //Campos padre
-        entidadDTO.setId(this.getId());
-
-        entidadDTO.setFechaCreacion(this.getFechaCreacion());
-        entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
-        entidadDTO.setNombre(this.getNombre());
-
-        //Campos de la entidad
-        entidadDTO.setObjetivo(objetivo);
-        entidadDTO.setUsuario(usuario);
-        entidadDTO.setDescripcion(descripcion);
-        //Collection<ConciliacionDTO> lstAux = convertirCollectionToDTO();
-        //entidadDTO.setConciliacion(this.conciliaciones);
-        return entidadDTO;
-    }
-        /*
-    private Collection<ConciliacionDTO> convertirCollectionToDTO(){
-        Collection<ConciliacionDTO> lstAux = new ArrayList<>();
-        //Conciliacion concAux = new 
-        //Collection<Conciliacion> conciliacionesAux = conciliaciones.clone();
-        //conciliaciones.clone
-        //Collection<Conciliacion> conciliacionesAux = (Collection<Conciliacion>) conciliaciones.clone();
-        for (Conciliacion concAux : conciliacionesAux) {
-            lstAux.add(concAux.toDTO());    
-        }
-        return lstAux;
-    }
-    */
     @Override
     public String toString() {
         return "com.claro.parametrizador.Politica[ codPolitica=" + id + " ]";

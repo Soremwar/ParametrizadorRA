@@ -10,11 +10,8 @@
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/DataNotFoundException.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/utils/comparators/EntityNameComparator.java
-/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/parent/PoliticaTreeDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/FormatoIncorrecto.java
-/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/parent/ConciliacionTreeDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/EscenarioRest.java
-/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/parent/EscenarioTreeDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/MensajeError.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/EscenarioDAO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/PoliticaDAO.java

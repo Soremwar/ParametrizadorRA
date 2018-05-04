@@ -6,6 +6,7 @@
 package co.com.claro.model.dto;
 
 import co.com.claro.model.dto.parent.PadreDTO;
+import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class EscenarioDTO extends PadreDTO implements Serializable{
 
     private String impacto;
-    private ConciliacionDTO conciliacion;
+    private Integer idConciliacion;
 
     public String getImpacto() {
         return impacto;
@@ -28,12 +29,12 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
         this.impacto = impacto;
     }
 
-    public ConciliacionDTO getConciliacion() {
-        return conciliacion;
+    public Integer getIdConciliacion() {
+        return idConciliacion;
     }
 
-    public void setConciliacion(ConciliacionDTO conciliacion) {
-        this.conciliacion = conciliacion;
+    public void setIdConciliacion(Integer idConciliacion) {
+        this.idConciliacion = idConciliacion;
     }
 
 
@@ -49,7 +50,7 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
 
         //Campos de la entidad
         p.setImpacto(this.impacto);
-        p.setConciliacion(conciliacion != null ? conciliacion.toEntity() : null);
+        p.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
         return p;
         
     }

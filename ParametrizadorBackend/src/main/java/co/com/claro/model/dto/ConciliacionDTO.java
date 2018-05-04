@@ -7,7 +7,9 @@ package co.com.claro.model.dto;
 
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.Politica;
 import java.io.Serializable;
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -19,9 +21,9 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private String tablaDestino;
     private String camposTablaDestino;
     private String descripcion;
+    private Integer idPolitica;
 
-    private PoliticaDTO politica;
-    
+    private List<EscenarioDTO> escenarios;
 
     public String getDescripcion() {
         return descripcion;
@@ -47,14 +49,22 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
         this.camposTablaDestino = camposTablaDestino;
     }
     
-    public PoliticaDTO getPolitica() {
-        return politica;
+    public Integer getIdPolitica() {
+        return idPolitica;
     }
 
-    public void setPolitica(PoliticaDTO politica) {
-        this.politica = politica;
+    public void setIdPolitica(Integer idPolitica) {
+        this.idPolitica = idPolitica;
     }
 
+    public List<EscenarioDTO> getEscenarios() {
+        return escenarios;
+    }
+
+    public void setEscenarios(List<EscenarioDTO> escenarios) {
+        this.escenarios = escenarios;
+    }
+    
     public Conciliacion toEntity(){
         Conciliacion p = new Conciliacion();
         //Campos Comunes
@@ -68,7 +78,7 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
         p.setDescripcion(this.descripcion);
         p.setTablaDestino(this.tablaDestino);
         p.setCamposTablaDestino(this.camposTablaDestino);
-        p.setPolitica(politica != null ? politica.toEntity() : null);
+        p.setPolitica(this.idPolitica != null ? new Politica(this.idPolitica) : null);
         return p;
         
     }

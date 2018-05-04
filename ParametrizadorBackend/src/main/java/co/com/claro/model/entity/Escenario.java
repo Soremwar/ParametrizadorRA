@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Escenario.findByFechaCreacion", query = "SELECT e FROM Escenario e WHERE e.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Escenario.findByFechaActualizacion", query = "SELECT e FROM Escenario e WHERE e.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "Escenario.findByConciliacionNull", query = "SELECT t FROM Escenario t WHERE t.conciliacion IS null")
+    , @NamedQuery(name = "Escenario.findByConciliacion", query = "SELECT t FROM Escenario t WHERE t.conciliacion.id = :codConciliacion")
     , @NamedQuery(name = "Escenario.findByUsuario", query = "SELECT e FROM Escenario e WHERE e.usuario = :usuario")})
 public class Escenario implements Serializable {
 
@@ -63,7 +64,7 @@ public class Escenario implements Serializable {
     private String usuario;
     
     @JoinColumn(name = "COD_CONCILIACION", referencedColumnName = "COD_CONCILIACION")
-    @ManyToOne
+    @ManyToOne()
     private Conciliacion conciliacion;
 
     public Escenario() {
@@ -170,7 +171,7 @@ public class Escenario implements Serializable {
         
         //Campos de la entidad
         entidadDTO.setImpacto(impacto);
-        entidadDTO.setConciliacion(this.getConciliacion() != null ? this.getConciliacion().toDTO() : null);
+        entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         return entidadDTO;
     }
     

@@ -1,12 +1,15 @@
 package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
+import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ConciliacionDTO;
+import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.MensajeError;
@@ -14,7 +17,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.GET;
@@ -44,9 +46,12 @@ public class ConciliacionRest {
     protected ConciliacionDAO managerDAO;
     @EJB
     protected PoliticaDAO politicaDAO;
+    @EJB
+    protected EscenarioDAO escenarioDAO;
 
     /**
      * Obtiene las Conciliaciones Paginadas
+     * @param conciliacion
      * @param offset Desde cual item se retorna
      * @param limit Limite de items a retornar
      * @param orderby Indica por cual campo descriptivo va a guardar (id, nombre, fechaCreacion)
@@ -55,20 +60,41 @@ public class ConciliacionRest {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<ConciliacionDTO> find(
+            @QueryParam("conciliacion") String conciliacion,
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
         List<Conciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<PadreDTO> lstDTO = new ArrayList<>();
+        List<EscenarioDTO> lstEscenarioDTO;
         for(Conciliacion entidad : lst) {
-            lstDTO.add(entidad.toDTO());
+            ConciliacionDTO auxDTO = entidad.toDTO();
+            if (conciliacion != null){
+                lstEscenarioDTO = getEscenarios(entidad.getId());
+                auxDTO.setEscenarios(lstEscenarioDTO);
+            }
+            lstDTO.add(auxDTO);
         }
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
         List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
 
+        /**
+     * Obtener conciliaciones asociadas a un id dentro de un arbol de politicas
+     * @param id id de la politicas
+     * @return Listado con las conciliaciones
+     */
+    private  List<EscenarioDTO> getEscenarios(int id) {
+        List<EscenarioDTO> lstEscenarioDTO = new ArrayList<>();
+        List<Escenario> lstEscenario = escenarioDAO.findByConciliacion(id);
+        for (Escenario conci : lstEscenario) {
+                lstEscenarioDTO.add(conci.toDTO());
+            }
+        return lstEscenarioDTO;
+    }
+    
     /**
      * Obtiene una Conciliacion por id
      * @param id Identificador de conciliacion
@@ -131,23 +157,16 @@ public class ConciliacionRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(ConciliacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-       
-        //PoliticaDTO politica = entidad.getPolitica();
-        Optional<PoliticaDTO> politica = Optional.ofNullable(entidad.getPolitica());
-        if(politica.isPresent()) {
-            Politica politicaAux = politicaDAO.find(entidad.getPolitica().getId());
+        if (entidad.getIdPolitica() != null) {
+            Politica politicaAux = politicaDAO.find(entidad.getIdPolitica());
             if (politicaAux == null) {
-                throw new DataNotFoundException("No se encontraron datos asociados a la politica " + entidad.getPolitica().getId());
-                //MensajeError mensaje = new MensajeError(404, "Politica no existe", "Esta politica no existe");
-                //return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
+                throw new DataNotFoundException("No se encontraron datos asociados a la politica " + entidad.getIdPolitica());
             }
         }
-        
-        //PoliticaDTO politica = getById(entidad.getPolitica().getId());
-        Conciliacion entidadAux = entidad.toEntity();
-        entidadAux.setFechaCreacion(Date.from(Instant.now()));
-        managerDAO.create(entidadAux);
-        return Response.status(Response.Status.CREATED).entity(entidadAux).build();
+        Conciliacion entidadJPA = entidad.toEntity();
+        entidadJPA.setFechaCreacion(Date.from(Instant.now()));
+        managerDAO.create(entidadJPA);
+        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }   
     /**
      * Actualiza una conciliacion por su Id
@@ -159,23 +178,31 @@ public class ConciliacionRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ConciliacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-        ConciliacionDTO entidadActual = getById(entidad.getId());
-        Conciliacion entidadAux = entidad.toEntity();
+        Conciliacion entidadJpa = entidad.toEntity();
         if (getById(entidad.getId()) != null) {
-            entidadAux.setFechaCreacion(entidadActual.getFechaCreacion());
-            entidadAux.setFechaActualizacion(Date.from(Instant.now()));
-            if (entidadActual.getPolitica() == null) {
-                entidadAux.setPolitica(entidad.getPolitica().toEntity());
-            } else {
-                entidadAux.setPolitica(entidadActual.getPolitica().toEntity());
+            Politica politicaAux = politicaDAO.find(entidad.getIdPolitica());
+            if (politicaAux == null) {
+                throw new DataNotFoundException("No se encontraron datos asociados a la politica " + entidad.getIdPolitica());
             }
-            managerDAO.edit(entidadAux);
-            return Response.status(Response.Status.OK).entity(entidadAux.toDTO()).build();
-            
+            entidadJpa.setFechaCreacion(entidadJpa.getFechaCreacion());
+            entidadJpa.setFechaActualizacion(Date.from(Instant.now()));
+            entidadJpa.setPolitica(getPoliticaToAssign(entidad));
+            managerDAO.edit(entidadJpa);
+            return Response.status(Response.Status.OK).entity(entidadJpa.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
     
+    private Politica getPoliticaToAssign(ConciliacionDTO entidadInDTO){
+        ConciliacionDTO entidadXIdDTO = getById(entidadInDTO.getId());
+        Politica politica = new Politica();
+        if (entidadXIdDTO.getIdPolitica() == null) {
+            politica.setId(entidadInDTO.getIdPolitica());
+        } else {
+            politica.setId(entidadXIdDTO.getIdPolitica());
+        }    
+        return politica;
+    }    
      /**
      * Borra una conciliacion por su Id
      * @param id Identificador de la identidad

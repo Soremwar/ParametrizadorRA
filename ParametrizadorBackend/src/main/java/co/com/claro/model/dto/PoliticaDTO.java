@@ -58,7 +58,7 @@ public class PoliticaDTO extends PadreDTO implements Serializable{
         p.setFechaActualizacion(this.getFechaActualizacion());
         
         //Campos de la entidad
-        p.setDescripcion(this.getDescripcion());
+        p.setDescripcion(this.descripcion);
         p.setObjetivo(this.objetivo);
        
         return p;

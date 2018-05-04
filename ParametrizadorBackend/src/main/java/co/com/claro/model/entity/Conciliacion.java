@@ -6,7 +6,6 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.ConciliacionDTO;
-import co.com.claro.model.dto.parent.ConciliacionTreeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
@@ -92,13 +91,16 @@ public class Conciliacion implements Serializable {
     private Politica politica;
     
     @JsonIgnore
-    @OneToMany(mappedBy = "conciliacion", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "conciliacion", cascade = CascadeType.ALL)
     private Collection<Escenario> escenarios;
 
     
     public Conciliacion() {
     }
 
+    public Conciliacion(Integer id) {
+        this.id = id;
+    }
     public Integer getId() {
         return id;
     }
@@ -207,34 +209,21 @@ public class Conciliacion implements Serializable {
     
     public ConciliacionDTO toDTO(){
         ConciliacionDTO entidadDTO = new ConciliacionDTO();
-        entidadDTO.setId(this.getId());
-        entidadDTO.setNombre(this.getNombre());            
-        entidadDTO.setPolitica(this.getPolitica() != null ? this.getPolitica().toDTO() : null);
-        entidadDTO.setDescripcion(this.getDescripcion());
+        
+        //Campos comunes
+        entidadDTO.setId(id);
         entidadDTO.setFechaCreacion(fechaCreacion);
         entidadDTO.setFechaActualizacion(fechaActualizacion);
-        entidadDTO.setCamposTablaDestino(this.getCamposTablaDestino());
-        entidadDTO.setTablaDestino(this.getTablaDestino());
-        entidadDTO.setUsuario(this.getUsuario());
+        entidadDTO.setNombre(nombre);
+
+        //Campos de la entidad
+        entidadDTO.setDescripcion(descripcion);
+        entidadDTO.setCamposTablaDestino(camposTablaDestino);
+        entidadDTO.setTablaDestino(tablaDestino);
+        entidadDTO.setUsuario(usuario);
+        entidadDTO.setIdPolitica(politica != null ? politica.getId() : null);
         
         return entidadDTO;
     }
     
-    /**
-     *
-     * @return
-     */
-    public ConciliacionTreeDTO toTreeDTO(){
-            ConciliacionTreeDTO entidadDTO = new ConciliacionTreeDTO();
-            entidadDTO.setId(this.getId());
-            entidadDTO.setNombre(this.getNombre());            
-            entidadDTO.setDescripcion(this.getDescripcion());
-            entidadDTO.setFechaCreacion(fechaCreacion);
-            entidadDTO.setFechaActualizacion(fechaActualizacion);
-            entidadDTO.setCamposTablaDestino(this.getCamposTablaDestino());
-            entidadDTO.setTablaDestino(this.getTablaDestino());
-            entidadDTO.setUsuario(this.getUsuario());
-
-        return entidadDTO;
-    }
 }

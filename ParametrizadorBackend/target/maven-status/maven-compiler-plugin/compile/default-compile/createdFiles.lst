@@ -1,7 +1,6 @@
 co/com/claro/service/rest/cors/NewCrossOriginResourceSharingFilter.class
 co/com/claro/ejb/dao/EscenarioDAO.class
 co/com/claro/ejb/dao/utils/comparators/EntityFechaCreacionComparator.class
-co/com/claro/model/dto/parent/EscenarioTreeDTO.class
 co/com/claro/model/entity/Escenario_.class
 co/com/claro/service/rest/ConciliacionRest.class
 co/com/claro/service/rest/excepciones/FormatoIncorrectoMapper.class
@@ -11,11 +10,9 @@ co/com/claro/service/rest/PoliticaRest.class
 co/com/claro/ejb/dao/ConciliacionDAO.class
 co/com/claro/ejb/dao/utils/LocalDateTimeConverter.class
 co/com/claro/ejb/dao/utils/LocalDateConverter.class
-co/com/claro/model/dto/parent/ConciliacionTreeDTO.class
 co/com/claro/model/entity/Escenario.class
 co/com/claro/ejb/dao/PoliticaDAO.class
 co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.class
-co/com/claro/model/dto/parent/PoliticaTreeDTO.class
 co/com/claro/model/entity/Politica_.class
 co/com/claro/service/rest/excepciones/FormatoIncorrecto.class
 co/com/claro/model/dto/parent/PadreDTO.class

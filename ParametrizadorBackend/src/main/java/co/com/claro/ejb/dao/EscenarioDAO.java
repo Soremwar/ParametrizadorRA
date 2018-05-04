@@ -6,6 +6,7 @@
 package co.com.claro.ejb.dao;
 
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
+import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
@@ -106,5 +107,13 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         }
         return results;
     }    
+    
+    public List<Escenario> findByConciliacion(int idConciliacion){
+        //logger.log(Level.INFO, "busqueda:{0}offset:{0}limit:{0}", new Object[]{busqueda, offset, limit});
+        TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findByConciliacion", Escenario.class);
+        query.setParameter("codConciliacion", idConciliacion);
+        List<Escenario> results = query.getResultList();
+        return results;
+    }
 }
 

@@ -3,9 +3,7 @@ package co.com.claro.service.rest;
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
-import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
-import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
@@ -16,7 +14,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.GET;
@@ -116,21 +113,16 @@ public class EscenarioRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(EscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Optional<ConciliacionDTO> conciliacion = Optional.ofNullable(entidad.getConciliacion());
-        if(conciliacion.isPresent()) {
-            Conciliacion conciliacionAux = conciliacionDAO.find(entidad.getConciliacion().getId());
+        if (entidad.getIdConciliacion() != null) {
+            Conciliacion conciliacionAux = conciliacionDAO.find(entidad.getIdConciliacion());
             if (conciliacionAux == null) {
-                throw new DataNotFoundException("No se encontraron datos asociados a la conciliacion " + entidad.getConciliacion().getId());
-
-                //MensajeError mensaje = new MensajeError(404, "Conciliacion no existe", "Esta conciliacion no existe");
-                //return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
+                throw new DataNotFoundException("No se encontraron datos asociados a la conciliacion " + entidad.getIdConciliacion());
             }
         }
-        
-        Escenario entidadAux = entidad.toEntity();
-        entidadAux.setFechaCreacion(Date.from(Instant.now()));
-        managerDAO.create(entidadAux);
-        return Response.status(Response.Status.CREATED).entity(entidadAux).build();
+        Escenario entidadJPA = entidad.toEntity();
+        entidadJPA.setFechaCreacion(Date.from(Instant.now()));
+        managerDAO.create(entidadJPA);
+        return Response.status(Response.Status.CREATED).entity(entidadJPA).build();
     }   
     /**
      * Actualiza una conciliacion por su Id
@@ -142,24 +134,32 @@ public class EscenarioRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(EscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-        EscenarioDTO entidadActual = getById(entidad.getId());
-        Escenario entidadAux = entidad.toEntity();
+        Escenario entidadJpa = entidad.toEntity();
         if (getById(entidad.getId()) != null) {
-            entidadAux.setFechaCreacion(entidadActual.getFechaCreacion());
-            entidadAux.setFechaActualizacion(Date.from(Instant.now()));
-            entidadAux.setConciliacion(entidadActual.getConciliacion().toEntity());
-           if (entidadActual.getConciliacion()== null) {
-                entidadAux.setConciliacion(entidad.getConciliacion().toEntity());
-            } else {
-                entidadAux.setConciliacion(entidadActual.getConciliacion().toEntity());
+            Conciliacion conciliacionAux = conciliacionDAO.find(entidad.getIdConciliacion());
+            if (conciliacionAux == null) {
+                throw new DataNotFoundException("No se encontraron datos asociados a la conciliacion " + entidad.getIdConciliacion());
             }
-            managerDAO.edit(entidadAux);
-            return Response.status(Response.Status.OK).entity(entidadAux.toDTO()).build();
-            
+            entidadJpa.setFechaCreacion(entidadJpa.getFechaCreacion());
+            entidadJpa.setFechaActualizacion(Date.from(Instant.now()));
+            entidadJpa.setConciliacion(getConciliacionToAssign(entidad));
+            managerDAO.edit(entidadJpa);
+            return Response.status(Response.Status.OK).entity(entidadJpa.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
     
+    
+    private Conciliacion getConciliacionToAssign(EscenarioDTO entidadInDTO){
+        EscenarioDTO entidadXIdDTO = getById(entidadInDTO.getId());
+        Conciliacion conciliacion = new Conciliacion();
+        if (entidadXIdDTO.getIdConciliacion() == null) {
+            conciliacion.setId(entidadInDTO.getIdConciliacion());
+        } else {
+            conciliacion.setId(entidadXIdDTO.getIdConciliacion());
+        }    
+        return conciliacion;
+    }  
      /**
      * Borra una conciliacion por su Id
      * @param id Identificador de la identidad
