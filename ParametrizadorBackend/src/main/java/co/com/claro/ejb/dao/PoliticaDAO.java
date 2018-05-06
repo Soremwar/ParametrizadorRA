@@ -6,12 +6,12 @@
 package co.com.claro.ejb.dao;
 
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
-import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,6 +29,9 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
 
+    @EJB
+    protected ConciliacionDAO conciliacionDAO;
+    
     public PoliticaDAO() {
         super(Politica.class);
     }
@@ -56,6 +59,18 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
         return results;
     }
     
+    public List<Politica> findByAllTree(int[] range){
+        TypedQuery<Politica> query = em.createNamedQuery("Politica.findAllTree", Politica.class);
+        //query.setParameter("nombrePolitica", "%" + busqueda + "%");
+        List<Politica> results = query.getResultList();
+        query.setMaxResults(range[1]);// - range[0] + 1);
+        query.setFirstResult(range[0]);           
+        List<Politica> lst = query.getResultList();
+        if (lst == null || lst.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos");
+        }        
+        return query.getResultList();
+    }
     
      /**
      * Buscar que coincidan todos los criterios de busqueda
@@ -97,6 +112,5 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
         return results;
     }
     
-
 }
 

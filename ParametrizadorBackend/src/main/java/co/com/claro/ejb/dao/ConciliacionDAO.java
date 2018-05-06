@@ -7,6 +7,7 @@ package co.com.claro.ejb.dao;
 
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
 import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.Escenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
@@ -74,6 +75,18 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         }
         return results;
     }
+    
+    
+    public List<Conciliacion> findByAllTree(int[] range){
+        TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findAllTree", Conciliacion.class);
+        query.setMaxResults(range[1]);// - range[0] + 1);
+        query.setFirstResult(range[0]);           
+        List<Conciliacion> lst = query.getResultList();
+        if (lst == null || lst.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos");
+        }        
+        return query.getResultList();
+    }  
     
     /**
      * Encuentra las conciliaciaciones que no tienen asociada ninguna politica

@@ -4,6 +4,7 @@ import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.EscenarioDTO;
+import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
@@ -12,10 +13,12 @@ import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import java.util.ArrayList;
+import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -59,11 +62,9 @@ public class EscenarioRest {
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
-        List<Escenario> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<PadreDTO> lstDTO = new ArrayList<>();
-        for(Escenario entidad : lst) {
-            lstDTO.add(entidad.toDTO());
-        }
+        List<Escenario> lst = managerDAO.findByAllTree(new int[]{offset, limit});
+        List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(EscenarioDTO::getId)).collect(toList());
+
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
         List<EscenarioDTO> lstFinal = (List<EscenarioDTO>)(List<?>) lstDTO;
         return lstFinal;

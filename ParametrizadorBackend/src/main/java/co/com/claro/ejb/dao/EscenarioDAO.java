@@ -55,7 +55,18 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         return results;
     }
     
-    
+      public List<Escenario> findByAllTree(int[] range){
+        TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findAllTree", Escenario.class);
+        //query.setParameter("nombreEscenario", "%" + busqueda + "%");
+        List<Escenario> results = query.getResultList();
+        query.setMaxResults(range[1]);// - range[0] + 1);
+        query.setFirstResult(range[0]);           
+        List<Escenario> lst = query.getResultList();
+        if (lst == null || lst.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos");
+        }        
+        return query.getResultList();
+    }  
      /**
      * Buscar que coincidan todos los criterios de busqueda
      * @param nombre Campo nombre

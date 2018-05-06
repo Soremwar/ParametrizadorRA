@@ -6,7 +6,6 @@ import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
-import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
@@ -60,7 +59,6 @@ public class ConciliacionRest {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<ConciliacionDTO> find(
-            @QueryParam("conciliacion") String conciliacion,
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
@@ -70,10 +68,6 @@ public class ConciliacionRest {
         List<EscenarioDTO> lstEscenarioDTO;
         for(Conciliacion entidad : lst) {
             ConciliacionDTO auxDTO = entidad.toDTO();
-            if (conciliacion != null){
-                lstEscenarioDTO = getEscenarios(entidad.getId());
-                auxDTO.setEscenarios(lstEscenarioDTO);
-            }
             lstDTO.add(auxDTO);
         }
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
@@ -81,19 +75,6 @@ public class ConciliacionRest {
         return lstFinal;
     }
 
-        /**
-     * Obtener conciliaciones asociadas a un id dentro de un arbol de politicas
-     * @param id id de la politicas
-     * @return Listado con las conciliaciones
-     */
-    private  List<EscenarioDTO> getEscenarios(int id) {
-        List<EscenarioDTO> lstEscenarioDTO = new ArrayList<>();
-        List<Escenario> lstEscenario = escenarioDAO.findByConciliacion(id);
-        for (Escenario conci : lstEscenario) {
-                lstEscenarioDTO.add(conci.toDTO());
-            }
-        return lstEscenarioDTO;
-    }
     
     /**
      * Obtiene una Conciliacion por id

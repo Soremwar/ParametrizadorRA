@@ -19,7 +19,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class EscenarioDTO extends PadreDTO implements Serializable{
 
     private String impacto;
+    //campos padre
     private Integer idConciliacion;
+    private String nombreConciliacion;
+
+    public String getNombreConciliacion() {
+        return nombreConciliacion;
+    }
+
+    public void setNombreConciliacion(String nombreConciliacion) {
+        this.nombreConciliacion = nombreConciliacion;
+    }
 
     public String getImpacto() {
         return impacto;

@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Escenario.findAll", query = "SELECT e FROM Escenario e")
+    , @NamedQuery(name = "Escenario.findAllTree", query = "SELECT e FROM Escenario e JOIN e.conciliacion c")
     , @NamedQuery(name = "Escenario.findByCodEscenario", query = "SELECT e FROM Escenario e WHERE e.id = :codEscenario")
     , @NamedQuery(name = "Escenario.findByNombreEscenario", query = "SELECT e FROM Escenario e WHERE e.nombre = :nombreEscenario")
     , @NamedQuery(name = "Escenario.findByImpacto", query = "SELECT e FROM Escenario e WHERE e.impacto = :impacto")
@@ -63,8 +64,9 @@ public class Escenario implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
     
-    @JoinColumn(name = "COD_CONCILIACION", referencedColumnName = "COD_CONCILIACION")
+
     @ManyToOne()
+    @JoinColumn(name = "COD_CONCILIACION")
     private Conciliacion conciliacion;
 
     public Escenario() {
@@ -172,6 +174,7 @@ public class Escenario implements Serializable {
         //Campos de la entidad
         entidadDTO.setImpacto(impacto);
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
+        entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
         return entidadDTO;
     }
     

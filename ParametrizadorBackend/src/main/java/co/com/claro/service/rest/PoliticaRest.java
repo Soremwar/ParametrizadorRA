@@ -4,18 +4,18 @@ import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.parent.PadreDTO;
-import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.PoliticaDTO;
-import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -48,8 +48,6 @@ public class PoliticaRest {
 
     /**
      * Obtiene las Politicas Paginadas
-     * @param conciliacion
-     * @param escenario
      * @param offset Desde cual item se retorna
      * @param limit Limite de items a retornar
      * @param orderby Indica por cual campo descriptivo va a guardar (id, nombre, fechaCreacion)
@@ -58,24 +56,15 @@ public class PoliticaRest {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<PoliticaDTO> find(
-            @QueryParam("conciliacion") String conciliacion,
-            @QueryParam("escenario") String escenario,
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
-        List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
+        //List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
         //List<Politica> lst = managerDAO.findAll();
-        List<PadreDTO> lstDTO = new ArrayList<>();
-        List<ConciliacionDTO> lstConciliacionDTO;// = new ArrayList<>();
-        for(Politica entidad : lst) {
-            PoliticaDTO auxDTO = entidad.toDTO();
-            if (conciliacion != null){
-                lstConciliacionDTO = getConciliaciones(entidad.getId());
-                auxDTO.setConciliaciones(lstConciliacionDTO);
-            }
-            lstDTO.add(auxDTO);
-        }
+        List<Politica> lst = managerDAO.findByAllTree(new int[]{offset, limit});
+        List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).sorted(comparing(PoliticaDTO::getId)).
+               collect(toList());
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
         List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
         return lstFinal;
@@ -109,21 +98,6 @@ public class PoliticaRest {
         List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
-
-    /**
-     * Obtener conciliaciones asociadas a un id dentro de un arbol de politicas
-     * @param id id de la politicas
-     * @return Listado con las conciliaciones
-     */
-    private  List<ConciliacionDTO> getConciliaciones(int id) {
-        List<ConciliacionDTO> lstConciliacionDTO = new ArrayList<>();
-        List<Conciliacion> lstConciliacion = conciliacionDAO.findByPolitica(id);
-        for (Conciliacion conci : lstConciliacion) {
-                lstConciliacionDTO.add(conci.toDTO());
-            }
-        return lstConciliacionDTO;
-    }
-
    
     /**
      * Crea una nueva politica

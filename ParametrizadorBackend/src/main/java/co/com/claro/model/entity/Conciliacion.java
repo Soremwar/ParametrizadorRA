@@ -6,10 +6,13 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.ConciliacionDTO;
+import co.com.claro.model.dto.EscenarioDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,6 +41,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Conciliacion.findAll", query = "SELECT t FROM Conciliacion t")
+    , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN t.escenarios c")    
     , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.id = :codConciliacion")
     , @NamedQuery(name = "Conciliacion.findByCamposTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.camposTablaDestino = :camposTablaDestino")
     , @NamedQuery(name = "Conciliacion.findByDescripcion", query = "SELECT t FROM Conciliacion t WHERE t.descripcion = :descripcion")
@@ -222,7 +226,12 @@ public class Conciliacion implements Serializable {
         entidadDTO.setTablaDestino(tablaDestino);
         entidadDTO.setUsuario(usuario);
         entidadDTO.setIdPolitica(politica != null ? politica.getId() : null);
-        
+        List<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(toList());
+        entidadDTO.setEscenarios(lstEscenarios);
+
+        //Campos padre
+        entidadDTO.setIdPolitica(politica != null ? politica.getId() : null);
+        entidadDTO.setNombrePolitica(politica != null ? politica.getNombre() : null);        
         return entidadDTO;
     }
     

@@ -5,12 +5,14 @@
  */
 package co.com.claro.model.entity;
 
-import co.com.claro.model.dto.PoliticaDTO;
+import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,7 +40,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Politica.findNumRegistros", query = "SELECT COUNT(t) FROM Politica t")
-    , @NamedQuery(name = "Politica.findAll", query = "SELECT t FROM Politica t")
+    , @NamedQuery(name = "Politica.findAll", query = "SELECT t FROM Politica t JOIN t.conciliaciones c")
+    , @NamedQuery(name = "Politica.findAllTree", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN t.conciliaciones c")
     , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT t FROM Politica t WHERE t.id = :codPolitica")
     , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT t FROM Politica t WHERE t.nombre LIKE :nombrePolitica")
     , @NamedQuery(name = "Politica.findByDescripcion", query = "SELECT t FROM Politica t WHERE t.descripcion = :descripcion")
@@ -203,6 +206,8 @@ public class Politica implements Serializable {
         entidadDTO.setObjetivo(objetivo);
         entidadDTO.setUsuario(usuario);
         entidadDTO.setDescripcion(descripcion);
+        List<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((conciliacionDTO) -> conciliacionDTO.toDTO()).collect(toList());
+        entidadDTO.setConciliaciones(lstConciliaciones);
 
         return entidadDTO;
     }
