@@ -8,6 +8,7 @@ package co.com.claro.ejb.dao;
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
+import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
@@ -54,7 +55,22 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         }
         return results;
     }
+   
     
+    /**
+     * Busca la jerarquia por un id
+     * @param id identificador unico a buscar
+     * @return Retorna un item con su jerarquia
+     */
+    public Conciliacion findByAllTreeById(int id){
+        TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findAllTreeById", Conciliacion.class);
+        query.setParameter("idConciliacion", id);
+        Conciliacion result = query.getSingleResult();
+        if (result == null) {
+            throw new DataNotFoundException("No se encontraron datos");
+        }        
+        return result; 
+    }
         
     /**
      * Buscar el texto en todas columnas con paginado

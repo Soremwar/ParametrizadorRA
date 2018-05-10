@@ -41,7 +41,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Conciliacion.findAll", query = "SELECT t FROM Conciliacion t")
-    , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN t.escenarios c")    
+    , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN t.escenarios c") 
+    , @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN t.escenarios c WHERE t.id = :idConciliacion")  
     , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.id = :codConciliacion")
     , @NamedQuery(name = "Conciliacion.findByCamposTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.camposTablaDestino = :camposTablaDestino")
     , @NamedQuery(name = "Conciliacion.findByDescripcion", query = "SELECT t FROM Conciliacion t WHERE t.descripcion = :descripcion")
