@@ -72,6 +72,16 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
         return query.getResultList();
     }
     
+    public Politica findByAllTreeById(int id){
+        TypedQuery<Politica> query = em.createNamedQuery("Politica.findAllTreeById", Politica.class);
+        query.setParameter("idPolitica", id);
+        Politica result = query.getSingleResult();
+        if (result == null) {
+            throw new DataNotFoundException("No se encontraron datos");
+        }        
+        return result; 
+    }
+    
      /**
      * Buscar que coincidan todos los criterios de busqueda
      * @param nombre Campo nombre
