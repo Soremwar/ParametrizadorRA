@@ -122,5 +122,17 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
         return results;
     }
     
+    
+    public List<Politica> findPoliticaSinConciliacion(){
+        TypedQuery<Politica> query = em.createNamedQuery("Politica.findPoliticaSinConciliacion", Politica.class);
+        //query.setParameter("idConciliacion", );
+        List<Politica> results = query.getResultList();    
+        List<Politica> lst = query.getResultList();
+        if (lst == null || lst.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos");
+        }        
+        return query.getResultList();
+    }
+       
 }
 

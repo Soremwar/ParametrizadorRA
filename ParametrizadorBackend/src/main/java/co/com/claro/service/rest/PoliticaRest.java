@@ -75,11 +75,23 @@ public class PoliticaRest {
     @Produces({MediaType.APPLICATION_JSON})
     public PoliticaDTO getById(@PathParam("id") Integer id){
         logger.log(Level.INFO, "id:{0}", id);
-        Politica entidad = managerDAO.findByAllTreeById(id != 0 ? id : null);
+        Politica entidad = managerDAO.findByAllTreeById(id);
         return entidad.toDTO();
 
     }
 
+    @GET
+    @Path("/findPoliticasSinConciliacion")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<PoliticaDTO> findPoliticasSinConciliacion(){
+        List<Politica> lst = managerDAO.findPoliticaSinConciliacion();
+        List<PadreDTO> lstDTO = new ArrayList<>();        
+        for(Politica entidad : lst) {
+            lstDTO.add(entidad.toDTO());
+        }
+        List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }
      /**
      * Busca las politicas por cualquier columna
      * @param texto Texto a buscar en cualquier texto
