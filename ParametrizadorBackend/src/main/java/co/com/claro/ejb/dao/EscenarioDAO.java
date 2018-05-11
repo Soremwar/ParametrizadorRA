@@ -6,7 +6,6 @@
 package co.com.claro.ejb.dao;
 
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
-import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
@@ -55,7 +54,12 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         return results;
     }
     
-      public List<Escenario> findByAllTree(int[] range){
+    /**
+     * Retornar todo el arbol de la jerarquia
+     * @param range rango de registros a retornar
+     * @return Retornar todo el arbol de la jerarquia de esta entidad
+     */
+    public List<Escenario> findByAllTree(int[] range){
         TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findAllTree", Escenario.class);
         //query.setParameter("nombreEscenario", "%" + busqueda + "%");
         List<Escenario> results = query.getResultList();
@@ -67,6 +71,13 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         }        
         return query.getResultList();
     }  
+    
+        /**
+     * Busca la jerarquia por un id
+     * @param id identificador unico a buscar
+     * @return Retorna un item con su jerarquia
+     */
+    
      /**
      * Buscar que coincidan todos los criterios de busqueda
      * @param nombre Campo nombre

@@ -10,6 +10,7 @@ import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import co.com.claro.service.rest.excepciones.InvalidDataException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -160,10 +161,6 @@ public class ConciliacionRest {
         logger.log(Level.INFO, "entidad:{0}", entidad);
         Conciliacion entidadJpa = entidad.toEntity();
         if (getById(entidad.getId()) != null) {
-            Politica politicaAux = politicaDAO.find(entidad.getIdPolitica());
-            if (politicaAux == null) {
-                throw new DataNotFoundException("No se encontraron datos asociados a la politica " + entidad.getIdPolitica());
-            }
             entidadJpa.setFechaCreacion(entidadJpa.getFechaCreacion());
             entidadJpa.setFechaActualizacion(Date.from(Instant.now()));
             entidadJpa.setPolitica(getPoliticaToAssign(entidad));
@@ -174,15 +171,24 @@ public class ConciliacionRest {
     }
 
     private Politica getPoliticaToAssign(ConciliacionDTO entidadInDTO){
+        Politica conciliacionAux = null;
+        if (entidadInDTO.getIdPolitica() != null) {
+            conciliacionAux = politicaDAO.find(entidadInDTO.getIdPolitica());
+        }
+        if (entidadInDTO.getIdPolitica() != null && conciliacionAux == null) {
+            throw new DataNotFoundException("No se encontraron datos asociados a la politica " + entidadInDTO.getIdPolitica());
+        }
         ConciliacionDTO entidadXIdDTO = getById(entidadInDTO.getId());
         Politica politica = new Politica();
         if (entidadXIdDTO.getIdPolitica() == null) {
             politica.setId(entidadInDTO.getIdPolitica());
-        } else {
+        } else if (conciliacionAux != null){
             politica.setId(entidadXIdDTO.getIdPolitica());
-        }
+            throw new InvalidDataException("Datos invalidos. No puede cambiar la politica cuando ya esta asignada");
+
+        }    
         return politica;
-    }
+    } 
     
     /**
      * Borra una conciliacion por su Id

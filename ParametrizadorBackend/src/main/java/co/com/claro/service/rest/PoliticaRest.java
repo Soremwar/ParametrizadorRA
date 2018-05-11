@@ -73,9 +73,9 @@ public class PoliticaRest {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public PoliticaDTO getById(@PathParam("id") int id){
+    public PoliticaDTO getById(@PathParam("id") Integer id){
         logger.log(Level.INFO, "id:{0}", id);
-        Politica entidad = managerDAO.find(id);
+        Politica entidad = managerDAO.findByAllTreeById(id != 0 ? id : null);
         return entidad.toDTO();
 
     }

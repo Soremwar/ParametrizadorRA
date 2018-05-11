@@ -72,7 +72,7 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
         return query.getResultList();
     }
     
-    public Politica findByAllTreeById(int id){
+    public Politica findByAllTreeById(Integer id){
         TypedQuery<Politica> query = em.createNamedQuery("Politica.findAllTreeById", Politica.class);
         query.setParameter("idPolitica", id);
         Politica result = query.getSingleResult();
