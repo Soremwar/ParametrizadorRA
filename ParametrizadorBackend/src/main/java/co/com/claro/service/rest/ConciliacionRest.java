@@ -84,13 +84,23 @@ public class ConciliacionRest {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public ConciliacionDTO getById(@PathParam("id") int id){
-        logger.log(Level.INFO, "id:{0}", id);
+        logger.log(Level.INFO, "id:{0}" , id);
         Conciliacion entidad = managerDAO.findByAllTreeById(id);
         return entidad.toDTO();
 
     }
 
-     /**
+    @GET
+    @Path("/findid/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public ConciliacionDTO getById2(@PathParam("id") int id){
+        logger.log(Level.INFO, "id:{0}" , id);
+        Conciliacion entidad = managerDAO.find(id);
+        return entidad.toDTO();
+
+    } 
+    
+    /**
      * Busca las conciliaciones por cualquier columna
      * @param texto Texto a buscar en cualquier texto
      * @return Lista de Conciliacions que cumplen con el criterio
@@ -137,8 +147,9 @@ public class ConciliacionRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(ConciliacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
+        Politica politicaAux = null;
         if (entidad.getIdPolitica() != null) {
-            Politica politicaAux = politicaDAO.find(entidad.getIdPolitica());
+            politicaAux = politicaDAO.find(entidad.getIdPolitica());
             if (politicaAux == null) {
                 throw new DataNotFoundException("No se encontraron datos asociados a la politica " + entidad.getIdPolitica());
             }
@@ -146,6 +157,8 @@ public class ConciliacionRest {
         Conciliacion entidadJPA = entidad.toEntity();
         entidadJPA.setFechaCreacion(Date.from(Instant.now()));
         managerDAO.create(entidadJPA);
+        politicaAux.getConciliaciones().add(entidadJPA);
+        politicaDAO.edit(politicaAux);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
     

@@ -65,11 +65,18 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
     public Conciliacion findByAllTreeById(int id){
         TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findAllTreeById", Conciliacion.class);
         query.setParameter("idConciliacion", id);
-        Conciliacion result = query.getSingleResult();
-        if (result == null) {
+        //Conciliacion result = query.getSingleResult();
+        //em.getEntityManagerFactory().getCache().evictAll();
+        List<Conciliacion> results = query.getResultList();
+        Conciliacion foundEntity = null;
+        if(!results.isEmpty()){
+            // ignores multiple results
+            foundEntity = results.get(0);
+        }
+        if (foundEntity == null) {
             throw new DataNotFoundException("No se encontraron datos");
         }        
-        return result; 
+        return foundEntity; 
     }
         
     /**

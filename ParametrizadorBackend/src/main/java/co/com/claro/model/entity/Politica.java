@@ -17,6 +17,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -41,8 +42,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Politica.findNumRegistros", query = "SELECT COUNT(t) FROM Politica t")
     , @NamedQuery(name = "Politica.findAll", query = "SELECT t FROM Politica t JOIN t.conciliaciones c")
-    , @NamedQuery(name = "Politica.findAllTree", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN t.conciliaciones c")
-    , @NamedQuery(name = "Politica.findAllTreeById", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN t.conciliaciones c WHERE t.id = :idPolitica")
+    , @NamedQuery(name = "Politica.findAllTree", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN FETCH t.conciliaciones c")
+    , @NamedQuery(name = "Politica.findAllTreeById", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN FETCH t.conciliaciones c WHERE t.id = :idPolitica")
     , @NamedQuery(name = "Politica.findPoliticaSinConciliacion", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN t.conciliaciones c WHERE c.id IS NULL")
     , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT t FROM Politica t WHERE t.id = :codPolitica")
     , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT t FROM Politica t WHERE t.nombre LIKE :nombrePolitica")
@@ -98,7 +99,7 @@ public class Politica implements Serializable {
     private String usuario;
     
     @JsonIgnore
-    @OneToMany(mappedBy = "politica", cascade = CascadeType.REMOVE)
+    @OneToMany(fetch=FetchType.EAGER, mappedBy = "politica", cascade = CascadeType.ALL)
     private Collection<Conciliacion> conciliaciones;
 
 
@@ -185,7 +186,7 @@ public class Politica implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work  in the case the id fields are not set
         if (!(object instanceof Politica)) {
             return false;
         }
@@ -208,8 +209,10 @@ public class Politica implements Serializable {
         entidadDTO.setObjetivo(objetivo);
         entidadDTO.setUsuario(usuario);
         entidadDTO.setDescripcion(descripcion);
-        List<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((conciliacionDTO) -> conciliacionDTO.toDTO()).collect(toList());
-        entidadDTO.setConciliaciones(lstConciliaciones);
+        if (conciliaciones != null) {
+            List<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((conciliacionDTO) -> conciliacionDTO.toDTO()).collect(toList());
+            entidadDTO.setConciliaciones(lstConciliaciones);
+        }
 
         return entidadDTO;
     }

@@ -26,6 +26,7 @@ import javax.persistence.TypedQuery;
 @Stateless
 public class PoliticaDAO extends AbstractJpaDAO<Politica>{
     private static final Logger logger = Logger.getLogger(PoliticaDAO.class.getSimpleName());
+    
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
 
@@ -75,6 +76,7 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
     public Politica findByAllTreeById(Integer id){
         TypedQuery<Politica> query = em.createNamedQuery("Politica.findAllTreeById", Politica.class);
         query.setParameter("idPolitica", id);
+        em.flush();
         Politica result = query.getSingleResult();
         if (result == null) {
             throw new DataNotFoundException("No se encontraron datos");

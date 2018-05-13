@@ -65,7 +65,7 @@ public class Escenario implements Serializable {
     private String usuario;
     
 
-    @ManyToOne()
+    @ManyToOne//(fetch=FetchType.EAGER)
     @JoinColumn(name = "COD_CONCILIACION")
     private Conciliacion conciliacion;
 

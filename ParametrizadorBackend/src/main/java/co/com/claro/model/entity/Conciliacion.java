@@ -17,6 +17,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -41,8 +42,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Conciliacion.findAll", query = "SELECT t FROM Conciliacion t")
-    , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN t.escenarios c") 
-    , @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN t.escenarios c WHERE t.id = :idConciliacion")  
+    , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN FETCH t.escenarios c") 
+    , @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT t FROM Conciliacion t LEFT JOIN FETCH t.escenarios c WHERE t.id = :idConciliacion")  
     , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.id = :codConciliacion")
     , @NamedQuery(name = "Conciliacion.findByCamposTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.camposTablaDestino = :camposTablaDestino")
     , @NamedQuery(name = "Conciliacion.findByDescripcion", query = "SELECT t FROM Conciliacion t WHERE t.descripcion = :descripcion")
@@ -91,12 +92,12 @@ public class Conciliacion implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
     
-    @ManyToOne()
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "COD_POLITICA")
     private Politica politica;
     
     @JsonIgnore
-    @OneToMany(mappedBy = "conciliacion", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER, mappedBy = "conciliacion", orphanRemoval = true)
     private Collection<Escenario> escenarios;
 
     
@@ -209,7 +210,7 @@ public class Conciliacion implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.Conciliacion[ codConciliacion=" + id + " ]";
+        return "co.com.claro.ejb.dao.Conciliacion[ codConciliacion=" + id + "  ]";
     }
     
     public ConciliacionDTO toDTO(){
@@ -227,8 +228,10 @@ public class Conciliacion implements Serializable {
         entidadDTO.setTablaDestino(tablaDestino);
         entidadDTO.setUsuario(usuario);
         entidadDTO.setIdPolitica(politica != null ? politica.getId() : null);
-        List<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(toList());
-        entidadDTO.setEscenarios(lstEscenarios);
+        if (escenarios != null) {
+            List<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(toList());
+            entidadDTO.setEscenarios(lstEscenarios);
+        }
 
         //Campos padre
         entidadDTO.setIdPolitica(politica != null ? politica.getId() : null);

@@ -79,6 +79,16 @@ public class PoliticaRest {
         return entidad.toDTO();
 
     }
+    
+    @GET
+    @Path("/findid/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public PoliticaDTO getById2(@PathParam("id") Integer id){
+        logger.log(Level.INFO, "id:{0}", id);
+        Politica entidad = managerDAO.find(id);
+        return entidad.toDTO();
+
+    }
 
     @GET
     @Path("/findPoliticasSinConciliacion")
