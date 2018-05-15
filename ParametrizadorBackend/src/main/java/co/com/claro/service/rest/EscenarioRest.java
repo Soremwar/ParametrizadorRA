@@ -177,7 +177,15 @@ public class EscenarioRest {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
-        managerDAO.remove(managerDAO.find(id));
+        Escenario hijo = managerDAO.find(id);
+        Conciliacion padre = null;
+        if (hijo.getConciliacion() != null) {
+            padre = conciliacionDAO.find(hijo.getConciliacion().getId());
+        }
+        
+        padre.getEscenarios().remove(hijo);
+        managerDAO.remove(hijo);
+        conciliacionDAO.edit(padre);
         MensajeError mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }

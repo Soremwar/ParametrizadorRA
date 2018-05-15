@@ -212,7 +212,15 @@ public class ConciliacionRest {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
-        managerDAO.remove(managerDAO.find(id));
+        Conciliacion hijo = managerDAO.find(id);
+        Politica padre = null;
+        if (hijo.getPolitica() != null) {
+            padre = politicaDAO.find(hijo.getPolitica().getId());
+        }
+        
+        padre.getConciliaciones().remove(hijo);
+        managerDAO.remove(hijo);
+        politicaDAO.edit(padre);
         MensajeError mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
