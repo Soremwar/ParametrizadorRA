@@ -40,7 +40,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Escenario.findByFechaActualizacion", query = "SELECT e FROM Escenario e WHERE e.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "Escenario.findByConciliacionNull", query = "SELECT t FROM Escenario t WHERE t.conciliacion IS null")
     , @NamedQuery(name = "Escenario.findByConciliacion", query = "SELECT t FROM Escenario t WHERE t.conciliacion.id = :codConciliacion")
-    , @NamedQuery(name = "Escenario.findByUsuario", query = "SELECT e FROM Escenario e WHERE e.usuario = :usuario")})
+    , @NamedQuery(name = "Escenario.findByUsuario", query = "SELECT e FROM Escenario e WHERE e.usuario = :usuario")
+    , @NamedQuery(name = "Escenario.findByAnyColumn", query = "SELECT t FROM Escenario t WHERE lower(t.nombre) LIKE lower(:nombreEscenario) or lower(t.impacto) LIKE lower(:impacto) ")})
+        
 public class Escenario implements Serializable {
 
     private static final long serialVersionUID = 1L;
