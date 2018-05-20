@@ -27,6 +27,7 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private String nombrePolitica;
 
     private List<EscenarioDTO> escenarios;
+    public Object getIdPolitica;
 
     public String getNombrePolitica() {
         return nombrePolitica;

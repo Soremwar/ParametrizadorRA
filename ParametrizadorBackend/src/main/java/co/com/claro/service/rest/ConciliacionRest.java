@@ -14,10 +14,12 @@ import co.com.claro.service.rest.excepciones.InvalidDataException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import java.util.ArrayList;
+import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -44,7 +46,7 @@ public class ConciliacionRest {
     @EJB
     protected ConciliacionDAO managerDAO;
     @EJB
-    protected PoliticaDAO politicaDAO;
+    protected PoliticaDAO padreDAO;
     @EJB
     protected EscenarioDAO escenarioDAO;
 
@@ -63,7 +65,7 @@ public class ConciliacionRest {
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
         List<Conciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<PadreDTO> lstDTO = new ArrayList<>();
+        List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ConciliacionDTO::getId)).collect(toList());
         List<EscenarioDTO> lstEscenarioDTO;
         for(Conciliacion entidad : lst) {
             ConciliacionDTO auxDTO = entidad.toDTO();
@@ -90,15 +92,6 @@ public class ConciliacionRest {
 
     }
 
-    @GET
-    @Path("/findid/{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public ConciliacionDTO getById2(@PathParam("id") int id){
-        logger.log(Level.INFO, "id:{0}" , id);
-        Conciliacion entidad = managerDAO.find(id);
-        return entidad.toDTO();
-
-    } 
     
     /**
      * Busca las conciliaciones por cualquier columna
@@ -119,24 +112,6 @@ public class ConciliacionRest {
         return lstFinal;
     }
 
-
-    /**
-     * Encuentra las conciliaciones que no tienen asociada ninguna politica
-     * @return Listado con las conciliaciones
-     */
-    @GET
-    @Path("/findByPoliticaNull")
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<ConciliacionDTO> findByPoliticaNull(){
-        List<Conciliacion> lst = managerDAO.findByPoliticaNull();
-        List<PadreDTO> lstDTO = new ArrayList<>();
-        for(Conciliacion entidad : lst) {
-            lstDTO.add(entidad.toDTO());
-        }
-        List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>)(List<?>) lstDTO;
-        return lstFinal;
-    }
-
      /**
      * Crea una nueva politica
      * @param entidad Entidad que se va a agregar
@@ -147,23 +122,25 @@ public class ConciliacionRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(ConciliacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Politica politicaAux = null;
+        Politica entidadPadreJPA = null;
         if (entidad.getIdPolitica() != null) {
-            politicaAux = politicaDAO.find(entidad.getIdPolitica());
-            if (politicaAux == null) {
-                throw new DataNotFoundException("No se encontraron datos asociados a la politica " + entidad.getIdPolitica());
+            entidadPadreJPA = padreDAO.find(entidad.getIdPolitica());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException("No se encontraron datos asociados a ... " + entidad.getIdPolitica());
             }
         }
-        Conciliacion entidadJPA = entidad.toEntity();
-        entidadJPA.setFechaCreacion(Date.from(Instant.now()));
-        managerDAO.create(entidadJPA);
-        politicaAux.getConciliaciones().add(entidadJPA);
-        politicaDAO.edit(politicaAux);
-        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
+        Conciliacion entidadHijaJPA = entidad.toEntity();
+        entidadHijaJPA.setFechaCreacion(Date.from(Instant.now()));
+        managerDAO.create(entidadHijaJPA);
+        if (entidadPadreJPA != null && entidadPadreJPA.getConciliaciones() != null){
+            entidadPadreJPA.getConciliaciones().add(entidadHijaJPA);
+            padreDAO.edit(entidadPadreJPA);           
+        }
+        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }
     
     /**
-     * Actualiza una conciliacion por su Id
+     * Actualiza la entidad por su Id
      * @param entidad conciliacion con la cual se va a trabajar
      * @return el resultado de la operacion
      */
@@ -172,33 +149,45 @@ public class ConciliacionRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ConciliacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Conciliacion entidadJpa = entidad.toEntity();
+        Politica entidadPadreJPA = null;
+        if (entidad.getIdPolitica() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdPolitica());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException("No se encontraron datos asociados a la entidad padre ... " + entidad.getIdPolitica());
+            }
+        }
+        Conciliacion entidadHijaJPA = entidad.toEntity();
         if (getById(entidad.getId()) != null) {
-            entidadJpa.setFechaCreacion(entidadJpa.getFechaCreacion());
-            entidadJpa.setFechaActualizacion(Date.from(Instant.now()));
-            entidadJpa.setPolitica(getPoliticaToAssign(entidad));
-            managerDAO.edit(entidadJpa);
-            return Response.status(Response.Status.OK).entity(entidadJpa.toDTO()).build();
+            entidadHijaJPA.setFechaCreacion(entidadHijaJPA.getFechaCreacion());
+            entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now())); 
+            if (entidad.getIdPolitica() != null) {
+                entidadHijaJPA.setPolitica(getPoliticaToAssign(entidad));
+            }
+            managerDAO.edit(entidadHijaJPA);
+            if (entidadPadreJPA != null && entidadPadreJPA.getConciliaciones() != null){
+                entidadPadreJPA.getConciliaciones().add(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);           
+            }
+            return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
+      
     }
-
-    private Politica getPoliticaToAssign(ConciliacionDTO entidadInDTO){
-        Politica conciliacionAux = null;
-        if (entidadInDTO.getIdPolitica() != null) {
-            conciliacionAux = politicaDAO.find(entidadInDTO.getIdPolitica());
-        }
-        if (entidadInDTO.getIdPolitica() != null && conciliacionAux == null) {
-            throw new DataNotFoundException("No se encontraron datos asociados a la politica " + entidadInDTO.getIdPolitica());
-        }
-        ConciliacionDTO entidadXIdDTO = getById(entidadInDTO.getId());
+    
+    /**
+     * Obtiene la entidad padre que hay que asignar
+     * @param entidadActualDTO
+     * @return la entidad padre que hay que asignar
+     */
+    private Politica getPoliticaToAssign(ConciliacionDTO entidadActualDTO){
+        ConciliacionDTO entidadInBDDTO = getById(entidadActualDTO.getId());
         Politica politica = new Politica();
-        if (entidadXIdDTO.getIdPolitica() == null) {
-            politica.setId(entidadInDTO.getIdPolitica());
-        } else if (conciliacionAux != null){
-            politica.setId(entidadXIdDTO.getIdPolitica());
-            throw new InvalidDataException("Datos invalidos. No puede cambiar la politica cuando ya esta asignada");
-
+        //Si no tiene padre en la base de datos
+        if (entidadInBDDTO.getIdPolitica() == null) {
+            politica.setId(entidadActualDTO.getIdPolitica());
+        //Si ya tiene padre 
+        } else {
+            politica.setId(entidadInBDDTO.getIdPolitica());
         }    
         return politica;
     } 
@@ -213,14 +202,13 @@ public class ConciliacionRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         Conciliacion hijo = managerDAO.find(id);
-        Politica padre = null;
+        Politica entidadPadreJPA = null;
         if (hijo.getPolitica() != null) {
-            padre = politicaDAO.find(hijo.getPolitica().getId());
+            entidadPadreJPA = padreDAO.find(hijo.getPolitica().getId());
         }
-        
-        padre.getConciliaciones().remove(hijo);
+        entidadPadreJPA.getConciliaciones().remove(hijo);
         managerDAO.remove(hijo);
-        politicaDAO.edit(padre);
+        padreDAO.edit(entidadPadreJPA);
         MensajeError mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }

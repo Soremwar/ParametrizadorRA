@@ -24,7 +24,6 @@ import javax.ejb.EJB;
 import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
@@ -76,16 +75,6 @@ public class PoliticaRest {
     public PoliticaDTO getById(@PathParam("id") Integer id){
         logger.log(Level.INFO, "id:{0}", id);
         Politica entidad = managerDAO.findByAllTreeById(id);
-        return entidad.toDTO();
-
-    }
-    
-    @GET
-    @Path("/findid/{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public PoliticaDTO getById2(@PathParam("id") Integer id){
-        logger.log(Level.INFO, "id:{0}", id);
-        Politica entidad = managerDAO.find(id);
         return entidad.toDTO();
 
     }
@@ -173,24 +162,6 @@ public class PoliticaRest {
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     
-    /**
-     * Busca las politicas por una columna de texto especifica
-     * @param nombre Nombre de Politica
-     * @param descripcion Descripcion de Politica
-     * @param objetivo Objetivo de Politica
-     * @return Lista de todas las politicas que cumplen con el criterio
-     */
-    @GET
-    @Path("/findBySpecificColum")
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Politica> findBySpecificColumn(
-            @DefaultValue("") @QueryParam("nombre") String nombre,
-            @DefaultValue("") @QueryParam("descripcion") String descripcion,
-            @DefaultValue("") @QueryParam("objetivo") String objetivo
-    ){
-        List<Politica> lst = managerDAO.findByColumn(nombre, descripcion, objetivo);
-        return lst;
-    }
     
     @GET
     @Path("/count")

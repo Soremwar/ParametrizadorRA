@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Escenario.findAll", query = "SELECT e FROM Escenario e")
-    , @NamedQuery(name = "Escenario.findAllTree", query = "SELECT e FROM Escenario e JOIN e.conciliacion c")
+    , @NamedQuery(name = "Escenario.findAllTree", query = "SELECT e FROM Escenario e LEFT JOIN FETCH e.conciliacion c")
     , @NamedQuery(name = "Escenario.findByCodEscenario", query = "SELECT e FROM Escenario e WHERE e.id = :codEscenario")
     , @NamedQuery(name = "Escenario.findByNombreEscenario", query = "SELECT e FROM Escenario e WHERE e.nombre = :nombreEscenario")
     , @NamedQuery(name = "Escenario.findByImpacto", query = "SELECT e FROM Escenario e WHERE e.impacto = :impacto")
