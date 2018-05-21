@@ -41,19 +41,19 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Politica.findNumRegistros", query = "SELECT COUNT(t) FROM Politica t")
-    , @NamedQuery(name = "Politica.findAll", query = "SELECT t FROM Politica t JOIN t.conciliaciones c")
+    , @NamedQuery(name = "Politica.findAll", query = "SELECT DISTINCT(t) FROM Politica t JOIN t.conciliaciones c")
     , @NamedQuery(name = "Politica.findAllTree", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN FETCH t.conciliaciones c")
     , @NamedQuery(name = "Politica.findAllTreeById", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN FETCH t.conciliaciones c WHERE t.id = :idPolitica")
     , @NamedQuery(name = "Politica.findPoliticaSinConciliacion", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN t.conciliaciones c WHERE c.id IS NULL")
-    , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT t FROM Politica t WHERE t.id = :codPolitica")
-    , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT t FROM Politica t WHERE t.nombre LIKE :nombrePolitica")
-    , @NamedQuery(name = "Politica.findByDescripcion", query = "SELECT t FROM Politica t WHERE t.descripcion = :descripcion")
-    , @NamedQuery(name = "Politica.findByObjetivo", query = "SELECT t FROM Politica t WHERE t.objetivo = :objetivo")
-    , @NamedQuery(name = "Politica.findByFechaCreacion", query = "SELECT t FROM Politica t WHERE t.fechaCreacion = :fechaCreacion")
-    , @NamedQuery(name = "Politica.findByFechaActualizacion", query = "SELECT t FROM Politica t WHERE t.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "Politica.findByColumn", query = "SELECT t FROM Politica t WHERE lower(t.nombre) LIKE lower(:nombrePolitica) and lower(t.descripcion) LIKE lower(:descripcion) and lower(t.objetivo) LIKE lower(:objetivo)")
-    , @NamedQuery(name = "Politica.findByUsuario", query = "SELECT t FROM Politica t WHERE t.usuario = :usuario")
-    , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT t FROM Politica t WHERE lower(t.nombre) LIKE lower(:nombrePolitica) or lower(t.descripcion) LIKE lower(:descripcion) or lower(t.objetivo) LIKE lower(:objetivo)")})
+    , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.id = :codPolitica")
+    , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.nombre LIKE :nombrePolitica")
+    , @NamedQuery(name = "Politica.findByDescripcion", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.descripcion = :descripcion")
+    , @NamedQuery(name = "Politica.findByObjetivo", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.objetivo = :objetivo")
+    , @NamedQuery(name = "Politica.findByFechaCreacion", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.fechaCreacion = :fechaCreacion")
+    , @NamedQuery(name = "Politica.findByFechaActualizacion", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "Politica.findByColumn", query = "SELECT DISTINCT(t) FROM Politica t WHERE lower(t.nombre) LIKE lower(:nombrePolitica) and lower(t.descripcion) LIKE lower(:descripcion) and lower(t.objetivo) LIKE lower(:objetivo)")
+    , @NamedQuery(name = "Politica.findByUsuario", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.usuario = :usuario")
+    , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT DISTINCT(t) FROM Politica t WHERE lower(t.nombre) LIKE lower(:nombrePolitica) or lower(t.descripcion) LIKE lower(:descripcion) or lower(t.objetivo) LIKE lower(:objetivo)")})
 
 public class Politica implements Serializable {
     private static final long serialVersionUID = 1L;

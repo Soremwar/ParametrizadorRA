@@ -41,9 +41,9 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "TBL_CONCILIACION")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Conciliacion.findAll", query = "SELECT t FROM Conciliacion t")
+    @NamedQuery(name = "Conciliacion.findAll", query = "SELECT DISTINCT(t) FROM Conciliacion t")
     , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN FETCH t.escenarios c") 
-    , @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT t FROM Conciliacion t LEFT JOIN FETCH t.escenarios c WHERE t.id = :idConciliacion")  
+    , @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN FETCH t.escenarios c WHERE t.id = :idConciliacion")  
     , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.id = :codConciliacion")
     , @NamedQuery(name = "Conciliacion.findByCamposTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.camposTablaDestino = :camposTablaDestino")
     , @NamedQuery(name = "Conciliacion.findByDescripcion", query = "SELECT t FROM Conciliacion t WHERE t.descripcion = :descripcion")
@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Conciliacion.findByUsuario", query = "SELECT t FROM Conciliacion t WHERE t.usuario = :usuario")
     , @NamedQuery(name = "Conciliacion.findByPoliticaNull", query = "SELECT t FROM Conciliacion t WHERE t.politica IS null")
     , @NamedQuery(name = "Conciliacion.findByPolitica", query = "SELECT t FROM Conciliacion t WHERE t.politica.id = :codPolitica")
-    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT t FROM Conciliacion t WHERE lower(t.nombre) LIKE lower(:nombreConciliacion) or lower(t.descripcion) LIKE lower(:descripcion)")})
+    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(t) FROM Conciliacion t WHERE lower(t.nombre) LIKE lower(:nombreConciliacion) or lower(t.descripcion) LIKE lower(:descripcion)")})
     
 public class Conciliacion implements Serializable {
 
