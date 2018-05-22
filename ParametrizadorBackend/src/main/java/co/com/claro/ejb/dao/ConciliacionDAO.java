@@ -11,6 +11,7 @@ import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -79,6 +80,26 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         return foundEntity; 
     }
         
+        /**
+     * Buscar el texto en todas columnas con paginado
+     * @param busqueda cadena de texto por el cual va a buscar
+     * @param offset desde que registro va a buscar
+     * @param limit limite de registros
+     * @return Lista de Conciliacions que cumplan con el criterio
+     */
+    /*public List<Conciliacion> findRange(int offset, int limit){
+        logger.log(Level.INFO, "busqueda:{0}offset:{0}offset:{0}", new Object[]{offset, limit});  
+        TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByAnyColumn", Conciliacion.class);
+        //query.setParameter("nombreConciliacion", "%" + busqueda + "%");
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+        List<Conciliacion> results = query.getResultList();
+        if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }
+        return results;
+    }*/
+    
     /**
      * Buscar el texto en todas columnas con paginado
      * @param busqueda cadena de texto por el cual va a buscar

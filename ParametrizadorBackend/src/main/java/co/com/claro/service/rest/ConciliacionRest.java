@@ -16,7 +16,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import static java.util.Comparator.comparing;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
@@ -64,14 +66,11 @@ public class ConciliacionRest {
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
-        List<Conciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
+        List<Conciliacion> lst = managerDAO.findByAllTree(new int[]{offset, limit});
         List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ConciliacionDTO::getId)).collect(toList());
-        List<EscenarioDTO> lstEscenarioDTO;
-        for(Conciliacion entidad : lst) {
-            ConciliacionDTO auxDTO = entidad.toDTO();
-            lstDTO.add(auxDTO);
-        }
+        lstDTO = lstDTO.stream().distinct().collect(toList());
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
+        
         List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
@@ -205,10 +204,12 @@ public class ConciliacionRest {
         Politica entidadPadreJPA = null;
         if (hijo.getPolitica() != null) {
             entidadPadreJPA = padreDAO.find(hijo.getPolitica().getId());
+            entidadPadreJPA.getConciliaciones().remove(hijo);
         }
-        entidadPadreJPA.getConciliaciones().remove(hijo);
         managerDAO.remove(hijo);
-        padreDAO.edit(entidadPadreJPA);
+        if (entidadPadreJPA != null) {
+            padreDAO.edit(entidadPadreJPA);
+        }
         MensajeError mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }

@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -42,7 +43,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Conciliacion.findAll", query = "SELECT DISTINCT(t) FROM Conciliacion t")
-    , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN FETCH t.escenarios c") 
+    , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT c FROM Conciliacion c LEFT JOIN FETCH c.escenarios e") 
     , @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN FETCH t.escenarios c WHERE t.id = :idConciliacion")  
     , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.id = :codConciliacion")
     , @NamedQuery(name = "Conciliacion.findByCamposTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.camposTablaDestino = :camposTablaDestino")
@@ -98,7 +99,7 @@ public class Conciliacion implements Serializable {
     
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER, mappedBy = "conciliacion", orphanRemoval = true)
-    private Collection<Escenario> escenarios;
+    private Set<Escenario> escenarios;
 
     
     public Conciliacion() {
@@ -180,11 +181,11 @@ public class Conciliacion implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Escenario> getEscenarios() {
+    public Set<Escenario> getEscenarios() {
         return escenarios;
     }
 
-    public void setEscenarios(Collection<Escenario> escenarios) {
+    public void setEscenarios(Set<Escenario> escenarios) {
         this.escenarios = escenarios;
     }
 
