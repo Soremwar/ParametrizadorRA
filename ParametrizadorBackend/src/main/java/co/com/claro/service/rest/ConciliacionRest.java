@@ -65,7 +65,7 @@ public class ConciliacionRest {
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
         List<Conciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ConciliacionDTO::getId)).collect(toList());
+        List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ConciliacionDTO::getId)).collect(toList());
         List<EscenarioDTO> lstEscenarioDTO;
         for(Conciliacion entidad : lst) {
             ConciliacionDTO auxDTO = entidad.toDTO();

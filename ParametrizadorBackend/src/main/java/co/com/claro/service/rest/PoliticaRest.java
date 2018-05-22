@@ -62,7 +62,7 @@ public class PoliticaRest {
         //List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
         //List<Politica> lst = managerDAO.findAll();
         List<Politica> lst = managerDAO.findByAllTree(new int[]{offset, limit});
-        List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).sorted(comparing(PoliticaDTO::getId)).
+        List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(PoliticaDTO::getId)).
                collect(toList());
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
         List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
