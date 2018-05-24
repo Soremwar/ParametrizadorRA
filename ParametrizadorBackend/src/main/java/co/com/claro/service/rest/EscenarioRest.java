@@ -58,7 +58,7 @@ public class EscenarioRest {
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
-        List<Escenario> lst = managerDAO.findByAllTree(new int[]{offset, limit});
+        List<Escenario> lst = managerDAO.findRange(new int[]{offset, limit});
         List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(EscenarioDTO::getId)).collect(toList());
 
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);

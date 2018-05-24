@@ -4,6 +4,7 @@ import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
+import co.com.claro.ejb.dao.utils.comparators.EntityNameComparator;
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
@@ -14,6 +15,7 @@ import co.com.claro.service.rest.excepciones.InvalidDataException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.HashSet;
@@ -66,10 +68,13 @@ public class ConciliacionRest {
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
-        List<Conciliacion> lst = managerDAO.findByAllTree(new int[]{offset, limit});
+        //List<Conciliacion> lst = managerDAO.findByAllTree(new int[]{offset, limit});
+        List<Conciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ConciliacionDTO::getId)).collect(toList());
-        lstDTO = lstDTO.stream().distinct().collect(toList());
-        lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
+        //List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().collect(toList());
+        //lstDTO = lstDTO.stream().distinct().collect(toList());
+        //lstDTO.sort(comparator);
+        UtilListas.ordenarLista(lstDTO, orderby);
         
         List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>)(List<?>) lstDTO;
         return lstFinal;
