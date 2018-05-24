@@ -133,6 +133,8 @@ public class EscenarioRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(EscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
+        MensajeError mensaje = new MensajeError(500, "ERROR", "No fue posible actualizar el registro. Revise la peticion");
+    
         Conciliacion entidadPadreJPA = null;
         if (entidad.getIdConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
@@ -141,11 +143,18 @@ public class EscenarioRest {
             }
         }
         Escenario entidadHijaJPA = entidad.toEntity();
+        Conciliacion concAux = null;
         if (getById(entidad.getId()) != null) {
             entidadHijaJPA.setFechaCreacion(entidadHijaJPA.getFechaCreacion());
             entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
             if (entidad.getIdConciliacion() != null) {
-                entidadHijaJPA.setConciliacion(getConciliacionToAssign(entidad));
+                concAux = getConciliacionToAssign(entidad);
+                if (concAux != null) {
+                    entidadHijaJPA.setConciliacion(concAux);
+                }
+            }
+            if (entidad.getIdConciliacion() != null || concAux == null) {
+                return Response.status(Response.Status.OK).entity(mensaje).build();
             }
             managerDAO.edit(entidadHijaJPA);
             if (entidadPadreJPA != null && entidadPadreJPA.getEscenarios() != null){
@@ -169,7 +178,7 @@ public class EscenarioRest {
             conciliacion.setId(entidadActualDTO.getIdConciliacion());
         } else {
             conciliacion.setId(entidadInBDDTO.getIdConciliacion());
-            return conciliacion;
+            return null;
         }
         return conciliacion;
     }  
