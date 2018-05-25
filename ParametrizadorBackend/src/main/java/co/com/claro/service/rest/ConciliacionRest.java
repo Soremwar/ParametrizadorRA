@@ -4,23 +4,17 @@ import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
-import co.com.claro.ejb.dao.utils.comparators.EntityNameComparator;
 import co.com.claro.model.dto.ConciliacionDTO;
-import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
-import co.com.claro.service.rest.excepciones.InvalidDataException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Comparator;
 import static java.util.Comparator.comparing;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
@@ -43,7 +37,7 @@ import javax.ws.rs.core.Response;
  * @author Andres Bedoya
  */
 @Path("conciliaciones")
-public class ConciliacionRest {
+public class ConciliacionRest{
     @Transient
     private static final Logger logger = Logger.getLogger(ConciliacionRest.class.getSimpleName());
 
@@ -162,16 +156,16 @@ public class ConciliacionRest {
         }
         Conciliacion entidadHijaJPA = entidad.toEntity();
         Politica polAux = null;
+        if (entidad.getIdPolitica() != null && isEntidadPadreAsignada(entidad)) {
+            MensajeError mensaje = new MensajeError(500, "ERROR", "No es posible cambiar la entidad padre. Revise la peticion");
+            return Response.status(Response.Status.OK).entity(mensaje).build();
+        }
         if (getById(entidad.getId()) != null) {
             entidadHijaJPA.setFechaCreacion(entidadHijaJPA.getFechaCreacion());
             entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now())); 
             if (entidad.getIdPolitica() != null) {
                 polAux = getPoliticaToAssign(entidad);
                 entidadHijaJPA.setPolitica(polAux);
-            }
-            if (entidad.getIdPolitica() != null || polAux == null) {
-                MensajeError mensaje = new MensajeError(500, "ERROR", "No es posible cambiar la entidad padre. Revise la peticion");
-                return Response.status(Response.Status.OK).entity(mensaje).build();
             }
             managerDAO.edit(entidadHijaJPA);
             if (entidadPadreJPA != null && entidadPadreJPA.getConciliaciones() != null){
@@ -201,6 +195,11 @@ public class ConciliacionRest {
         }    
         return politica;
     } 
+    
+    private Boolean isEntidadPadreAsignada(ConciliacionDTO entidadActualDTO){
+        ConciliacionDTO entidadInBDDTO = getById(entidadActualDTO.getId());
+        return entidadInBDDTO.getIdPolitica() != null;
+    }  
     
     /**
      * Borra una conciliacion por su Id

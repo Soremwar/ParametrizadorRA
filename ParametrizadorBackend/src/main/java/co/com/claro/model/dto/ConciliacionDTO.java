@@ -26,6 +26,22 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private Integer idPolitica;
     private String nombrePolitica;
 
+    public Integer getIdPolitica() {
+        return idPolitica;
+    }
+
+    public void setIdPolitica(Integer idPolitica) {
+        this.idPolitica = idPolitica;
+    }
+
+    public Object getGetIdPolitica() {
+        return getIdPolitica;
+    }
+
+    public void setGetIdPolitica(Object getIdPolitica) {
+        this.getIdPolitica = getIdPolitica;
+    }
+
     private List<EscenarioDTO> escenarios;
     public Object getIdPolitica;
 
@@ -61,13 +77,6 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
         this.camposTablaDestino = camposTablaDestino;
     }
     
-    public Integer getIdPolitica() {
-        return idPolitica;
-    }
-
-    public void setIdPolitica(Integer idPolitica) {
-        this.idPolitica = idPolitica;
-    }
 
     public List<EscenarioDTO> getEscenarios() {
         return escenarios;

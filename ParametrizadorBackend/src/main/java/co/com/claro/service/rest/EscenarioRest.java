@@ -133,7 +133,6 @@ public class EscenarioRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(EscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-        MensajeError mensaje = new MensajeError(500, "ERROR", "No fue posible actualizar el registro. Revise la peticion");
     
         Conciliacion entidadPadreJPA = null;
         if (entidad.getIdConciliacion() != null) {
@@ -144,17 +143,16 @@ public class EscenarioRest {
         }
         Escenario entidadHijaJPA = entidad.toEntity();
         Conciliacion concAux = null;
+        if (entidad.getIdConciliacion() != null && isConciliacionAsignada(entidad)) {
+            MensajeError mensaje = new MensajeError(500, "ERROR", "No es posible cambiar la entidad padre. Revise la peticion");
+            return Response.status(Response.Status.OK).entity(mensaje).build();
+        }
         if (getById(entidad.getId()) != null) {
             entidadHijaJPA.setFechaCreacion(entidadHijaJPA.getFechaCreacion());
             entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
-            if (entidad.getIdConciliacion() != null) {
-                concAux = getConciliacionToAssign(entidad);
-                if (concAux != null) {
-                    entidadHijaJPA.setConciliacion(concAux);
-                }
-            }
-            if (entidad.getIdConciliacion() != null || concAux == null) {
-                return Response.status(Response.Status.OK).entity(mensaje).build();
+            concAux = getConciliacionToAssign(entidad);
+            if (concAux != null) {
+                entidadHijaJPA.setConciliacion(concAux);
             }
             managerDAO.edit(entidadHijaJPA);
             if (entidadPadreJPA != null && entidadPadreJPA.getEscenarios() != null){
@@ -178,10 +176,16 @@ public class EscenarioRest {
             conciliacion.setId(entidadActualDTO.getIdConciliacion());
         } else {
             conciliacion.setId(entidadInBDDTO.getIdConciliacion());
-            return null;
         }
         return conciliacion;
     }  
+    
+    private Boolean isConciliacionAsignada(EscenarioDTO entidadActualDTO){
+        EscenarioDTO entidadInBDDTO = getById(entidadActualDTO.getId());
+        Conciliacion conciliacion = new Conciliacion();
+        return entidadInBDDTO.getIdConciliacion() != null;
+    }  
+    
      /**
      * Borra una conciliacion por su Id
      * @param id Identificador de la identidad

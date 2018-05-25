@@ -17,8 +17,10 @@ public class PadreDTO implements Serializable {
     private Integer id;
     private String nombre;
     private String usuario;
+    
     private Date fechaCreacion;
     private Date fechaActualizacion;
+    
 
     public Integer getId() {
         return id;

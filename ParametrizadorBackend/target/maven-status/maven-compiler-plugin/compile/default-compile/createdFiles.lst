@@ -2,7 +2,6 @@ co/com/claro/service/rest/cors/NewCrossOriginResourceSharingFilter.class
 co/com/claro/ejb/dao/EscenarioDAO.class
 co/com/claro/ejb/dao/utils/comparators/EntityFechaCreacionComparator.class
 co/com/claro/model/entity/Escenario_.class
-co/com/claro/service/rest/ConciliacionRest.class
 co/com/claro/service/rest/excepciones/FormatoIncorrectoMapper.class
 co/com/claro/model/dto/EscenarioDTO.class
 co/com/claro/service/rest/excepciones/DataNotFoundException.class
@@ -14,6 +13,7 @@ co/com/claro/ejb/dao/utils/LocalDateConverter.class
 co/com/claro/model/entity/Escenario.class
 co/com/claro/ejb/dao/PoliticaDAO.class
 co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.class
+co/com/claro/model/entity/Padre_.class
 co/com/claro/model/entity/Politica_.class
 co/com/claro/service/rest/excepciones/FormatoIncorrecto.class
 co/com/claro/service/rest/excepciones/InvalidDataExceptionMapper.class
@@ -25,6 +25,7 @@ co/com/claro/ejb/dao/utils/comparators/EntityIdComparator.class
 co/com/claro/ejb/dao/utils/UtilListas.class
 co/com/claro/model/entity/Politica.class
 co/com/claro/model/entity/Conciliacion_.class
+co/com/claro/model/entity/Padre.class
 co/com/claro/model/dto/ConciliacionDTO.class
 co/com/claro/service/rest/excepciones/MensajeError.class
 co/com/claro/ejb/dao/parent/AbstractJpaDAO.class

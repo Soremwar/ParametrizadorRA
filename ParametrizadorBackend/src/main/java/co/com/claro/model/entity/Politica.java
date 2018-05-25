@@ -55,14 +55,21 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Politica.findByUsuario", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.usuario = :usuario")
     , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT DISTINCT(t) FROM Politica t WHERE lower(t.nombre) LIKE lower(:nombrePolitica) or lower(t.descripcion) LIKE lower(:descripcion) or lower(t.objetivo) LIKE lower(:objetivo)")})
 
-public class Politica implements Serializable {
+public class Politica extends Padre implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+    /*
     @Id
     @Basic(optional = false)
     @Column(name = "COD_POLITICA")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    */
+    @Id
+    @Basic(optional = false)
+    @Column(name = "COD_POLITICA")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     
     @Basic(optional = false)
     @NotNull
@@ -106,10 +113,11 @@ public class Politica implements Serializable {
     public Politica() {
     }
 
+    
     public Politica(Integer id) {
         this.id = id;
     }
-    
+    /*
     public Integer getId() {
         return id;
     }
@@ -117,7 +125,7 @@ public class Politica implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-
+*/
     public String getNombre() {
         return nombre;
     }
