@@ -5,6 +5,7 @@
  */
 package co.com.claro.model.entity;
 
+import co.com.claro.model.entity.parent.Padre;
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,7 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author andres
  */
 @Entity
-@Table(name = "TBL_POLITICA")
+@Table(name = "TBL_GAI_POLITICA")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Politica.findNumRegistros", query = "SELECT COUNT(t) FROM Politica t")

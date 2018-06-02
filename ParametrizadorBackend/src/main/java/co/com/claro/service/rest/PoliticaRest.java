@@ -35,7 +35,7 @@ import javax.ws.rs.core.Response;
  * @author Andres Bedoya
  */
 @Path("politicas")
-public class PoliticaRest {
+public class PoliticaRest{
     @Transient
     private static final Logger logger = Logger.getLogger(PoliticaRest.class.getSimpleName());
 
@@ -121,6 +121,7 @@ public class PoliticaRest {
         logger.log(Level.INFO, "entidad:{0}", entidad);
         Politica entidadAux = entidad.toEntity();
         entidadAux.setFechaCreacion(Date.from(ZonedDateTime.now().toInstant()));
+        entidadAux.setFechaActualizacion(Date.from(ZonedDateTime.now().toInstant()));
         managerDAO.create(entidadAux);
         return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
     }

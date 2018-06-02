@@ -13,7 +13,6 @@ co/com/claro/ejb/dao/utils/LocalDateConverter.class
 co/com/claro/model/entity/Escenario.class
 co/com/claro/ejb/dao/PoliticaDAO.class
 co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.class
-co/com/claro/model/entity/Padre_.class
 co/com/claro/model/entity/Politica_.class
 co/com/claro/service/rest/excepciones/FormatoIncorrecto.class
 co/com/claro/service/rest/excepciones/InvalidDataExceptionMapper.class
@@ -25,7 +24,6 @@ co/com/claro/ejb/dao/utils/comparators/EntityIdComparator.class
 co/com/claro/ejb/dao/utils/UtilListas.class
 co/com/claro/model/entity/Politica.class
 co/com/claro/model/entity/Conciliacion_.class
-co/com/claro/model/entity/Padre.class
 co/com/claro/model/dto/ConciliacionDTO.class
 co/com/claro/service/rest/excepciones/MensajeError.class
 co/com/claro/ejb/dao/parent/AbstractJpaDAO.class

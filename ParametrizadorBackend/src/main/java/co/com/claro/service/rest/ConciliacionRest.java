@@ -160,8 +160,9 @@ public class ConciliacionRest{
             MensajeError mensaje = new MensajeError(500, "ERROR", "No es posible cambiar la entidad padre. Revise la peticion");
             return Response.status(Response.Status.OK).entity(mensaje).build();
         }
-        if (getById(entidad.getId()) != null) {
-            entidadHijaJPA.setFechaCreacion(entidadHijaJPA.getFechaCreacion());
+        ConciliacionDTO conciliacionActual = getById(entidad.getId());
+        if (conciliacionActual != null) {
+            entidadHijaJPA.setFechaCreacion(conciliacionActual.getFechaCreacion());
             entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now())); 
             if (entidad.getIdPolitica() != null) {
                 polAux = getPoliticaToAssign(entidad);

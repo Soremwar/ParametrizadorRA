@@ -9,7 +9,6 @@ import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author andres
  */
 @Entity
-@Table(name = "TBL_CONCILIACION")
+@Table(name = "TBL_GAI_CONCILIACION")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Conciliacion.findAll", query = "SELECT DISTINCT(t) FROM Conciliacion t")

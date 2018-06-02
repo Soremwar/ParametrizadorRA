@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author andresbedoya
  */
 @Entity
-@Table(name = "TBL_ESCENARIO")
+@Table(name = "TBL_GAI_ESCENARIO")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Escenario.findAll", query = "SELECT DISTINCT(e) FROM Escenario e")
@@ -65,6 +65,8 @@ public class Escenario implements Serializable {
     private Date fechaActualizacion;
     @Column(name = "USUARIO")
     private String usuario;
+    @Column(name = "USUARIO_ASIGNADO")
+    private String usuarioAsignado;
     
 
     @ManyToOne//(fetch=FetchType.EAGER)
@@ -131,6 +133,14 @@ public class Escenario implements Serializable {
         this.usuario = usuario;
     }
 
+    public String getUsuarioAsignado() {
+        return usuarioAsignado; 
+    }
+
+    public void setUsuarioAsignado(String usuarioAsignado) {
+        this.usuarioAsignado = usuarioAsignado;
+    }
+    
     public Conciliacion getConciliacion() {
         return conciliacion;
     }
