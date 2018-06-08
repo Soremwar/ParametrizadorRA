@@ -8,7 +8,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-05-31T08:36:03")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-06-06T22:50:46")
 @StaticMetamodel(Politica.class)
 public class Politica_ extends Padre_ {
 

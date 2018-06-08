@@ -3,14 +3,18 @@ package co.com.claro.ejb.dao.parent;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.InvalidDataException;
 import java.util.List;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import org.eclipse.persistence.exceptions.DatabaseException;
 
 /**
  * Contiene toda la implementacion generica de todos los metodos estandar de DAO
+ *
  * @author andres bedoya
  * @param <T>
  */
-public abstract class AbstractJpaDAO<T>{
+public abstract class AbstractJpaDAO<T> {
 
     private final Class<T> entityClass;
 
@@ -22,6 +26,7 @@ public abstract class AbstractJpaDAO<T>{
 
     public void create(T entity) {
         getEntityManager().persist(entity);
+
     }
 
     public T edit(T entity) {
@@ -30,7 +35,7 @@ public abstract class AbstractJpaDAO<T>{
         } catch (Exception e) {
             throw new InvalidDataException("ERROR" + e.toString());
         }
-        
+
         if (entity == null) {
             throw new DataNotFoundException("No se encontro la entidad " + entity);
         }
@@ -49,7 +54,7 @@ public abstract class AbstractJpaDAO<T>{
         return getEntityManager().find(entityClass, id);
     }
 
-    public List<T> findAll(){
+    public List<T> findAll() {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
         List<T> lst = getEntityManager().createQuery(cq).getResultList();
@@ -64,11 +69,11 @@ public abstract class AbstractJpaDAO<T>{
         cq.select(cq.from(entityClass));
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         q.setMaxResults(range[1]);// - range[0] + 1);
-        q.setFirstResult(range[0]);  
+        q.setFirstResult(range[0]);
         List<T> lst = q.getResultList();
         if (lst == null || lst.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos");
-        }        
+        }
         return q.getResultList();
     }
 
@@ -79,5 +84,5 @@ public abstract class AbstractJpaDAO<T>{
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }
-    
+
 }

@@ -97,7 +97,7 @@ public class Conciliacion implements Serializable {
     private Politica politica;
     
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER, mappedBy = "conciliacion", orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.EAGER, mappedBy = "conciliacion", orphanRemoval = true)
     private Set<Escenario> escenarios;
 
     

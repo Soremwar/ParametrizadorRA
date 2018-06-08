@@ -107,7 +107,7 @@ public class Politica extends Padre implements Serializable {
     private String usuario;
     
     @JsonIgnore
-    @OneToMany(fetch=FetchType.EAGER, mappedBy = "politica", cascade = CascadeType.ALL)
+    @OneToMany(fetch=FetchType.EAGER, mappedBy = "politica", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Collection<Conciliacion> conciliaciones;
 
 

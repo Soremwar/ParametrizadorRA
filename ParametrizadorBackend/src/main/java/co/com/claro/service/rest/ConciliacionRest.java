@@ -124,7 +124,7 @@ public class ConciliacionRest{
         if (entidad.getIdPolitica() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdPolitica());
             if (entidadPadreJPA == null) {
-                throw new DataNotFoundException("No se encontraron datos asociados a ... " + entidad.getIdPolitica());
+                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdPolitica());
             }
         }
         Conciliacion entidadHijaJPA = entidad.toEntity();
@@ -151,14 +151,14 @@ public class ConciliacionRest{
         if (entidad.getIdPolitica() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdPolitica());
             if (entidadPadreJPA == null) {
-                throw new DataNotFoundException("No se encontraron datos asociados a la entidad padre ... " + entidad.getIdPolitica());
+                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdPolitica());
             }
         }
         Conciliacion entidadHijaJPA = entidad.toEntity();
         Politica polAux = null;
         if (entidad.getIdPolitica() != null && isEntidadPadreAsignada(entidad)) {
-            MensajeError mensaje = new MensajeError(500, "ERROR", "No es posible cambiar la entidad padre. Revise la peticion");
-            return Response.status(Response.Status.OK).entity(mensaje).build();
+            MensajeError mensaje = new MensajeError(Response.Status.CONFLICT.getStatusCode(), "Conflicto", "No es posible cambiar la entidad padre. Revise la peticion");
+            return Response.status(Response.Status.CONFLICT).entity(mensaje).build();
         }
         ConciliacionDTO conciliacionActual = getById(entidad.getId());
         if (conciliacionActual != null) {
@@ -221,7 +221,7 @@ public class ConciliacionRest{
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);
         }
-        MensajeError mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
+        MensajeError mensaje = new MensajeError(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
 

@@ -111,7 +111,7 @@ public class EscenarioRest {
         if (entidad.getIdConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
             if (entidadPadreJPA == null) {
-                throw new DataNotFoundException("No se encontraron datos asociados a ... " + entidad.getIdConciliacion());
+                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + " " + entidad.getIdConciliacion());
             }
         }
         Escenario entidadHijaJPA = entidad.toEntity();
@@ -138,17 +138,19 @@ public class EscenarioRest {
         if (entidad.getIdConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
             if (entidadPadreJPA == null) {
-                throw new DataNotFoundException("No se encontraron datos asociados a la entidad padre ... " + entidad.getIdConciliacion());
+                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + " " + entidad.getIdConciliacion());
             }
         }
         Escenario entidadHijaJPA = entidad.toEntity();
         Conciliacion concAux = null;
         if (entidad.getIdConciliacion() != null && isConciliacionAsignada(entidad)) {
-            MensajeError mensaje = new MensajeError(500, "ERROR", "No es posible cambiar la entidad padre. Revise la peticion");
+            MensajeError mensaje = new MensajeError(409, Response.Status.CONFLICT.getReasonPhrase(), "No es posible cambiar la entidad padre. Revise la peticion");
             return Response.status(Response.Status.OK).entity(mensaje).build();
         }
-        if (getById(entidad.getId()) != null) {
-            entidadHijaJPA.setFechaCreacion(entidadHijaJPA.getFechaCreacion());
+        EscenarioDTO escenarioActual = getById(entidad.getId());
+
+        if (escenarioActual != null) {
+            entidadHijaJPA.setFechaCreacion(escenarioActual.getFechaCreacion());
             entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
             concAux = getConciliacionToAssign(entidad);
             if (concAux != null) {
@@ -182,7 +184,6 @@ public class EscenarioRest {
     
     private Boolean isConciliacionAsignada(EscenarioDTO entidadActualDTO){
         EscenarioDTO entidadInBDDTO = getById(entidadActualDTO.getId());
-        Conciliacion conciliacion = new Conciliacion();
         return entidadInBDDTO.getIdConciliacion() != null;
     }  
     
@@ -203,7 +204,7 @@ public class EscenarioRest {
         entidadPadreJPA.getEscenarios().remove(hijo);
         managerDAO.remove(hijo);
         padreDAO.edit(entidadPadreJPA);
-        MensajeError mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
+        MensajeError mensaje = new MensajeError(200, Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     
