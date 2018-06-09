@@ -3,7 +3,6 @@ package co.com.claro.service.rest;
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
-import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.entity.Conciliacion;

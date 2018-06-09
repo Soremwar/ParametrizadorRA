@@ -53,6 +53,7 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
         query.setParameter("nombrePolitica", "%" + busqueda + "%");
         query.setParameter("descripcion", "%" + busqueda + "%");
         query.setParameter("objetivo", "%" + busqueda + "%");
+        query.setParameter("nombreConciliacion", "%" + busqueda + "%");
         List<Politica> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

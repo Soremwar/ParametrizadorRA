@@ -3,10 +3,7 @@ package co.com.claro.ejb.dao.parent;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.InvalidDataException;
 import java.util.List;
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import org.eclipse.persistence.exceptions.DatabaseException;
 
 /**
  * Contiene toda la implementacion generica de todos los metodos estandar de DAO

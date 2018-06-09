@@ -5,11 +5,8 @@
  */
 package co.com.claro.model.dto;
 
-import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Resultado;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.io.Serializable;
-import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -17,7 +14,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author andres
  */
 @XmlRootElement
-@JsonPropertyOrder({ "id", "nombre", "usuario", "fechaCreacion", "fechaActualizacion","objetivo", "descripcion"})
 public class ResultadoDTO implements Serializable{
 
     private Integer idResultado;
@@ -48,18 +44,12 @@ public class ResultadoDTO implements Serializable{
         this.xml = xml;
     }
 
-
-
- 
-        
     public Resultado toEntity(){
         Resultado p = new Resultado();
-        //Campos comunes
         p.setCodResultados(this.idResultado);
         p.setCodEjecucion(this.idEjecucion);
         p.setXmlResultado(this.xml);
        
         return p;
-        
     }
 }

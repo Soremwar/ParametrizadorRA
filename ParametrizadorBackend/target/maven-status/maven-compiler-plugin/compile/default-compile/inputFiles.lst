@@ -7,12 +7,14 @@
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/DatabaseExceptionMapper.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/ResultadoDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/utils/LocalDateTimeConverter.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/WsTransformacion.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/DataNotFoundExceptionMapper.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/config/ConfiguracionRest.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/ResultadoDAO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/parent/Padre.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/Politica.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/WsTransformacionDAO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/DataNotFoundException.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/utils/comparators/EntityNameComparator.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/InvalidDataException.java
@@ -24,8 +26,9 @@
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/ResultadosRest.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/InvalidDataExceptionMapper.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/utils/LocalDateConverter.java
-/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/SQLExceptionMapper.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/WsTransformacionDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/Conciliacion.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/WsTransformacionRest.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/parent/AbstractJpaDAO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/cors/NewCrossOriginResourceSharingFilter.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/PoliticaRest.java

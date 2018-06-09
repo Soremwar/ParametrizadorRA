@@ -9,6 +9,7 @@ import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -41,20 +42,20 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "TBL_GAI_CONCILIACION")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Conciliacion.findAll", query = "SELECT DISTINCT(t) FROM Conciliacion t")
-    , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT c FROM Conciliacion c LEFT JOIN FETCH c.escenarios e ORDER BY c.id ASC") 
-    , @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT DISTINCT(t) FROM Conciliacion t LEFT JOIN FETCH t.escenarios c WHERE t.id = :idConciliacion")  
-    , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.id = :codConciliacion")
-    , @NamedQuery(name = "Conciliacion.findByCamposTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.camposTablaDestino = :camposTablaDestino")
-    , @NamedQuery(name = "Conciliacion.findByDescripcion", query = "SELECT t FROM Conciliacion t WHERE t.descripcion = :descripcion")
-    , @NamedQuery(name = "Conciliacion.findByFechaActualizacion", query = "SELECT t FROM Conciliacion t WHERE t.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "Conciliacion.findByFechaCreacion", query = "SELECT t FROM Conciliacion t WHERE t.fechaCreacion = :fechaCreacion")
-    , @NamedQuery(name = "Conciliacion.findByNombreConciliacion", query = "SELECT t FROM Conciliacion t WHERE t.nombre = :nombreConciliacion")
-    , @NamedQuery(name = "Conciliacion.findByTablaDestino", query = "SELECT t FROM Conciliacion t WHERE t.tablaDestino = :tablaDestino")
-    , @NamedQuery(name = "Conciliacion.findByUsuario", query = "SELECT t FROM Conciliacion t WHERE t.usuario = :usuario")
-    , @NamedQuery(name = "Conciliacion.findByPoliticaNull", query = "SELECT t FROM Conciliacion t WHERE t.politica IS null")
-    , @NamedQuery(name = "Conciliacion.findByPolitica", query = "SELECT t FROM Conciliacion t WHERE t.politica.id = :codPolitica")
-    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(t) FROM Conciliacion t WHERE lower(t.nombre) LIKE lower(:nombreConciliacion) or lower(t.descripcion) LIKE lower(:descripcion)")})
+    @NamedQuery(name = "Conciliacion.findAll", query = "SELECT DISTINCT(c) FROM Conciliacion c")
+    , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e ORDER BY c.id ASC") 
+    , @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e WHERE c.id = :idConciliacion")  
+    , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT c FROM Conciliacion c WHERE c.id = :codConciliacion")
+    , @NamedQuery(name = "Conciliacion.findByCamposTablaDestino", query = "SELECT c FROM Conciliacion c WHERE c.camposTablaDestino = :camposTablaDestino")
+    , @NamedQuery(name = "Conciliacion.findByDescripcion", query = "SELECT c FROM Conciliacion c WHERE c.descripcion = :descripcion")
+    , @NamedQuery(name = "Conciliacion.findByFechaActualizacion", query = "SELECT c FROM Conciliacion c WHERE c.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "Conciliacion.findByFechaCreacion", query = "SELECT c FROM Conciliacion c WHERE c.fechaCreacion = :fechaCreacion")
+    , @NamedQuery(name = "Conciliacion.findByNombreConciliacion", query = "SELECT c FROM Conciliacion c WHERE c.nombre = :nombreConciliacion")
+    , @NamedQuery(name = "Conciliacion.findByTablaDestino", query = "SELECT c FROM Conciliacion c WHERE c.tablaDestino = :tablaDestino")
+    , @NamedQuery(name = "Conciliacion.findByUsuario", query = "SELECT c FROM Conciliacion c WHERE c.usuario = :usuario")
+    , @NamedQuery(name = "Conciliacion.findByPoliticaNull", query = "SELECT c FROM Conciliacion c WHERE c.politica IS null")
+    , @NamedQuery(name = "Conciliacion.findByPolitica", query = "SELECT c FROM Conciliacion c WHERE c.politica.id = :codPolitica")
+    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(c) FROM Conciliacion c WHERE lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.descripcion) LIKE lower(:descripcion) or LOWER(c.politica.nombre) LIKE lower(:nombrePolitica)")})
     
 public class Conciliacion implements Serializable {
 
@@ -99,6 +100,9 @@ public class Conciliacion implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.EAGER, mappedBy = "conciliacion", orphanRemoval = true)
     private Set<Escenario> escenarios;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "conciliacion")
+    private Collection<WsTransformacion> wsTransformacionesCollection;
 
     
     public Conciliacion() {
@@ -237,6 +241,16 @@ public class Conciliacion implements Serializable {
         entidadDTO.setIdPolitica(politica != null ? politica.getId() : null);
         entidadDTO.setNombrePolitica(politica != null ? politica.getNombre() : null);        
         return entidadDTO;
+    }
+
+    @XmlTransient
+    @org.codehaus.jackson.annotate.JsonIgnore
+    public Collection<WsTransformacion> getWsTransformacionesCollection() {
+        return wsTransformacionesCollection;
+    }
+
+    public void setWsTransformacionesCollection(Collection<WsTransformacion> wsTransformacionesCollection) {
+        this.wsTransformacionesCollection = wsTransformacionesCollection;
     }
     
 }

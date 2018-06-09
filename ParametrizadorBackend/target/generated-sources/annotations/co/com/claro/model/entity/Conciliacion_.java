@@ -2,17 +2,20 @@ package co.com.claro.model.entity;
 
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.Politica;
+import co.com.claro.model.entity.WsTransformacion;
 import java.util.Date;
 import javax.annotation.Generated;
+import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-06-06T22:50:46")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-06-09T16:48:03")
 @StaticMetamodel(Conciliacion.class)
 public class Conciliacion_ { 
 
     public static volatile SingularAttribute<Conciliacion, String> descripcion;
+    public static volatile CollectionAttribute<Conciliacion, WsTransformacion> wsTransformacionesCollection;
     public static volatile SingularAttribute<Conciliacion, String> camposTablaDestino;
     public static volatile SingularAttribute<Conciliacion, Date> fechaActualizacion;
     public static volatile SingularAttribute<Conciliacion, Date> fechaCreacion;

@@ -25,6 +25,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,36 +42,28 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "TBL_GAI_POLITICA")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Politica.findNumRegistros", query = "SELECT COUNT(t) FROM Politica t")
-    , @NamedQuery(name = "Politica.findAll", query = "SELECT DISTINCT(t) FROM Politica t JOIN t.conciliaciones c")
-    , @NamedQuery(name = "Politica.findAllTree", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN FETCH t.conciliaciones c")
-    , @NamedQuery(name = "Politica.findAllTreeById", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN FETCH t.conciliaciones c WHERE t.id = :idPolitica")
-    , @NamedQuery(name = "Politica.findPoliticaSinConciliacion", query = "SELECT DISTINCT(t) FROM Politica t LEFT JOIN t.conciliaciones c WHERE c.id IS NULL")
-    , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.id = :codPolitica")
-    , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.nombre LIKE :nombrePolitica")
-    , @NamedQuery(name = "Politica.findByDescripcion", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.descripcion = :descripcion")
-    , @NamedQuery(name = "Politica.findByObjetivo", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.objetivo = :objetivo")
-    , @NamedQuery(name = "Politica.findByFechaCreacion", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.fechaCreacion = :fechaCreacion")
-    , @NamedQuery(name = "Politica.findByFechaActualizacion", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "Politica.findByColumn", query = "SELECT DISTINCT(t) FROM Politica t WHERE lower(t.nombre) LIKE lower(:nombrePolitica) and lower(t.descripcion) LIKE lower(:descripcion) and lower(t.objetivo) LIKE lower(:objetivo)")
-    , @NamedQuery(name = "Politica.findByUsuario", query = "SELECT DISTINCT(t) FROM Politica t WHERE t.usuario = :usuario")
-    , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT DISTINCT(t) FROM Politica t WHERE lower(t.nombre) LIKE lower(:nombrePolitica) or lower(t.descripcion) LIKE lower(:descripcion) or lower(t.objetivo) LIKE lower(:objetivo)")})
+    @NamedQuery(name = "Politica.findNumRegistros", query = "SELECT COUNT(p) FROM Politica p")
+    , @NamedQuery(name = "Politica.findAll", query = "SELECT DISTINCT(p) FROM Politica p JOIN p.conciliaciones c")
+    , @NamedQuery(name = "Politica.findAllTree", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN FETCH p.conciliaciones c")
+    , @NamedQuery(name = "Politica.findAllTreeById", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN FETCH p.conciliaciones c WHERE p.id = :idPolitica")
+    , @NamedQuery(name = "Politica.findPoliticaSinConciliacion", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN p.conciliaciones c WHERE c.id IS NULL")
+    , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.id = :codPolitica")
+    , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.nombre LIKE :nombrePolitica")
+    , @NamedQuery(name = "Politica.findByDescripcion", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.descripcion = :descripcion")
+    , @NamedQuery(name = "Politica.findByObjetivo", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.objetivo = :objetivo")
+    , @NamedQuery(name = "Politica.findByFechaCreacion", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.fechaCreacion = :fechaCreacion")
+    , @NamedQuery(name = "Politica.findByFechaActualizacion", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "Politica.findByColumn", query = "SELECT DISTINCT(p) FROM Politica p WHERE lower(p.nombre) LIKE lower(:nombrePolitica) and lower(p.descripcion) LIKE lower(:descripcion) and lower(p.objetivo) LIKE lower(:objetivo)")
+    , @NamedQuery(name = "Politica.findByUsuario", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.usuario = :usuario")
+    , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN FETCH p.conciliaciones c WHERE lower(p.nombre) LIKE lower(:nombrePolitica) or lower(p.descripcion) LIKE lower(:descripcion) or lower(p.objetivo) LIKE lower(:objetivo) or lower(c.nombre) LIKE lower(:nombreConciliacion)")})
 
 public class Politica extends Padre implements Serializable {
-    private static final long serialVersionUID = 1L;
-    /*
-    @Id
-    @Basic(optional = false)
-    @Column(name = "COD_POLITICA")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    */
-    @Id
-    @Basic(optional = false)
-    @Column(name = "COD_POLITICA")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
+    @Id
+    @Basic(optional = false)
+    @Column(name = "COD_POLITICA")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     
     @Basic(optional = false)
     @NotNull

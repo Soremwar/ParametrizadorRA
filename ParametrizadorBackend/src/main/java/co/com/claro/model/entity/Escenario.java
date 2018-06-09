@@ -38,10 +38,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Escenario.findByImpacto", query = "SELECT e FROM Escenario e WHERE e.impacto = :impacto")
     , @NamedQuery(name = "Escenario.findByFechaCreacion", query = "SELECT e FROM Escenario e WHERE e.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Escenario.findByFechaActualizacion", query = "SELECT e FROM Escenario e WHERE e.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "Escenario.findByConciliacionNull", query = "SELECT t FROM Escenario t WHERE t.conciliacion IS null")
-    , @NamedQuery(name = "Escenario.findByConciliacion", query = "SELECT t FROM Escenario t WHERE t.conciliacion.id = :codConciliacion")
+    , @NamedQuery(name = "Escenario.findByConciliacionNull", query = "SELECT e FROM Escenario e WHERE e.conciliacion IS null")
+    , @NamedQuery(name = "Escenario.findByConciliacion", query = "SELECT e FROM Escenario e WHERE e.conciliacion.id = :codConciliacion")
     , @NamedQuery(name = "Escenario.findByUsuario", query = "SELECT e FROM Escenario e WHERE e.usuario = :usuario")
-    , @NamedQuery(name = "Escenario.findByAnyColumn", query = "SELECT DISTINCT(t) FROM Escenario t WHERE lower(t.nombre) LIKE lower(:nombreEscenario) or lower(t.impacto) LIKE lower(:impacto) ")})
+    , @NamedQuery(name = "Escenario.findByAnyColumn", query = "SELECT DISTINCT(e) FROM Escenario e WHERE lower(e.nombre) LIKE lower(:nombreEscenario) or lower(e.impacto) LIKE lower(:impacto) or lower(e.conciliacion.nombre) LIKE lower(:nombreConciliacion)")})
         
 public class Escenario implements Serializable {
 

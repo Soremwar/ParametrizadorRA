@@ -6,7 +6,6 @@
 package co.com.claro.ejb.dao;
 
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
-import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
@@ -48,6 +47,8 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findByAnyColumn", Escenario.class);
         query.setParameter("nombreEscenario", "%" + busqueda + "%");
         query.setParameter("impacto", "%" + busqueda + "%");
+        query.setParameter("nombreConciliacion", "%" + busqueda + "%");
+       
         List<Escenario> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
