@@ -164,6 +164,9 @@ public class ConciliacionRest{
         if (conciliacionActual != null) {
             entidadHijaJPA.setFechaCreacion(conciliacionActual.getFechaCreacion());
             entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now())); 
+            if (entidad.getNombre() == null){
+                entidadHijaJPA.setNombre(conciliacionActual.getNombre());
+            } 
             if (entidad.getIdPolitica() != null) {
                 polAux = getPoliticaToAssign(entidad);
                 entidadHijaJPA.setPolitica(polAux);

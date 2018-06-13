@@ -153,6 +153,9 @@ public class EscenarioRest {
             entidadHijaJPA.setFechaCreacion(escenarioActual.getFechaCreacion());
             entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
             concAux = getConciliacionToAssign(entidad);
+            if (entidad.getNombre() == null){
+                entidadHijaJPA.setNombre(escenarioActual.getNombre());
+            } 
             if (concAux != null) {
                 entidadHijaJPA.setConciliacion(concAux);
             }
