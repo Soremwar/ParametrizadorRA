@@ -9,6 +9,7 @@ import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -98,10 +99,10 @@ public class Conciliacion implements Serializable {
     private Politica politica;
     
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch=FetchType.EAGER, mappedBy = "conciliacion", orphanRemoval = true)
+    @OneToMany(fetch=FetchType.EAGER, mappedBy = "conciliacion", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Escenario> escenarios;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "conciliacion")
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, mappedBy = "conciliacion")
     private Collection<WsTransformacion> wsTransformacionesCollection;
 
     
@@ -148,7 +149,7 @@ public class Conciliacion implements Serializable {
     }
 
     public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+        this.fechaCreacion = fechaCreacion != null ? fechaCreacion : Date.from(Instant.now());
     }
 
     public String getNombre() {

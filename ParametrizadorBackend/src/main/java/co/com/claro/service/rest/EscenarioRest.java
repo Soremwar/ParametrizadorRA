@@ -119,6 +119,7 @@ public class EscenarioRest {
         managerDAO.create(entidadHijaJPA);
         if (entidadPadreJPA != null && entidadPadreJPA.getEscenarios() != null) {
             entidadPadreJPA.getEscenarios().add(entidadHijaJPA);
+            entidadPadreJPA.setFechaCreacion(Date.from(Instant.now()));
             padreDAO.edit(entidadPadreJPA);
         }        
         return Response.status(Response.Status.CREATED).entity(entidadHijaJPA).build();

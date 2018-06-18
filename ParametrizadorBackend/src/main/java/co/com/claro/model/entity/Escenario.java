@@ -7,8 +7,10 @@ package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.EscenarioDTO;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -57,9 +60,12 @@ public class Escenario implements Serializable {
     private String nombre;
     @Column(name = "IMPACTO")
     private String impacto;
+    
     @Column(name = "FECHA_CREACION")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
+    @XmlTransient
     private Date fechaCreacion;
+    
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.DATE)
     private Date fechaActualizacion;
@@ -69,7 +75,7 @@ public class Escenario implements Serializable {
     private String usuarioAsignado;
     
 
-    @ManyToOne//(fetch=FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "COD_CONCILIACION")
     private Conciliacion conciliacion;
 
@@ -114,7 +120,9 @@ public class Escenario implements Serializable {
     }
 
     public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+        //if (fechaCreacion != null) {
+            this.fechaCreacion = fechaCreacion != null ? fechaCreacion : Date.from(Instant.now());
+        //}
     }
 
     public Date getFechaActualizacion() {

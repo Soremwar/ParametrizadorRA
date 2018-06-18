@@ -162,7 +162,7 @@ public class ConciliacionRest{
         }
         ConciliacionDTO conciliacionActual = getById(entidad.getId());
         if (conciliacionActual != null) {
-            entidadHijaJPA.setFechaCreacion(conciliacionActual.getFechaCreacion());
+            entidadHijaJPA.setFechaCreacion(conciliacionActual.getFechaCreacion() != null ? conciliacionActual.getFechaCreacion() : Date.from(Instant.now()));
             entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now())); 
             if (entidad.getNombre() == null){
                 entidadHijaJPA.setNombre(conciliacionActual.getNombre());
@@ -171,11 +171,13 @@ public class ConciliacionRest{
                 polAux = getPoliticaToAssign(entidad);
                 entidadHijaJPA.setPolitica(polAux);
             }
-            managerDAO.edit(entidadHijaJPA);
             if (entidadPadreJPA != null && entidadPadreJPA.getConciliaciones() != null){
                 entidadPadreJPA.getConciliaciones().add(entidadHijaJPA);
+                entidadPadreJPA.setFechaCreacion(Date.from(Instant.now()));
                 padreDAO.edit(entidadPadreJPA);           
             }
+            managerDAO.edit(entidadHijaJPA);
+
             return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
