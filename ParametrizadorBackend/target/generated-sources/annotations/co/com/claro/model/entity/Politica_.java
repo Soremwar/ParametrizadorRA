@@ -1,20 +1,18 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.entity.Conciliacion;
-import co.com.claro.model.entity.parent.Padre_;
 import java.util.Date;
 import javax.annotation.Generated;
-import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-06-09T16:48:03")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-07-05T22:04:10")
 @StaticMetamodel(Politica.class)
-public class Politica_ extends Padre_ {
+public class Politica_ { 
 
     public static volatile SingularAttribute<Politica, String> descripcion;
     public static volatile SingularAttribute<Politica, String> objetivo;
-    public static volatile CollectionAttribute<Politica, Conciliacion> conciliaciones;
+    public static volatile SingularAttribute<Politica, Conciliacion> conciliaciones;
     public static volatile SingularAttribute<Politica, Date> fechaCreacion;
     public static volatile SingularAttribute<Politica, Date> fechaActualizacion;
     public static volatile SingularAttribute<Politica, String> usuario;

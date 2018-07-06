@@ -1,7 +1,6 @@
 package co.com.claro.ejb.dao.parent;
 
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
-import co.com.claro.service.rest.excepciones.InvalidDataException;
 import java.util.List;
 import javax.persistence.EntityManager;
 
@@ -22,17 +21,16 @@ public abstract class AbstractJpaDAO<T> {
     protected abstract EntityManager getEntityManager();
 
     public void create(T entity) {
+        //getEntityManager().merge(entity);
         getEntityManager().persist(entity);
+        getEntityManager().flush();
 
     }
 
     public T edit(T entity) {
-        try {
-            getEntityManager().merge(entity);
-        } catch (Exception e) {
-            throw new InvalidDataException("ERROR" + e.toString());
-        }
-
+        getEntityManager().merge(entity);
+        //getEntityManager().setFlushMode(FlushModeType.COMMIT);
+        getEntityManager().flush();
         if (entity == null) {
             throw new DataNotFoundException("No se encontro la entidad " + entity);
         }
@@ -44,6 +42,7 @@ public abstract class AbstractJpaDAO<T> {
     }
 
     public T find(Object id) {
+        getEntityManager().flush();
         Object item = getEntityManager().find(entityClass, id);
         if (item == null) {
             throw new DataNotFoundException("No se encontro el Registro " + id);

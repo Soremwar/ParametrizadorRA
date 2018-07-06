@@ -18,13 +18,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class ConciliacionDTO extends PadreDTO implements Serializable{
+    //campos padre
+    private Integer idPolitica;
+    private String nombrePolitica;
+    
     private String tablaDestino;
     private String camposTablaDestino;
     private String descripcion;
     
-    //campos padre
-    private Integer idPolitica;
-    private String nombrePolitica;
+    private List<EscenarioDTO> escenarios;
+   
 
     public Integer getIdPolitica() {
         return idPolitica;
@@ -33,17 +36,6 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     public void setIdPolitica(Integer idPolitica) {
         this.idPolitica = idPolitica;
     }
-
-    public Object getGetIdPolitica() {
-        return getIdPolitica;
-    }
-
-    public void setGetIdPolitica(Object getIdPolitica) {
-        this.getIdPolitica = getIdPolitica;
-    }
-
-    private List<EscenarioDTO> escenarios;
-    public Object getIdPolitica;
 
     public String getNombrePolitica() {
         return nombrePolitica;
@@ -77,7 +69,7 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
         this.camposTablaDestino = camposTablaDestino;
     }
     
-
+    
     public List<EscenarioDTO> getEscenarios() {
         return escenarios;
     }

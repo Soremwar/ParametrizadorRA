@@ -9,7 +9,6 @@ import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Politica;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.io.Serializable;
-import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -22,13 +21,14 @@ public class PoliticaDTO extends PadreDTO implements Serializable{
 
     private String objetivo;
     private String descripcion;
-    private List<ConciliacionDTO> conciliaciones;
+    
+    private ConciliacionDTO conciliaciones;
 
-    public List<ConciliacionDTO> getConciliaciones() {
+    public ConciliacionDTO getConciliaciones() {
         return conciliaciones;
     }
 
-    public void setConciliaciones(List<ConciliacionDTO> conciliaciones) {
+    public void setConciliaciones(ConciliacionDTO conciliaciones) {
         this.conciliaciones = conciliaciones;
     }
 

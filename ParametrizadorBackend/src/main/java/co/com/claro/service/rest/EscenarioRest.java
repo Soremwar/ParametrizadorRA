@@ -41,6 +41,7 @@ public class EscenarioRest {
 
     @EJB
     protected EscenarioDAO managerDAO;
+    
     @EJB
     protected ConciliacionDAO padreDAO;
 
@@ -107,23 +108,24 @@ public class EscenarioRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(EscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Conciliacion entidadPadreJPA = null;
-        if (entidad.getIdConciliacion() != null) {
+        Conciliacion entidadPadreJPA;
+        Escenario entidadHijaJPA = entidad.toEntity();
+        entidadHijaJPA.setConciliacion(null);        
+        managerDAO.create(entidadHijaJPA);
+        if ( entidad.getIdConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
             if (entidadPadreJPA == null) {
-                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + " " + entidad.getIdConciliacion());
+                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdConciliacion());
+            } else {
+                entidadHijaJPA.setConciliacion(entidadPadreJPA);
+                managerDAO.edit(entidadHijaJPA);
+                entidadPadreJPA.addEscenario(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
             }
         }
-        Escenario entidadHijaJPA = entidad.toEntity();
-        entidadHijaJPA.setFechaCreacion(Date.from(Instant.now()));
-        managerDAO.create(entidadHijaJPA);
-        if (entidadPadreJPA != null && entidadPadreJPA.getEscenarios() != null) {
-            entidadPadreJPA.getEscenarios().add(entidadHijaJPA);
-            entidadPadreJPA.setFechaCreacion(Date.from(Instant.now()));
-            padreDAO.edit(entidadPadreJPA);
-        }        
-        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA).build();
+        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }   
+    
     /**
      * Actualiza la entidad por su Id
      * @param entidad conciliacion con la cual se va a trabajar
@@ -134,36 +136,26 @@ public class EscenarioRest {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(EscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-    
         Conciliacion entidadPadreJPA = null;
         if (entidad.getIdConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
             if (entidadPadreJPA == null) {
-                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + " " + entidad.getIdConciliacion());
+                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdConciliacion());
             }
         }
-        Escenario entidadHijaJPA = entidad.toEntity();
-        Conciliacion concAux = null;
-        if (entidad.getIdConciliacion() != null && isConciliacionAsignada(entidad)) {
-            MensajeError mensaje = new MensajeError(409, Response.Status.CONFLICT.getReasonPhrase(), "No es posible cambiar la entidad padre. Revise la peticion");
-            return Response.status(Response.Status.OK).entity(mensaje).build();
-        }
-        EscenarioDTO escenarioActual = getById(entidad.getId());
-
-        if (escenarioActual != null) {
-            entidadHijaJPA.setFechaCreacion(escenarioActual.getFechaCreacion());
+        //Hallar La entidad actual para actualizarla
+        Escenario entidadHijaJPA = managerDAO.find(entidad.getId());
+        if (entidadHijaJPA != null) {
             entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
-            concAux = getConciliacionToAssign(entidad);
-            if (entidad.getNombre() == null){
-                entidadHijaJPA.setNombre(escenarioActual.getNombre());
-            } 
-            if (concAux != null) {
-                entidadHijaJPA.setConciliacion(concAux);
-            }
+            entidadHijaJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : entidadHijaJPA.getNombre());
+            entidadHijaJPA.setImpacto(entidad.getImpacto() != null ? entidad.getImpacto() : entidadHijaJPA.getImpacto());
+            entidadHijaJPA.setUsuario(entidad.getUsuario()!= null ? entidad.getUsuario() : entidadHijaJPA.getUsuario());
+            entidadHijaJPA.setUsuarioAsignado(entidad.getUsuarioAsignado() != null ? entidad.getUsuarioAsignado() : entidadHijaJPA.getUsuarioAsignado());
+            entidadHijaJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadHijaJPA.getConciliacion());
             managerDAO.edit(entidadHijaJPA);
-            if (entidadPadreJPA != null && entidadPadreJPA.getEscenarios() != null){
-                entidadPadreJPA.getEscenarios().add(entidadHijaJPA);
-                padreDAO.edit(entidadPadreJPA);           
+            if ((entidadPadreJPA != null)){
+                entidadPadreJPA.addEscenario(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
             }
             return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
         }
@@ -204,11 +196,14 @@ public class EscenarioRest {
         Conciliacion entidadPadreJPA = null;
         if (hijo.getConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(hijo.getConciliacion().getId());
+            entidadPadreJPA.removeEscenario(hijo);
+            //entidadPadreJPA.getConciliaciones().remove(hijo);
         }
-        entidadPadreJPA.getEscenarios().remove(hijo);
         managerDAO.remove(hijo);
-        padreDAO.edit(entidadPadreJPA);
-        MensajeError mensaje = new MensajeError(200, Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        if (entidadPadreJPA != null) {
+            padreDAO.edit(entidadPadreJPA);
+        }
+        MensajeError mensaje = new MensajeError(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     

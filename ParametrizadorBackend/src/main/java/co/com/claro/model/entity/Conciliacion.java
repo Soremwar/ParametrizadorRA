@@ -7,13 +7,15 @@ package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -24,16 +26,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -46,6 +48,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Conciliacion.findAll", query = "SELECT DISTINCT(c) FROM Conciliacion c")
     , @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e ORDER BY c.id ASC") 
     , @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e WHERE c.id = :idConciliacion")  
+    //, @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(c) FROM Conciliacion c ORDER BY c.id ASC") 
+    //, @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT DISTINCT(c) FROM Conciliacion c WHERE c.id = :idConciliacion")  
     , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT c FROM Conciliacion c WHERE c.id = :codConciliacion")
     , @NamedQuery(name = "Conciliacion.findByCamposTablaDestino", query = "SELECT c FROM Conciliacion c WHERE c.camposTablaDestino = :camposTablaDestino")
     , @NamedQuery(name = "Conciliacion.findByDescripcion", query = "SELECT c FROM Conciliacion c WHERE c.descripcion = :descripcion")
@@ -61,11 +65,16 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Conciliacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @Basic(optional = false)
     @Column(name = "COD_CONCILIACION")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    
+    @Size(max = 255)
+    @Column(name = "NOMBRE_CONCILIACION")
+    private String nombre;
     
     @Column(name = "CAMPOS_TABLA_DESTINO")
     private String camposTablaDestino;
@@ -83,10 +92,6 @@ public class Conciliacion implements Serializable {
     private Date fechaCreacion;
     
     @Size(max = 255)
-    @Column(name = "NOMBRE_CONCILIACION")
-    private String nombre;
-    
-    @Size(max = 255)
     @Column(name = "TABLA_DESTINO")
     private String tablaDestino;
     
@@ -94,16 +99,17 @@ public class Conciliacion implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    //@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    //@JoinColumn(name = "COD_POLITICA")
+    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "COD_POLITICA")
     private Politica politica;
     
-    @JsonIgnore
-    @OneToMany(fetch=FetchType.EAGER, mappedBy = "conciliacion", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    private Set<Escenario> escenarios;
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
+    private List<Escenario> escenarios;
 
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, mappedBy = "conciliacion")
-    private Collection<WsTransformacion> wsTransformacionesCollection;
+    //@OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    //private Collection<WsTransformacion> wsTransformacionesCollection;
 
     
     public Conciliacion() {
@@ -112,6 +118,7 @@ public class Conciliacion implements Serializable {
     public Conciliacion(Integer id) {
         this.id = id;
     }
+    
     public Integer getId() {
         return id;
     }
@@ -120,6 +127,14 @@ public class Conciliacion implements Serializable {
         this.id = id;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
     public String getCamposTablaDestino() {
         return camposTablaDestino;
     }
@@ -136,28 +151,20 @@ public class Conciliacion implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Date getFechaActualizacion() {
-        return fechaActualizacion;
-    }
-
-    public void setFechaActualizacion(Date fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
-    }
-
     public Date getFechaCreacion() {
         return fechaCreacion;
     }
 
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion != null ? fechaCreacion : Date.from(Instant.now());
+     }
+
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
     }
 
     public String getTablaDestino() {
@@ -176,6 +183,7 @@ public class Conciliacion implements Serializable {
         this.usuario = usuario;
     }
 
+    
     public Politica getPolitica() {
         return politica;
     }
@@ -184,14 +192,27 @@ public class Conciliacion implements Serializable {
         this.politica = politica;
     }
 
-    @XmlTransient
-    public Set<Escenario> getEscenarios() {
+    public void addEscenario(Escenario escenario) {
+        escenarios.add(escenario);
+        escenario.setConciliacion(this);
+    }
+    
+    public void removeEscenario(Escenario escenario) {
+        this.escenarios.remove(escenario);
+        escenario.setConciliacion(null);
+    }
+    
+    
+    public List<Escenario> getEscenarios() {
         return escenarios;
     }
 
-    public void setEscenarios(Set<Escenario> escenarios) {
+    @Transient
+    public void setEscenarios(List<Escenario> escenarios) {
         this.escenarios = escenarios;
     }
+    
+    
 
     @Override
     public int hashCode() {
@@ -232,7 +253,6 @@ public class Conciliacion implements Serializable {
         entidadDTO.setCamposTablaDestino(camposTablaDestino);
         entidadDTO.setTablaDestino(tablaDestino);
         entidadDTO.setUsuario(usuario);
-        entidadDTO.setIdPolitica(politica != null ? politica.getId() : null);
         if (escenarios != null) {
             List<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(toList());
             entidadDTO.setEscenarios(lstEscenarios);
@@ -244,14 +264,5 @@ public class Conciliacion implements Serializable {
         return entidadDTO;
     }
 
-    @XmlTransient
-    @org.codehaus.jackson.annotate.JsonIgnore
-    public Collection<WsTransformacion> getWsTransformacionesCollection() {
-        return wsTransformacionesCollection;
-    }
-
-    public void setWsTransformacionesCollection(Collection<WsTransformacion> wsTransformacionesCollection) {
-        this.wsTransformacionesCollection = wsTransformacionesCollection;
-    }
     
 }

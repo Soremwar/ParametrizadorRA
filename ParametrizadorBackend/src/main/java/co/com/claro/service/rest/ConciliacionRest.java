@@ -120,19 +120,20 @@ public class ConciliacionRest{
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(ConciliacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Politica entidadPadreJPA = null;
-        if (entidad.getIdPolitica() != null) {
+        Politica entidadPadreJPA;
+        Conciliacion entidadHijaJPA = entidad.toEntity();
+        entidadHijaJPA.setPolitica(null);
+        managerDAO.create(entidadHijaJPA);
+        if ( entidad.getIdPolitica() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdPolitica());
             if (entidadPadreJPA == null) {
                 throw new DataNotFoundException("Datos no encontrados " + entidad.getIdPolitica());
+            } else {
+                entidadHijaJPA.setPolitica(entidadPadreJPA);
+                managerDAO.edit(entidadHijaJPA);
+                entidadPadreJPA.addConciliacion(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
             }
-        }
-        Conciliacion entidadHijaJPA = entidad.toEntity();
-        entidadHijaJPA.setFechaCreacion(Date.from(Instant.now()));
-        managerDAO.create(entidadHijaJPA);
-        if (entidadPadreJPA != null && entidadPadreJPA.getConciliaciones() != null){
-            entidadPadreJPA.getConciliaciones().add(entidadHijaJPA);
-            padreDAO.edit(entidadPadreJPA);           
         }
         return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }
@@ -154,58 +155,27 @@ public class ConciliacionRest{
                 throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdPolitica());
             }
         }
-        Conciliacion entidadHijaJPA = entidad.toEntity();
-        Politica polAux = null;
-        if (entidad.getIdPolitica() != null && isEntidadPadreAsignada(entidad)) {
-            MensajeError mensaje = new MensajeError(Response.Status.CONFLICT.getStatusCode(), "Conflicto", "No es posible cambiar la entidad padre. Revise la peticion");
-            return Response.status(Response.Status.CONFLICT).entity(mensaje).build();
-        }
-        ConciliacionDTO conciliacionActual = getById(entidad.getId());
-        if (conciliacionActual != null) {
-            entidadHijaJPA.setFechaCreacion(conciliacionActual.getFechaCreacion() != null ? conciliacionActual.getFechaCreacion() : Date.from(Instant.now()));
-            entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now())); 
-            if (entidad.getNombre() == null){
-                entidadHijaJPA.setNombre(conciliacionActual.getNombre());
-            } 
-            if (entidad.getIdPolitica() != null) {
-                polAux = getPoliticaToAssign(entidad);
-                entidadHijaJPA.setPolitica(polAux);
-            }
-            if (entidadPadreJPA != null && entidadPadreJPA.getConciliaciones() != null){
-                entidadPadreJPA.getConciliaciones().add(entidadHijaJPA);
-                entidadPadreJPA.setFechaCreacion(Date.from(Instant.now()));
-                padreDAO.edit(entidadPadreJPA);           
-            }
+        //Hallar La entidad actual para actualizarla
+        Conciliacion entidadHijaJPA = managerDAO.find(entidad.getId());
+        if (entidadHijaJPA != null) {
+            entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
+            entidadHijaJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : entidadHijaJPA.getNombre());
+            entidadHijaJPA.setTablaDestino(entidad.getTablaDestino() != null ? entidad.getTablaDestino() : entidadHijaJPA.getTablaDestino());
+            entidadHijaJPA.setCamposTablaDestino(entidad.getCamposTablaDestino() != null ? entidad.getCamposTablaDestino() : entidadHijaJPA.getCamposTablaDestino());
+            entidadHijaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadHijaJPA.getDescripcion());
+            entidadHijaJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadHijaJPA.getUsuario());
+            entidadHijaJPA.setPolitica(entidad.getIdPolitica() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadHijaJPA.getPolitica());
             managerDAO.edit(entidadHijaJPA);
-
+            if ((entidadPadreJPA != null)){
+                entidadPadreJPA.addConciliacion(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
+            }
             return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
       
     }
     
-    /**
-     * Obtiene la entidad padre que hay que asignar
-     * @param entidadActualDTO
-     * @return la entidad padre que hay que asignar
-     */
-    private Politica getPoliticaToAssign(ConciliacionDTO entidadActualDTO){
-        ConciliacionDTO entidadInBDDTO = getById(entidadActualDTO.getId());
-        Politica politica = new Politica();
-        //Si no tiene padre en la base de datos
-        if (entidadInBDDTO.getIdPolitica() == null) {
-            politica.setId(entidadActualDTO.getIdPolitica());
-        //Si ya tiene padre 
-        } else {
-            politica.setId(entidadInBDDTO.getIdPolitica());
-        }    
-        return politica;
-    } 
-    
-    private Boolean isEntidadPadreAsignada(ConciliacionDTO entidadActualDTO){
-        ConciliacionDTO entidadInBDDTO = getById(entidadActualDTO.getId());
-        return entidadInBDDTO.getIdPolitica() != null;
-    }  
     
     /**
      * Borra una conciliacion por su Id
@@ -219,8 +189,12 @@ public class ConciliacionRest{
         Conciliacion hijo = managerDAO.find(id);
         Politica entidadPadreJPA = null;
         if (hijo.getPolitica() != null) {
+            if (hijo.getEscenarios() != null) {
+                throw new DataNotFoundException("Esta entidad tiene hijos asociados ");
+            }
             entidadPadreJPA = padreDAO.find(hijo.getPolitica().getId());
-            entidadPadreJPA.getConciliaciones().remove(hijo);
+            entidadPadreJPA.removeConciliacion(hijo);
+            //entidadPadreJPA.getConciliaciones().remove(hijo);
         }
         managerDAO.remove(hijo);
         if (entidadPadreJPA != null) {

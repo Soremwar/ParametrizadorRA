@@ -6,7 +6,6 @@
 package co.com.claro.model.dto;
 
 import co.com.claro.model.dto.parent.PadreDTO;
-import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,11 +17,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class EscenarioDTO extends PadreDTO implements Serializable{
 
-    private String impacto;
     //campos padre
     private Integer idConciliacion;
     private String nombreConciliacion;
     private String usuarioAsignado;
+    
+    private String impacto;
+
 
     public String getUsuarioAsignado() {
         return usuarioAsignado;
@@ -68,7 +69,7 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
         //Campos de la entidad
         p.setUsuarioAsignado(usuarioAsignado);
         p.setImpacto(this.impacto);
-        p.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
+        //p.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
         return p;
         
     }

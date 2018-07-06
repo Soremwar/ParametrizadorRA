@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +25,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Escenario.findByFechaCreacion", query = "SELECT e FROM Escenario e WHERE e.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Escenario.findByFechaActualizacion", query = "SELECT e FROM Escenario e WHERE e.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "Escenario.findByConciliacionNull", query = "SELECT e FROM Escenario e WHERE e.conciliacion IS null")
-    , @NamedQuery(name = "Escenario.findByConciliacion", query = "SELECT e FROM Escenario e WHERE e.conciliacion.id = :codConciliacion")
+    , @NamedQuery(name = "Escenario.findByConciliacion", query = "SELECT e FROM Escenario e WHERE e.conciliacion = :codConciliacion")
     , @NamedQuery(name = "Escenario.findByUsuario", query = "SELECT e FROM Escenario e WHERE e.usuario = :usuario")
     , @NamedQuery(name = "Escenario.findByAnyColumn", query = "SELECT DISTINCT(e) FROM Escenario e WHERE lower(e.nombre) LIKE lower(:nombreEscenario) or lower(e.impacto) LIKE lower(:impacto) or lower(e.conciliacion.nombre) LIKE lower(:nombreConciliacion)")})
         
@@ -58,24 +58,26 @@ public class Escenario implements Serializable {
     @Basic(optional = false)
     @Column(name = "NOMBRE_ESCENARIO")
     private String nombre;
+    
     @Column(name = "IMPACTO")
     private String impacto;
     
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
-    @XmlTransient
     private Date fechaCreacion;
     
     @Column(name = "FECHA_ACTUALIZACION")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
+    
     @Column(name = "USUARIO")
     private String usuario;
+    
     @Column(name = "USUARIO_ASIGNADO")
     private String usuarioAsignado;
     
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION")
     private Conciliacion conciliacion;
 
@@ -119,11 +121,10 @@ public class Escenario implements Serializable {
         return fechaCreacion;
     }
 
+
     public void setFechaCreacion(Date fechaCreacion) {
-        //if (fechaCreacion != null) {
-            this.fechaCreacion = fechaCreacion != null ? fechaCreacion : Date.from(Instant.now());
-        //}
-    }
+        this.fechaCreacion = fechaCreacion != null ? fechaCreacion : Date.from(Instant.now());
+     }
 
     public Date getFechaActualizacion() {
         return fechaActualizacion;

@@ -15,6 +15,7 @@ import java.util.Date;
 
 public class PadreDTO implements Serializable {
     private Integer id;
+
     private String nombre;
     private String usuario;
     
@@ -28,8 +29,8 @@ public class PadreDTO implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }   
- 
+    }
+    
     public String getNombre() {
         return nombre;
     }

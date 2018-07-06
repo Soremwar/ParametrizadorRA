@@ -10,6 +10,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.eclipse.persistence.exceptions.DatabaseException;
 
+
 /**
  *
  * @author andresbedoya

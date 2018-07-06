@@ -5,11 +5,9 @@ import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.dto.PoliticaDTO;
-import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -121,8 +119,8 @@ public class PoliticaRest{
     public Response add(PoliticaDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
         Politica entidadAux = entidad.toEntity();
-        entidadAux.setFechaCreacion(Date.from(ZonedDateTime.now().toInstant()));
-        entidadAux.setFechaActualizacion(Date.from(ZonedDateTime.now().toInstant()));
+        //entidadAux.setFechaCreacion(Date.from(ZonedDateTime.now().toInstant()));
+        //entidadAux.setFechaActualizacion(Date.from(ZonedDateTime.now().toInstant()));
         managerDAO.create(entidadAux);
         return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
     }
@@ -137,21 +135,19 @@ public class PoliticaRest{
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(PoliticaDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-        PoliticaDTO entidadActual = getById(entidad.getId());
-        Politica entidadDAO = managerDAO.findByAllTreeById(entidad.getId());
-        Politica entidadAux = entidad.toEntity();
-        if (entidadActual != null) {
-            entidadAux.setFechaCreacion(entidadActual.getFechaCreacion());
-            entidadAux.setFechaActualizacion(Date.from(Instant.now()));
-            List<Conciliacion> lstConciliacionDTO = (List<Conciliacion>) entidadDAO.getConciliaciones();
-            managerDAO.edit(entidadAux);
-            entidadAux.setConciliaciones(lstConciliacionDTO);
-            managerDAO.edit(entidadAux);
-            return Response.status(Response.Status.OK).entity(entidadAux.toDTO()).build();
-            
+        //Hallar La entidad actual para actualizarla
+        Politica politicaJPA = managerDAO.find(entidad.getId());
+        if (politicaJPA != null) {
+            politicaJPA.setFechaActualizacion(Date.from(Instant.now()));
+            politicaJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : politicaJPA.getNombre());
+            politicaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : politicaJPA.getDescripcion());
+            politicaJPA.setObjetivo(entidad.getObjetivo() != null ? entidad.getObjetivo() : politicaJPA.getObjetivo());
+            politicaJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : politicaJPA.getUsuario());
+            managerDAO.edit(politicaJPA);
+            return Response.status(Response.Status.OK).entity(politicaJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
-    }
+      }
     
      /**
      * Borra una politica por su Id

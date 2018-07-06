@@ -28,7 +28,7 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
             mensaje = new MensajeError(409, Response.Status.CONFLICT.getReasonPhrase(), exception.getCause().getMessage());
             return Response.status(Response.Status.CONFLICT).entity(mensaje).build();
             
-        }
+        } 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(mensaje).build();
     }
     
