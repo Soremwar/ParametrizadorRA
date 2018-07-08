@@ -17,11 +17,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class EscenarioDTO extends PadreDTO implements Serializable{
 
-    //campos padre
+    //Campos padre
     private Integer idConciliacion;
     private String nombreConciliacion;
+
+    //Campos propios
     private String usuarioAsignado;
-    
     private String impacto;
 
 

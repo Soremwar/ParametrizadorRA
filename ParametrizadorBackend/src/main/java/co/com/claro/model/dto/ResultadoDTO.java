@@ -17,7 +17,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ResultadoDTO implements Serializable{
 
     private Integer idResultado;
-    private Long idEjecucion;
+    private Integer idEjecucion;
+    private Integer idEscenario;
+
+
     private String xml;
 
     public Integer getIdResultado() {
@@ -28,11 +31,11 @@ public class ResultadoDTO implements Serializable{
         this.idResultado = idResultado;
     }
 
-    public Long getIdEjecucion() {
+    public Integer getIdEjecucion() {
         return idEjecucion;
     }
 
-    public void setIdEjecucion(Long idEjecucion) {
+    public void setIdEjecucion(Integer idEjecucion) {
         this.idEjecucion = idEjecucion;
     }
 
@@ -44,12 +47,19 @@ public class ResultadoDTO implements Serializable{
         this.xml = xml;
     }
 
+    public Integer getIdEscenario() {
+        return idEscenario;
+    }
+
+    public void setIdEscenario(Integer idEscenario) {
+        this.idEscenario = idEscenario;
+    }
     public Resultado toEntity(){
         Resultado p = new Resultado();
-        p.setCodResultados(this.idResultado);
-        p.setCodEjecucion(this.idEjecucion);
+        p.setId(this.idResultado);
         p.setXmlResultado(this.xml);
        
         return p;
     }
+    
 }

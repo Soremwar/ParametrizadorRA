@@ -1,20 +1,22 @@
-package co.com.claro.ejb.dao.parent;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package service;
 
-import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
 
 /**
- * Contiene toda la implementacion generica de todos los metodos estandar de DAO
  *
- * @author andres bedoya
- * @param <T>
+ * @author andresbedoya
  */
-public abstract class AbstractJpaDAO<T> {
+public abstract class AbstractFacade<T> {
 
-    private final Class<T> entityClass;
+    private Class<T> entityClass;
 
-    public AbstractJpaDAO(Class entityClass) {
+    public AbstractFacade(Class<T> entityClass) {
         this.entityClass = entityClass;
     }
 
@@ -22,17 +24,10 @@ public abstract class AbstractJpaDAO<T> {
 
     public void create(T entity) {
         getEntityManager().persist(entity);
-        getEntityManager().flush();
-
     }
 
-    public T edit(T entity) {
+    public void edit(T entity) {
         getEntityManager().merge(entity);
-        getEntityManager().flush();
-        if (entity == null) {
-            throw new DataNotFoundException("No se encontro la entidad " + entity);
-        }
-        return entity;
     }
 
     public void remove(T entity) {
@@ -40,34 +35,21 @@ public abstract class AbstractJpaDAO<T> {
     }
 
     public T find(Object id) {
-        getEntityManager().flush();
-        Object item = getEntityManager().find(entityClass, id);
-        if (item == null) {
-            throw new DataNotFoundException("No se encontro el Registro " + id);
-        }
         return getEntityManager().find(entityClass, id);
     }
 
     public List<T> findAll() {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
-        List<T> lst = getEntityManager().createQuery(cq).getResultList();
-        if (lst == null || lst.isEmpty()) {
-            throw new DataNotFoundException("No se encontraron datos");
-        }
-        return lst;
+        return getEntityManager().createQuery(cq).getResultList();
     }
 
     public List<T> findRange(int[] range) {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
         javax.persistence.Query q = getEntityManager().createQuery(cq);
-        q.setMaxResults(range[1]);// - range[0] + 1);
+        q.setMaxResults(range[1] - range[0] + 1);
         q.setFirstResult(range[0]);
-        List<T> lst = q.getResultList();
-        if (lst == null || lst.isEmpty()) {
-            throw new DataNotFoundException("No se encontraron datos");
-        }
         return q.getResultList();
     }
 
@@ -78,5 +60,5 @@ public abstract class AbstractJpaDAO<T> {
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }
-
+    
 }

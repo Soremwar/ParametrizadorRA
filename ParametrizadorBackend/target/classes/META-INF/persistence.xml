@@ -3,6 +3,7 @@
   <persistence-unit name="co.com.claro_ParametrizadorClaro_war_1.0PU" transaction-type="JTA">
     <jta-data-source>java:app/Parametrizador</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
     <properties>
     </properties>
   </persistence-unit>

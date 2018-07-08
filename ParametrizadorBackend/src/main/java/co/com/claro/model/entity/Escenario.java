@@ -9,6 +9,7 @@ import co.com.claro.model.dto.EscenarioDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,6 +22,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -80,6 +82,9 @@ public class Escenario implements Serializable {
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION")
     private Conciliacion conciliacion;
+    
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "escenario")
+    private List<Indicador> indicadores;
 
     public Escenario() {
     }
@@ -157,6 +162,17 @@ public class Escenario implements Serializable {
     public void setConciliacion(Conciliacion conciliacion) {
         this.conciliacion = conciliacion;
     }
+    
+    public void addIndicador(Indicador indicador) {
+        this.indicadores.add(indicador);
+        indicador.setEscenario(this);
+    }
+    
+    public void removeEscenario(Indicador indicador) {
+        this.indicadores.remove(indicador);
+        indicador.setEscenario(null);
+    }
+    
 
     @Override
     public int hashCode() {
@@ -198,5 +214,5 @@ public class Escenario implements Serializable {
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
         return entidadDTO;
     }
-    
+
 }

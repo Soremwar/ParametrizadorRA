@@ -8,10 +8,17 @@ package co.com.claro.model.entity;
 import co.com.claro.model.dto.ResultadoDTO;
 import java.io.Serializable;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -28,55 +35,46 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Resultados.findAll", query = "SELECT r FROM Resultado r")
-    , @NamedQuery(name = "Resultados.findByCodResultados", query = "SELECT r FROM Resultado r WHERE r.codResultados = :codResultados")
-    , @NamedQuery(name = "Resultados.findByCodEjecucion", query = "SELECT r FROM Resultado r WHERE r.codEjecucion = :codEjecucion")})
+    , @NamedQuery(name = "Resultados.findByCodResultados", query = "SELECT r FROM Resultado r WHERE r.id = :codResultados")
+    , @NamedQuery(name = "Resultados.findByCodEjecucion", query = "SELECT r FROM Resultado r WHERE r.ejecucion = :codEjecucion")})
+@Cacheable(false)
 public class Resultado implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "COD_RESULTADOS")
-    private Integer codResultados;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "COD_EJECUCION")
-    private long codEjecucion;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Lob
     @Size(min = 1, max = 2147483647)
     @Column(name = "XML_RESULTADO")
     private String xmlResultado;
+    
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COD_EJECUCION")
+    private EjecucionProceso ejecucion;
+    
 
     public Resultado() {
     }
 
     public Resultado(Integer codResultados) {
-        this.codResultados = codResultados;
+        this.id = codResultados;
     }
 
-    public Resultado(Integer codResultados, long codEjecucion, String xmlResultado) {
-        this.codResultados = codResultados;
-        this.codEjecucion = codEjecucion;
-        this.xmlResultado = xmlResultado;
+
+    public Integer getId() {
+        return id;
     }
 
-    public Integer getCodResultados() {
-        return codResultados;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setCodResultados(Integer codResultados) {
-        this.codResultados = codResultados;
-    }
-
-    public long getCodEjecucion() {
-        return codEjecucion;
-    }
-
-    public void setCodEjecucion(long codEjecucion) {
-        this.codEjecucion = codEjecucion;
-    }
 
     public String getXmlResultado() {
         return xmlResultado;
@@ -86,10 +84,18 @@ public class Resultado implements Serializable {
         this.xmlResultado = xmlResultado;
     }
 
+    public EjecucionProceso getEjecucion() {
+        return ejecucion;
+    }
+
+    public void setEjecucion(EjecucionProceso ejecucion) {
+        this.ejecucion = ejecucion;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (codResultados != null ? codResultados.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -99,7 +105,7 @@ public class Resultado implements Serializable {
             return false;
         }
         Resultado other = (Resultado) object;
-        if ((this.codResultados == null && other.codResultados != null) || (this.codResultados != null && !this.codResultados.equals(other.codResultados))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -108,9 +114,13 @@ public class Resultado implements Serializable {
     
     public ResultadoDTO toDTO() {
         ResultadoDTO entidadDTO = new ResultadoDTO();
-        entidadDTO.setIdEjecucion(this.codEjecucion);
-        entidadDTO.setIdResultado(this.codResultados);
+        //entidadDTO.setIdEjecucion(this.codEjecucion);
+        entidadDTO.setIdResultado(this.id);
         entidadDTO.setXml(this.xmlResultado);
+        
+        //Campos padre
+        entidadDTO.setIdEjecucion(ejecucion != null ? ejecucion.getId() : null); 
+        entidadDTO.setIdEscenario(ejecucion != null ? ejecucion.getCodEscenario() : null);
         return entidadDTO;
         
     }
@@ -118,7 +128,7 @@ public class Resultado implements Serializable {
     
     @Override
     public String toString() {
-        return "co.com.claro.model.entity.Resultados[ codResultados=" + codResultados + " ]";
+        return "co.com.claro.model.entity.Resultados[ codResultados=" + id + " ]";
     }
     
 }

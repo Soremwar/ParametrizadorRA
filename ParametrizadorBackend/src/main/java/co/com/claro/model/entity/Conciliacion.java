@@ -7,13 +7,8 @@ package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
@@ -33,7 +28,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -201,17 +195,6 @@ public class Conciliacion implements Serializable {
         this.escenarios.remove(escenario);
         escenario.setConciliacion(null);
     }
-    
-    
-    public List<Escenario> getEscenarios() {
-        return escenarios;
-    }
-
-    @Transient
-    public void setEscenarios(List<Escenario> escenarios) {
-        this.escenarios = escenarios;
-    }
-    
     
 
     @Override

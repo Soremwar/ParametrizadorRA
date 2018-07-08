@@ -7,7 +7,6 @@ package co.com.claro.model.dto;
 
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Politica;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -16,7 +15,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author andres
  */
 @XmlRootElement
-@JsonPropertyOrder({ "id", "nombre", "usuario", "fechaCreacion", "fechaActualizacion","objetivo", "descripcion"})
 public class PoliticaDTO extends PadreDTO implements Serializable{
 
     private String objetivo;

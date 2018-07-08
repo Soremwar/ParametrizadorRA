@@ -37,9 +37,9 @@ import javax.ws.rs.core.Response;
  * @author Andres Bedoya
  */
 @Path("conciliaciones")
-public class ConciliacionRest{
+public class ConciliacionREST{
     @Transient
-    private static final Logger logger = Logger.getLogger(ConciliacionRest.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(ConciliacionREST.class.getSimpleName());
 
     @EJB
     protected ConciliacionDAO managerDAO;
@@ -123,17 +123,19 @@ public class ConciliacionRest{
         Politica entidadPadreJPA;
         Conciliacion entidadHijaJPA = entidad.toEntity();
         entidadHijaJPA.setPolitica(null);
-        managerDAO.create(entidadHijaJPA);
         if ( entidad.getIdPolitica() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdPolitica());
             if (entidadPadreJPA == null) {
                 throw new DataNotFoundException("Datos no encontrados " + entidad.getIdPolitica());
             } else {
+                managerDAO.create(entidadHijaJPA);
                 entidadHijaJPA.setPolitica(entidadPadreJPA);
                 managerDAO.edit(entidadHijaJPA);
                 entidadPadreJPA.addConciliacion(entidadHijaJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
+        } else {
+            managerDAO.create(entidadHijaJPA);
         }
         return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }
@@ -188,13 +190,12 @@ public class ConciliacionRest{
     public Response remove(@PathParam("id") Integer id) {
         Conciliacion hijo = managerDAO.find(id);
         Politica entidadPadreJPA = null;
+        /*if (hijo.getEscenarios() != null && hijo.getEscenarios().size() > 0) {
+            throw new InvalidDataException("Esta entidad tiene hijos asociados ");
+        }*/
         if (hijo.getPolitica() != null) {
-            if (hijo.getEscenarios() != null) {
-                throw new DataNotFoundException("Esta entidad tiene hijos asociados ");
-            }
             entidadPadreJPA = padreDAO.find(hijo.getPolitica().getId());
             entidadPadreJPA.removeConciliacion(hijo);
-            //entidadPadreJPA.getConciliaciones().remove(hijo);
         }
         managerDAO.remove(hijo);
         if (entidadPadreJPA != null) {

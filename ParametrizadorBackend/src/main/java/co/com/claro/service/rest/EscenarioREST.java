@@ -35,9 +35,9 @@ import javax.ws.rs.core.Response;
  * @author Andres Bedoya
  */
 @Path("escenarios")
-public class EscenarioRest {
+public class EscenarioREST {
     @Transient
-    private static final Logger logger = Logger.getLogger(EscenarioRest.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(EscenarioREST.class.getSimpleName());
 
     @EJB
     protected EscenarioDAO managerDAO;
@@ -111,17 +111,20 @@ public class EscenarioRest {
         Conciliacion entidadPadreJPA;
         Escenario entidadHijaJPA = entidad.toEntity();
         entidadHijaJPA.setConciliacion(null);        
-        managerDAO.create(entidadHijaJPA);
+
         if ( entidad.getIdConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
             if (entidadPadreJPA == null) {
                 throw new DataNotFoundException("Datos no encontrados " + entidad.getIdConciliacion());
             } else {
+                managerDAO.create(entidadHijaJPA);
                 entidadHijaJPA.setConciliacion(entidadPadreJPA);
                 managerDAO.edit(entidadHijaJPA);
                 entidadPadreJPA.addEscenario(entidadHijaJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
+        } else {
+            managerDAO.create(entidadHijaJPA);
         }
         return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }   
