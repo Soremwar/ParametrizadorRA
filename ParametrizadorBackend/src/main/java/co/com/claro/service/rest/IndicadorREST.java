@@ -192,4 +192,11 @@ public class IndicadorREST{
         MensajeError mensaje = new MensajeError(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
+    
+    @GET
+    @Path("/count")
+    @Produces({MediaType.APPLICATION_JSON})
+    public int count(){
+        return managerDAO.count();
+    }
 }
