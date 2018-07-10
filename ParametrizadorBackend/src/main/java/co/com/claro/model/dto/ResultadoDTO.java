@@ -21,7 +21,7 @@ public class ResultadoDTO implements Serializable{
     private Integer idEscenario;
 
 
-    private String xml;
+    private String variables;
 
     public Integer getIdResultado() {
         return idResultado;
@@ -39,12 +39,12 @@ public class ResultadoDTO implements Serializable{
         this.idEjecucion = idEjecucion;
     }
 
-    public String getXml() {
-        return xml;
+    public String getVariables() {
+        return variables;
     }
 
-    public void setXml(String xml) {
-        this.xml = xml;
+    public void setVariables(String variables) {
+        this.variables = variables;
     }
 
     public Integer getIdEscenario() {
@@ -57,7 +57,7 @@ public class ResultadoDTO implements Serializable{
     public Resultado toEntity(){
         Resultado p = new Resultado();
         p.setId(this.idResultado);
-        p.setXmlResultado(this.xml);
+        p.setXmlResultado(this.variables);
        
         return p;
     }

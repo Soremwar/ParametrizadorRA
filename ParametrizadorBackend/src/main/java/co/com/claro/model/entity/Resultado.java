@@ -116,7 +116,7 @@ public class Resultado implements Serializable {
         ResultadoDTO entidadDTO = new ResultadoDTO();
         //entidadDTO.setIdEjecucion(this.codEjecucion);
         entidadDTO.setIdResultado(this.id);
-        entidadDTO.setXml(this.xmlResultado);
+        entidadDTO.setVariables(this.xmlResultado);
         
         //Campos padre
         entidadDTO.setIdEjecucion(ejecucion != null ? ejecucion.getId() : null); 
