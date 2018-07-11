@@ -9,6 +9,7 @@ import co.com.claro.ejb.dao.utils.comparators.EntityFechaCreacionComparator;
 import co.com.claro.ejb.dao.utils.comparators.EntityIdComparator;
 import co.com.claro.ejb.dao.utils.comparators.EntityNameComparator;
 import co.com.claro.model.dto.IndicadorDTO;
+import co.com.claro.model.dto.ParametroDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +47,21 @@ public class UtilListas {
             lstDTO.sort((IndicadorDTO h1, IndicadorDTO h2) -> h1.getId().compareTo(h2.getId()));
         } else if (orderby != null && orderby.equals("descripcion")) {
             lstDTO.sort((IndicadorDTO h1, IndicadorDTO h2) -> h1.getDescripcion().compareTo(h2.getDescripcion()));
+        }        
+        return lstDTO;
+    }
+    
+        /**
+     *
+     * @param lstDTO
+     * @param orderby
+     * @return
+     */
+    public static List<ParametroDTO> ordenarListaParametros(List<ParametroDTO> lstDTO, String orderby) {
+        if (orderby != null && orderby.equals("parametro")) {
+            lstDTO.sort((ParametroDTO h1, ParametroDTO h2) -> h1.getParametro().compareTo(h2.getParametro()));
+        } else if (orderby != null && orderby.equals("descripcion")) {
+            lstDTO.sort((ParametroDTO h1, ParametroDTO h2) -> h1.getDescripcion().compareTo(h2.getDescripcion()));
         }        
         return lstDTO;
     }
