@@ -15,6 +15,7 @@ co/com/claro/service/rest/excepciones/FormatoIncorrecto.class
 co/com/claro/model/entity/parent/Padre_.class
 service/IndicadorFacadeREST.class
 co/com/claro/service/rest/excepciones/DataNotFoundExceptionMapper.class
+co/com/claro/model/entity/ParametroEscenario_.class
 co/com/claro/service/rest/ParametroREST.class
 co/com/claro/model/entity/Resultado.class
 co/com/claro/ejb/dao/utils/comparators/EntityIdComparator.class
@@ -23,6 +24,7 @@ co/com/claro/model/entity/Politica.class
 co/com/claro/model/entity/Conciliacion_.class
 co/com/claro/model/entity/Indicador.class
 co/com/claro/service/rest/excepciones/MensajeError.class
+co/com/claro/model/dto/ParametroEscenarioDTO.class
 co/com/claro/model/dto/PoliticaDTO.class
 co/com/claro/model/entity/Conciliacion.class
 co/com/claro/ejb/dao/ResultadoDAO.class
@@ -32,6 +34,7 @@ co/com/claro/service/rest/EscenarioREST.class
 co/com/claro/service/rest/cors/NewCrossOriginResourceSharingFilter.class
 co/com/claro/ejb/dao/utils/comparators/EntityFechaCreacionComparator.class
 co/com/claro/model/entity/Indicador_.class
+co/com/claro/service/rest/ParametroEscenarioREST.class
 co/com/claro/ejb/dao/IndicadorDAO.class
 co/com/claro/service/rest/WsTransformacionREST.class
 co/com/claro/model/dto/EscenarioDTO.class
@@ -41,6 +44,7 @@ co/com/claro/model/entity/Parametro.class
 co/com/claro/service/rest/EjecucionProcesoREST.class
 co/com/claro/ejb/dao/utils/LocalDateConverter.class
 co/com/claro/ejb/dao/service/AbstractFacade.class
+co/com/claro/model/entity/ParametroEscenario.class
 co/com/claro/ejb/dao/PoliticaDAO.class
 co/com/claro/service/rest/ConciliacionREST.class
 co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.class
@@ -67,4 +71,5 @@ co/com/claro/ejb/dao/parent/AbstractJpaDAO.class
 co/com/claro/model/entity/WsTransformacion_.class
 co/com/claro/model/entity/Usuario.class
 co/com/claro/model/dto/ParametroDTO.class
+co/com/claro/ejb/dao/ParametroEscenarioDAO.class
 co/com/claro/service/rest/config/ConfiguracionRest.class

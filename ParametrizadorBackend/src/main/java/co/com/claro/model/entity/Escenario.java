@@ -85,6 +85,9 @@ public class Escenario implements Serializable {
     
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "escenario")
     private List<Indicador> indicadores;
+    
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "escenario")
+    private List<ParametroEscenario> parametroEscenario;
 
     public Escenario() {
     }
