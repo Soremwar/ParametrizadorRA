@@ -5,10 +5,13 @@
  */
 package co.com.claro.service.rest;
 
+import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.ParametroEscenarioDAO;
 import co.com.claro.model.dto.ParametroEscenarioDTO;
+import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.Parametro;
 import co.com.claro.model.entity.ParametroEscenario;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import static java.util.Comparator.comparing;
@@ -44,6 +47,9 @@ public class ParametroEscenarioREST{
     
     @EJB
     protected ParametroEscenarioDAO managerDAO;
+    
+    @EJB
+    protected EscenarioDAO padreDAO;
     
        /**
      * Obtiene las Parametros Paginadas
@@ -107,9 +113,24 @@ public class ParametroEscenarioREST{
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(ParametroEscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        ParametroEscenario entidadAux = entidad.toEntity();
-        managerDAO.create(entidadAux);
-        return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
+        Escenario entidadPadreJPA;
+        ParametroEscenario entidadHijaJPA = entidad.toEntity();
+        entidadHijaJPA.setEscenario(null);
+        if ( entidad.getIdEscenario() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdEscenario());
+            } else {
+                managerDAO.create(entidadHijaJPA);
+                entidadHijaJPA.setEscenario(entidadPadreJPA);
+                managerDAO.edit(entidadHijaJPA);
+                entidadPadreJPA.addParametro(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
+            }
+        } else {
+            managerDAO.create(entidadHijaJPA);
+        }
+        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }  
     
     /**
@@ -121,17 +142,28 @@ public class ParametroEscenarioREST{
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ParametroEscenarioDTO entidad) {
-    logger.log(Level.INFO, "entidad:{0}", entidad);  
+        logger.log(Level.INFO, "entidad:{0}", entidad);  
+        Escenario entidadPadreJPA = null;
+        if (entidad.getIdEscenario() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdEscenario());
+            }
+        }
         //Hallar La entidad actual para actualizarla
-        ParametroEscenario parametroJPA = managerDAO.find(entidad.getId());
-        if (parametroJPA != null) {
-            parametroJPA.setFechaActualizacion(Date.from(Instant.now()));
-            parametroJPA.setParametro(entidad.getParametro() != null ? entidad.getParametro() : parametroJPA.getParametro());
-            parametroJPA.setValor(entidad.getValor() != null ? entidad.getValor() : parametroJPA.getValor());
-            parametroJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : parametroJPA.getDescripcion());
-            parametroJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : parametroJPA.getUsuario());
-            managerDAO.edit(parametroJPA);
-            return Response.status(Response.Status.OK).entity(parametroJPA.toDTO()).build();
+        ParametroEscenario entidadHijaJPA = managerDAO.find(entidad.getId());
+        if (entidadHijaJPA != null) {
+            entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
+            entidadHijaJPA.setParametro(entidad.getParametro() != null ? entidad.getParametro() : entidadHijaJPA.getParametro());
+            entidadHijaJPA.setValor(entidad.getValor() != null ? entidad.getValor() : entidadHijaJPA.getValor());
+            entidadHijaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadHijaJPA.getDescripcion());
+            entidadHijaJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadHijaJPA.getUsuario());
+            managerDAO.edit(entidadHijaJPA);
+            if ((entidadPadreJPA != null)){
+                entidadPadreJPA.addParametro(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
+            }
+            return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
       
@@ -146,8 +178,20 @@ public class ParametroEscenarioREST{
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
-        managerDAO.remove(managerDAO.find(id));
-        MensajeError mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
+        ParametroEscenario hijo = managerDAO.find(id);
+        Escenario entidadPadreJPA = null;
+        /*if (hijo.getEscenarios() != null && hijo.getEscenarios().size() > 0) {
+            throw new InvalidDataException("Esta entidad tiene hijos asociados ");
+        }*/
+        if (hijo.getEscenario() != null) {
+            entidadPadreJPA = padreDAO.find(hijo.getEscenario().getId());
+            entidadPadreJPA.removeParametro(hijo);
+        }
+        managerDAO.remove(hijo);
+        if (entidadPadreJPA != null) {
+            padreDAO.edit(entidadPadreJPA);
+        }
+        MensajeError mensaje = new MensajeError(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     

@@ -171,12 +171,22 @@ public class Escenario implements Serializable {
         indicador.setEscenario(this);
     }
     
-    public void removeEscenario(Indicador indicador) {
+    public void removeIndicador(Indicador indicador) {
         this.indicadores.remove(indicador);
         indicador.setEscenario(null);
     }
     
-
+    
+    public void addParametro(ParametroEscenario parametro) {
+        this.parametroEscenario.add(parametro);
+        parametro.setEscenario(this);
+    }
+    
+    public void removeParametro(ParametroEscenario parametro) {
+        this.parametroEscenario.remove(parametro);
+        parametro.setEscenario(null);
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

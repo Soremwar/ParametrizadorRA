@@ -5,13 +5,10 @@
  */
 package co.com.claro.service.rest;
 
-import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ParametroDTO;
-import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.Parametro;
-import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import static java.util.Comparator.comparing;

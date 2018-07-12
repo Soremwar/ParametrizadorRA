@@ -183,7 +183,7 @@ public class IndicadorREST{
         }*/
         if (hijo.getEscenario() != null) {
             entidadPadreJPA = padreDAO.find(hijo.getEscenario().getId());
-            entidadPadreJPA.removeEscenario(hijo);
+            entidadPadreJPA.removeIndicador(hijo);
         }
         managerDAO.remove(hijo);
         if (entidadPadreJPA != null) {
