@@ -9,6 +9,8 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -26,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")
-    , @NamedQuery(name = "Usuario.findByCodUsuario", query = "SELECT u FROM Usuario u WHERE u.codUsuario = :codUsuario")
+    , @NamedQuery(name = "Usuario.findByCodUsuario", query = "SELECT u FROM Usuario u WHERE u.id = :codUsuario")
     , @NamedQuery(name = "Usuario.findByNombreUsuario", query = "SELECT u FROM Usuario u WHERE u.nombreUsuario = :nombreUsuario")
     , @NamedQuery(name = "Usuario.findByUsername", query = "SELECT u FROM Usuario u WHERE u.username = :username")
     , @NamedQuery(name = "Usuario.findByPassword", query = "SELECT u FROM Usuario u WHERE u.password = :password")})
@@ -36,9 +38,9 @@ public class Usuario implements Serializable {
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "COD_USUARIO")
-    private Integer codUsuario;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     
     @Basic(optional = false)
     @NotNull
@@ -62,22 +64,22 @@ public class Usuario implements Serializable {
     }
 
     public Usuario(Integer codUsuario) {
-        this.codUsuario = codUsuario;
+        this.id = codUsuario;
     }
 
     public Usuario(Integer codUsuario, int nombreUsuario, String username, String password) {
-        this.codUsuario = codUsuario;
+        this.id = codUsuario;
         this.nombreUsuario = nombreUsuario;
         this.username = username;
         this.password = password;
     }
 
-    public Integer getCodUsuario() {
-        return codUsuario;
+    public Integer getId() {
+        return id;
     }
 
-    public void setCodUsuario(Integer codUsuario) {
-        this.codUsuario = codUsuario;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int getNombreUsuario() {
@@ -107,7 +109,7 @@ public class Usuario implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (codUsuario != null ? codUsuario.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -118,7 +120,7 @@ public class Usuario implements Serializable {
             return false;
         }
         Usuario other = (Usuario) object;
-        if ((this.codUsuario == null && other.codUsuario != null) || (this.codUsuario != null && !this.codUsuario.equals(other.codUsuario))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -126,7 +128,7 @@ public class Usuario implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.Usuario[ codUsuario=" + codUsuario + " ]";
+        return "co.com.claro.ejb.dao.Usuario[ codUsuario=" + id + " ]";
     }
     
 }

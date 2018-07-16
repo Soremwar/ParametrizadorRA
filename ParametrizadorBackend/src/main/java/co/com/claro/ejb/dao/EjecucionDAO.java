@@ -10,7 +10,6 @@ import co.com.claro.model.entity.Indicador;
 import co.com.claro.model.entity.EjecucionProceso;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;

@@ -7,6 +7,7 @@ package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.EjecucionProcesoDTO;
 import co.com.claro.model.dto.ResultadoDTO;
+import static co.com.claro.model.entity.ParametroEscenario_.escenario;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -183,13 +184,14 @@ public class EjecucionProceso implements Serializable {
 
     public void addResultado(Resultado resultado) {
         resultados.add(resultado);
-        //resultado.set(this);
+        resultado.setEjecucion(this);
     }
     
-    public void removeEscenario(Resultado resultado) {
+    public void removeResultado(Resultado resultado) {
         this.resultados.remove(resultado);
-        //resultado.setConciliacion(null);
+        resultado.setEjecucion(null);
     }
+    
     @Override
     public int hashCode() {
         int hash = 0;

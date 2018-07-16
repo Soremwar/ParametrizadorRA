@@ -51,7 +51,8 @@ public class WsTransformacionDAO extends AbstractJpaDAO<WsTransformacion>{
     public List<WsTransformacion> findByAnyColumn(String busqueda){
         logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});    
         TypedQuery<WsTransformacion> query = em.createNamedQuery("WsTransformacion.findByAnyColumn", WsTransformacion.class);
-        query.setParameter("nombreWsTransformacion", "%" + busqueda + "%");
+        query.setParameter("nombreWs", "%" + busqueda + "%");
+        query.setParameter("paqueteWs", "%" + busqueda + "%");
         List<WsTransformacion> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

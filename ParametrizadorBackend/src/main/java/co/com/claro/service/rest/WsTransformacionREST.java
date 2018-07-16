@@ -1,10 +1,16 @@
 package co.com.claro.service.rest;
 
 
+import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.WsTransformacionDAO;
 import co.com.claro.model.dto.WsTransformacionDTO;
+import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.WsTransformacion;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import co.com.claro.service.rest.excepciones.MensajeError;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,8 +21,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.persistence.Transient;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 /**
  * Clase que maneja el API Rest de WsTransformaciones
@@ -29,6 +40,9 @@ public class WsTransformacionREST{
    
     @EJB
     protected WsTransformacionDAO managerDAO;
+    
+    @EJB
+    protected ConciliacionDAO padreDAO;
 
     /**
      * Obtiene las Resultados Paginadas
@@ -85,6 +99,95 @@ public class WsTransformacionREST{
         return lstFinal;
     }
    
+    /**
+     * Crea una nueva entidad
+     * @param entidad Entidad que se va a agregar
+     * @return el la entidad recien creada
+     */
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response add(WsTransformacionDTO entidad) {
+        logger.log(Level.INFO, "entidad:{0}", entidad);
+        Conciliacion entidadPadreJPA;
+        WsTransformacion entidadHijaJPA = entidad.toEntity();
+        entidadHijaJPA.setConciliacion(null);        
+
+        if ( entidad.getIdConciliacion() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdConciliacion());
+            } else {
+                managerDAO.create(entidadHijaJPA);
+                entidadHijaJPA.setConciliacion(entidadPadreJPA);
+                managerDAO.edit(entidadHijaJPA);
+                entidadPadreJPA.addTransformacion(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
+            }
+        } else {
+            managerDAO.create(entidadHijaJPA);
+        }
+        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
+    }
+    
+    /**
+     * Actualiza la entidad por su Id
+     * @param entidad conciliacion con la cual se va a trabajar
+     * @return el resultado de la operacion
+     */
+    @PUT
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response update(WsTransformacionDTO entidad) {
+        logger.log(Level.INFO, "entidad:{0}", entidad);  
+        Conciliacion entidadPadreJPA = null;
+        if (entidad.getIdConciliacion() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdConciliacion());
+            }
+        }
+        //Hallar La entidad actual para actualizarla
+        WsTransformacion entidadHijaJPA = managerDAO.find(entidad.getId());
+        if (entidadHijaJPA != null) {
+            entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
+            entidadHijaJPA.setNombreWs(entidad.getNombreWs()!= null ? entidad.getNombreWs(): entidadHijaJPA.getNombreWs());
+            entidadHijaJPA.setPaqueteWs(entidad.getPaqueteWs()!= null ? entidad.getPaqueteWs(): entidadHijaJPA.getPaqueteWs());
+            entidadHijaJPA.setUsuario(entidad.getUsuario()!= null ? entidad.getUsuario() : entidadHijaJPA.getUsuario());
+            entidadHijaJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadHijaJPA.getConciliacion());
+            managerDAO.edit(entidadHijaJPA);
+            if ((entidadPadreJPA != null)){
+                entidadPadreJPA.addTransformacion(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
+            }
+            return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    
+     /**
+     * Borra una conciliacion por su Id
+     * @param id Identificador de la identidad
+     * @return el resultado de la operacion
+     */
+    @DELETE
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response remove(@PathParam("id") Integer id) {
+        WsTransformacion hijo = managerDAO.find(id);
+        Conciliacion entidadPadreJPA = null;
+        if (hijo.getConciliacion() != null) {
+            entidadPadreJPA = padreDAO.find(hijo.getConciliacion().getId());
+            entidadPadreJPA.removeTransformacion(hijo);
+            //entidadPadreJPA.getConciliaciones().remove(hijo);
+        }
+        managerDAO.remove(hijo);
+        if (entidadPadreJPA != null) {
+            padreDAO.edit(entidadPadreJPA);
+        }
+        MensajeError mensaje = new MensajeError(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        return Response.status(Response.Status.OK).entity(mensaje).build();
+    }
     /**
      * Retorna el numero de registros 
      * @return numero de registros total

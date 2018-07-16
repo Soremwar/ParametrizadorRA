@@ -9,6 +9,7 @@ import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
@@ -102,8 +103,8 @@ public class Conciliacion implements Serializable {
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
     private List<Escenario> escenarios;
 
-    //@OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    //private Collection<WsTransformacion> wsTransformacionesCollection;
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
+    private Collection<WsTransformacion> transformaciones;
 
     
     public Conciliacion() {
@@ -196,7 +197,16 @@ public class Conciliacion implements Serializable {
         escenario.setConciliacion(null);
     }
     
-
+    public void addTransformacion(WsTransformacion transformacion) {
+        this.transformaciones.add(transformacion);
+        transformacion.setConciliacion(this);
+    }
+    
+    public void removeTransformacion(WsTransformacion transformacion) {
+        this.transformaciones.remove(transformacion);
+        transformacion.setConciliacion(null);
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

@@ -20,7 +20,7 @@ public class EjecucionProcesoDTO implements Serializable{
     private Integer id;
     private String nombre;
     private List<ResultadoDTO> resultados;
-
+    private List<ParametroEscenarioDTO> parametros;
 
     public Integer getId() {
         return id;
@@ -46,6 +46,16 @@ public class EjecucionProcesoDTO implements Serializable{
         this.resultados = resultados;
     }
 
+    public List<ParametroEscenarioDTO> getParametros() {
+        return parametros;
+    }
+
+    public void setParametros(List<ParametroEscenarioDTO> parametros) {
+        this.parametros = parametros;
+    }
+
+    
+    
     public EjecucionProceso toEntity(){
         EjecucionProceso p = new EjecucionProceso();
         //Campos Entidad

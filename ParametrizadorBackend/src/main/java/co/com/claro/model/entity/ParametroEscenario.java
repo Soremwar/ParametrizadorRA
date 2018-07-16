@@ -5,14 +5,15 @@
  */
 package co.com.claro.model.entity;
 
-import co.com.claro.model.dto.ParametroDTO;
 import co.com.claro.model.dto.ParametroEscenarioDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -80,8 +81,8 @@ public class ParametroEscenario implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
 
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_ESCENARIO", referencedColumnName = "COD_ESCENARIO")
-    @ManyToOne
     private Escenario escenario;
 
     public Escenario getEscenario() {
