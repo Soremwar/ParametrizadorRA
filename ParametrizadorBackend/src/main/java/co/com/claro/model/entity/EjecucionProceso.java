@@ -6,23 +6,17 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.EjecucionProcesoDTO;
-import co.com.claro.model.dto.ResultadoDTO;
-import static co.com.claro.model.entity.ParametroEscenario_.escenario;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
 import javax.persistence.Basic;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -44,11 +38,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EjecucionProceso.findByNombreEscenario", query = "SELECT l FROM EjecucionProceso l WHERE l.nombreEscenario = :nombreEscenario")
     , @NamedQuery(name = "EjecucionProceso.findByCodConciliacion", query = "SELECT l FROM EjecucionProceso l WHERE l.codConciliacion = :codConciliacion")
     , @NamedQuery(name = "EjecucionProceso.findByNombreConciliacion", query = "SELECT l FROM EjecucionProceso l WHERE l.nombreConciliacion = :nombreConciliacion")
+    , @NamedQuery(name = "EjecucionProceso.findByIdPlanInstance", query = "SELECT l FROM EjecucionProceso l WHERE l.idPlanInstance = :idPlanInstance")
     , @NamedQuery(name = "EjecucionProceso.findByEstadoEjecucion", query = "SELECT l FROM EjecucionProceso l WHERE l.estadoEjecucion = :estadoEjecucion")
     , @NamedQuery(name = "EjecucionProceso.findByFechaEjecucion", query = "SELECT l FROM EjecucionProceso l WHERE l.fechaEjecucion = :fechaEjecucion")
     , @NamedQuery(name = "EjecucionProceso.findByFechaEjecucionExitosa", query = "SELECT l FROM EjecucionProceso l WHERE l.fechaEjecucionExitosa = :fechaEjecucionExitosa")
     , @NamedQuery(name = "EjecucionProceso.findByComponenteEjecutado", query = "SELECT l FROM EjecucionProceso l WHERE l.componenteEjecutado = :componenteEjecutado")})
-@Cacheable(false)
+//@Cacheable(false)
 public class EjecucionProceso implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -72,8 +67,12 @@ public class EjecucionProceso implements Serializable {
     
     @Column(name = "COD_CONCILIACION")
     private Integer codConciliacion;
-    @Size(max = 200)
     
+    @Size(max = 200)
+    @Column(name = "ID_PLAN_INSTANCE")
+    private String idPlanInstance;
+    
+    @Size(max = 200)
     @Column(name = "NOMBRE_CONCILIACION")
     private String nombreConciliacion;
     
@@ -89,11 +88,11 @@ public class EjecucionProceso implements Serializable {
     private Date fechaEjecucionExitosa;
     
     @Column(name = "COMPONENTE_EJECUTADO")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date componenteEjecutado;
+    @Size(max = 200)
+    private String componenteEjecutado;
 
-    @OneToMany(fetch=FetchType.LAZY, mappedBy = "ejecucion")
-    private List<Resultado> resultados;
+    //@OneToMany(fetch=FetchType.LAZY, mappedBy = "ejecucion")
+    //private List<Resultado> resultados;
     
     public EjecucionProceso() {
     }
@@ -174,15 +173,24 @@ public class EjecucionProceso implements Serializable {
         this.fechaEjecucionExitosa = fechaEjecucionExitosa;
     }
 
-    public Date getComponenteEjecutado() {
+    public String getComponenteEjecutado() {
         return componenteEjecutado;
     }
 
-    public void setComponenteEjecutado(Date componenteEjecutado) {
+    public void setComponenteEjecutado(String componenteEjecutado) {
         this.componenteEjecutado = componenteEjecutado;
     }
 
-    public void addResultado(Resultado resultado) {
+    public String getIdPlanInstance() {
+        return idPlanInstance;
+    }
+
+    public void setIdPlanInstance(String idPlanInstance) {
+        this.idPlanInstance = idPlanInstance;
+    }
+    
+
+    /*public void addResultado(Resultado resultado) {
         resultados.add(resultado);
         resultado.setEjecucion(this);
     }
@@ -190,7 +198,7 @@ public class EjecucionProceso implements Serializable {
     public void removeResultado(Resultado resultado) {
         this.resultados.remove(resultado);
         resultado.setEjecucion(null);
-    }
+    }*/
     
     @Override
     public int hashCode() {
@@ -219,10 +227,22 @@ public class EjecucionProceso implements Serializable {
         
         //Campos de la entidad
         entidadDTO.setNombre(nombre);
-        if (resultados != null) {
+        entidadDTO.setComponenteEjecutado(componenteEjecutado);
+        entidadDTO.setEstadoEjecucion(estadoEjecucion);
+        entidadDTO.setFechaEjecucion(fechaEjecucion);
+        entidadDTO.setFechaEjecucionExitosa(fechaEjecucionExitosa);
+        entidadDTO.setIdPlanInstance(idPlanInstance);
+        
+        entidadDTO.setIdConciliacion(codConciliacion);
+        entidadDTO.setNombreConciliacion(nombreConciliacion);
+        
+        entidadDTO.setIdEscenario(codEscenario);
+        entidadDTO.setNombreEscenario(nombreEscenario);
+        
+        /*if (resultados != null) {
             List<ResultadoDTO> lstEjecucionProceso = resultados.stream().map((resultado) -> resultado.toDTO()).collect(toList());
             entidadDTO.setResultados(lstEjecucionProceso);
-        }        
+        }*/        
         return entidadDTO;
     }    
     

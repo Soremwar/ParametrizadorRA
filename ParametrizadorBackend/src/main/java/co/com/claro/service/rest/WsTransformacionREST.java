@@ -3,6 +3,7 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.WsTransformacionDAO;
+import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.WsTransformacion;
@@ -60,7 +61,7 @@ public class WsTransformacionREST{
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
         List<WsTransformacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<WsTransformacionDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().collect(toList());
-        //UtilListas.ordenarLista(lstDTO, orderby);
+        UtilListas.ordenarListaTransormacion(lstDTO, orderby);
         List<WsTransformacionDTO> lstFinal = (List<WsTransformacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }   
@@ -92,9 +93,9 @@ public class WsTransformacionREST{
         logger.log(Level.INFO, "texto:{0}", texto);        
         List<WsTransformacion> lst = managerDAO.findByAnyColumn(texto);
         List<WsTransformacionDTO> lstDTO = new ArrayList<>();        
-        for(WsTransformacion entidad : lst) {
+        lst.forEach((entidad) -> {
             lstDTO.add(entidad.toDTO());
-        }
+        });
         List<WsTransformacionDTO> lstFinal = (List<WsTransformacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
@@ -179,7 +180,6 @@ public class WsTransformacionREST{
         if (hijo.getConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(hijo.getConciliacion().getId());
             entidadPadreJPA.removeTransformacion(hijo);
-            //entidadPadreJPA.getConciliaciones().remove(hijo);
         }
         managerDAO.remove(hijo);
         if (entidadPadreJPA != null) {

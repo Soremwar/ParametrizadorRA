@@ -165,26 +165,6 @@ public class EscenarioREST {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
     
-    /**
-     * Obtiene la entidad entidadPadreJPA que hay que asignar
-     * @param entidadActualDTO
-     * @return la entidad entidadPadreJPA que hay que asignar
-     */
-    private Conciliacion getConciliacionToAssign(EscenarioDTO entidadActualDTO){
-        EscenarioDTO entidadInBDDTO = getById(entidadActualDTO.getId());
-        Conciliacion conciliacion = new Conciliacion();
-        if (entidadInBDDTO.getIdConciliacion() == null) {
-            conciliacion.setId(entidadActualDTO.getIdConciliacion());
-        } else {
-            conciliacion.setId(entidadInBDDTO.getIdConciliacion());
-        }
-        return conciliacion;
-    }  
-    
-    private Boolean isConciliacionAsignada(EscenarioDTO entidadActualDTO){
-        EscenarioDTO entidadInBDDTO = getById(entidadActualDTO.getId());
-        return entidadInBDDTO.getIdConciliacion() != null;
-    }  
     
      /**
      * Borra una conciliacion por su Id
@@ -200,7 +180,6 @@ public class EscenarioREST {
         if (hijo.getConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(hijo.getConciliacion().getId());
             entidadPadreJPA.removeEscenario(hijo);
-            //entidadPadreJPA.getConciliaciones().remove(hijo);
         }
         managerDAO.remove(hijo);
         if (entidadPadreJPA != null) {

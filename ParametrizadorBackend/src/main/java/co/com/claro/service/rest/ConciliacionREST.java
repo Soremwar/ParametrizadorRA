@@ -33,7 +33,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
- * Clase que maneja el API Rest de Conciliaciones
+ * Clase que maneja el API Rest de la entidad
  * @author Andres Bedoya
  */
 @Path("conciliaciones")
@@ -42,9 +42,11 @@ public class ConciliacionREST{
     private static final Logger logger = Logger.getLogger(ConciliacionREST.class.getSimpleName());
 
     @EJB
-    protected ConciliacionDAO managerDAO;
-    @EJB
     protected PoliticaDAO padreDAO;
+    
+    @EJB
+    protected ConciliacionDAO managerDAO;
+
     @EJB
     protected EscenarioDAO escenarioDAO;
 
@@ -62,14 +64,9 @@ public class ConciliacionREST{
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
-        //List<Conciliacion> lst = managerDAO.findByAllTree(new int[]{offset, limit});
         List<Conciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ConciliacionDTO::getId)).collect(toList());
-        //List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().collect(toList());
-        //lstDTO = lstDTO.stream().distinct().collect(toList());
-        //lstDTO.sort(comparator);
         UtilListas.ordenarLista(lstDTO, orderby);
-        
         List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
@@ -87,7 +84,6 @@ public class ConciliacionREST{
         logger.log(Level.INFO, "id:{0}" , id);
         Conciliacion entidad = managerDAO.findByAllTreeById(id);
         return entidad.toDTO();
-
     }
 
     
@@ -103,9 +99,9 @@ public class ConciliacionREST{
         logger.log(Level.INFO, "texto:{0}", texto);
         List<Conciliacion> lst = managerDAO.findByAnyColumn(texto);
         List<PadreDTO> lstDTO = new ArrayList<>();
-        for(Conciliacion entidad : lst) {
+        lst.forEach((entidad) -> {
             lstDTO.add(entidad.toDTO());
-        }
+        });
         List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
@@ -178,7 +174,6 @@ public class ConciliacionREST{
       
     }
     
-    
     /**
      * Borra una conciliacion por su Id
      * @param id Identificador de la identidad
@@ -190,9 +185,6 @@ public class ConciliacionREST{
     public Response remove(@PathParam("id") Integer id) {
         Conciliacion hijo = managerDAO.find(id);
         Politica entidadPadreJPA = null;
-        /*if (hijo.getEscenarios() != null && hijo.getEscenarios().size() > 0) {
-            throw new InvalidDataException("Esta entidad tiene hijos asociados ");
-        }*/
         if (hijo.getPolitica() != null) {
             entidadPadreJPA = padreDAO.find(hijo.getPolitica().getId());
             entidadPadreJPA.removeConciliacion(hijo);

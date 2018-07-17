@@ -45,9 +45,7 @@ public class ParametroREST{
     @EJB
     protected ParametroDAO managerDAO;
     
-
-   
-       /**
+    /**
      * Obtiene las Parametros Paginadas
      * @param offset Desde cual item se retorna
      * @param limit Limite de items a retornar
@@ -80,7 +78,6 @@ public class ParametroREST{
         logger.log(Level.INFO, "id:{0}", id);
         Parametro entidad = managerDAO.find(id);
         return entidad.toDTO();
-
     }
     
     /**

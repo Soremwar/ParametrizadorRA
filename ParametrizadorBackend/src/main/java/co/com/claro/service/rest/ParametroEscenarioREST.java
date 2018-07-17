@@ -7,9 +7,9 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.ParametroEscenarioDAO;
+import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ParametroEscenarioDTO;
 import co.com.claro.model.entity.Escenario;
-import co.com.claro.model.entity.Parametro;
 import co.com.claro.model.entity.ParametroEscenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.MensajeError;
@@ -67,7 +67,7 @@ public class ParametroEscenarioREST{
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2} ", new Object[]{offset, limit, orderby});     
         List<ParametroEscenario> lst = managerDAO.findRange(new int[]{offset, limit});
         List<ParametroEscenarioDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ParametroEscenarioDTO::getId)).collect(toList());
-        //lstDTO = UtilListas.ordenarListaParametros( lstDTO, orderby);
+        lstDTO = UtilListas.ordenarListaParametrosEscenario(lstDTO, orderby);
         List<ParametroEscenarioDTO> lstFinal = (List<ParametroEscenarioDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
@@ -180,9 +180,6 @@ public class ParametroEscenarioREST{
     public Response remove(@PathParam("id") Integer id) {
         ParametroEscenario hijo = managerDAO.find(id);
         Escenario entidadPadreJPA = null;
-        /*if (hijo.getEscenarios() != null && hijo.getEscenarios().size() > 0) {
-            throw new InvalidDataException("Esta entidad tiene hijos asociados ");
-        }*/
         if (hijo.getEscenario() != null) {
             entidadPadreJPA = padreDAO.find(hijo.getEscenario().getId());
             entidadPadreJPA.removeParametro(hijo);

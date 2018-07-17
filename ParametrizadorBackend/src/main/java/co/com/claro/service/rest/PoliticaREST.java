@@ -58,8 +58,6 @@ public class PoliticaREST{
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
-        //List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
-        //List<Politica> lst = managerDAO.findAll();
         List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
         List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(PoliticaDTO::getId)).collect(toList());
         UtilListas.ordenarLista(lstDTO, orderby);
@@ -77,15 +75,19 @@ public class PoliticaREST{
 
     }
 
+    /**
+     * Encontrar Politicas que no tengan conciliacion
+     * @return
+     */
     @GET
     @Path("/findPoliticasSinConciliacion")
     @Produces({MediaType.APPLICATION_JSON})
     public List<PoliticaDTO> findPoliticasSinConciliacion(){
         List<Politica> lst = managerDAO.findPoliticaSinConciliacion();
         List<PadreDTO> lstDTO = new ArrayList<>();        
-        for(Politica entidad : lst) {
+        lst.forEach((entidad) -> {
             lstDTO.add(entidad.toDTO());
-        }
+        });
         List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
@@ -101,9 +103,9 @@ public class PoliticaREST{
         logger.log(Level.INFO, "texto:{0}", texto);        
         List<Politica> lst = managerDAO.findByAnyColumn(texto);
         List<PadreDTO> lstDTO = new ArrayList<>();        
-        for(Politica entidad : lst) {
+        lst.forEach((entidad) -> {
             lstDTO.add(entidad.toDTO());
-        }
+        });
         List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
@@ -160,7 +162,6 @@ public class PoliticaREST{
         MensajeError mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
-    
     
     @GET
     @Path("/count")

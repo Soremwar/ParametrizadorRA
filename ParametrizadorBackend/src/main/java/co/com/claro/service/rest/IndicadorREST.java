@@ -178,9 +178,6 @@ public class IndicadorREST{
     public Response remove(@PathParam("id") Integer id) {
         Indicador hijo = managerDAO.find(id);
         Escenario entidadPadreJPA = null;
-        /*if (hijo.getEscenarios() != null && hijo.getEscenarios().size() > 0) {
-            throw new InvalidDataException("Esta entidad tiene hijos asociados ");
-        }*/
         if (hijo.getEscenario() != null) {
             entidadPadreJPA = padreDAO.find(hijo.getEscenario().getId());
             entidadPadreJPA.removeIndicador(hijo);
