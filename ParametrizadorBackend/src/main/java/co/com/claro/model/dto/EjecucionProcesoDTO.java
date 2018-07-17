@@ -139,7 +139,6 @@ public class EjecucionProcesoDTO implements Serializable{
         //Campos Entidad
         p.setId(id);
         p.setNombre(nombre);
-        p.setCodConciliacion(idConciliacion);
         p.setCodEscenario(idEscenario);
         p.setComponenteEjecutado(componenteEjecutado);
         p.setEstadoEjecucion(estadoEjecucion);

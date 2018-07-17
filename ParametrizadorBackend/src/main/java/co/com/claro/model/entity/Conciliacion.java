@@ -6,7 +6,9 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.ConciliacionDTO;
+import co.com.claro.model.dto.EjecucionProcesoDTO;
 import co.com.claro.model.dto.EscenarioDTO;
+import co.com.claro.model.dto.WsTransformacionDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
@@ -106,6 +108,8 @@ public class Conciliacion implements Serializable {
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
     private Collection<WsTransformacion> transformaciones;
 
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
+    private Collection<EjecucionProceso> ejecucionesProceso;
     
     public Conciliacion() {
     }
@@ -207,6 +211,16 @@ public class Conciliacion implements Serializable {
         transformacion.setConciliacion(null);
     }
     
+    public void addEjecucionProceso(EjecucionProceso ejecucionProceso) {
+        this.ejecucionesProceso.add(ejecucionProceso);
+        ejecucionProceso.setConciliacion(this);
+    }
+    
+    public void removeEjecucionPRoceso(EjecucionProceso ejecucionProceso) {
+        this.ejecucionesProceso.remove(ejecucionProceso);
+        ejecucionProceso.setConciliacion(null);
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -249,6 +263,16 @@ public class Conciliacion implements Serializable {
         if (escenarios != null) {
             List<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(toList());
             entidadDTO.setEscenarios(lstEscenarios);
+        }
+        
+        if (transformaciones != null) {
+            List<WsTransformacionDTO> lstTransformaciones = transformaciones.stream().map((transformacionDTO) -> transformacionDTO.toDTO()).collect(toList());
+            entidadDTO.setTransformaciones(lstTransformaciones);
+        }
+
+        if (ejecucionesProceso != null) {
+            List<EjecucionProcesoDTO> lstEjecuciones = ejecucionesProceso.stream().map((ejecucionProcesoDTO) -> ejecucionProcesoDTO.toDTO()).collect(toList());
+            entidadDTO.setEjecucionesProceso(lstEjecuciones);
         }
 
         //Campos padre

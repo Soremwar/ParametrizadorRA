@@ -10,11 +10,15 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -36,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EjecucionProceso.findByNombre", query = "SELECT l FROM EjecucionProceso l WHERE l.nombre = :nombre")
     , @NamedQuery(name = "EjecucionProceso.findByCodEscenario", query = "SELECT l FROM EjecucionProceso l WHERE l.codEscenario = :codEscenario")
     , @NamedQuery(name = "EjecucionProceso.findByNombreEscenario", query = "SELECT l FROM EjecucionProceso l WHERE l.nombreEscenario = :nombreEscenario")
-    , @NamedQuery(name = "EjecucionProceso.findByCodConciliacion", query = "SELECT l FROM EjecucionProceso l WHERE l.codConciliacion = :codConciliacion")
+    , @NamedQuery(name = "EjecucionProceso.findByCodConciliacion", query = "SELECT l FROM EjecucionProceso l WHERE l.conciliacion = :codConciliacion")
     , @NamedQuery(name = "EjecucionProceso.findByNombreConciliacion", query = "SELECT l FROM EjecucionProceso l WHERE l.nombreConciliacion = :nombreConciliacion")
     , @NamedQuery(name = "EjecucionProceso.findByIdPlanInstance", query = "SELECT l FROM EjecucionProceso l WHERE l.idPlanInstance = :idPlanInstance")
     , @NamedQuery(name = "EjecucionProceso.findByEstadoEjecucion", query = "SELECT l FROM EjecucionProceso l WHERE l.estadoEjecucion = :estadoEjecucion")
@@ -65,9 +69,6 @@ public class EjecucionProceso implements Serializable {
     @Column(name = "NOMBRE_ESCENARIO")
     private String nombreEscenario;
     
-    @Column(name = "COD_CONCILIACION")
-    private Integer codConciliacion;
-    
     @Size(max = 200)
     @Column(name = "ID_PLAN_INSTANCE")
     private String idPlanInstance;
@@ -91,8 +92,9 @@ public class EjecucionProceso implements Serializable {
     @Size(max = 200)
     private String componenteEjecutado;
 
-    //@OneToMany(fetch=FetchType.LAZY, mappedBy = "ejecucion")
-    //private List<Resultado> resultados;
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COD_CONCILIACION", referencedColumnName = "COD_CONCILIACION")
+    private Conciliacion conciliacion;
     
     public EjecucionProceso() {
     }
@@ -131,14 +133,6 @@ public class EjecucionProceso implements Serializable {
 
     public void setNombreEscenario(String nombreEscenario) {
         this.nombreEscenario = nombreEscenario;
-    }
-
-    public Integer getCodConciliacion() {
-        return codConciliacion;
-    }
-
-    public void setCodConciliacion(Integer codConciliacion) {
-        this.codConciliacion = codConciliacion;
     }
 
     public String getNombreConciliacion() {
@@ -188,17 +182,16 @@ public class EjecucionProceso implements Serializable {
     public void setIdPlanInstance(String idPlanInstance) {
         this.idPlanInstance = idPlanInstance;
     }
-    
 
-    /*public void addResultado(Resultado resultado) {
-        resultados.add(resultado);
-        resultado.setEjecucion(this);
+    public Conciliacion getConciliacion() {
+        return conciliacion;
+    }
+
+    public void setConciliacion(Conciliacion conciliacion) {
+        this.conciliacion = conciliacion;
     }
     
-    public void removeResultado(Resultado resultado) {
-        this.resultados.remove(resultado);
-        resultado.setEjecucion(null);
-    }*/
+    
     
     @Override
     public int hashCode() {
@@ -233,8 +226,8 @@ public class EjecucionProceso implements Serializable {
         entidadDTO.setFechaEjecucionExitosa(fechaEjecucionExitosa);
         entidadDTO.setIdPlanInstance(idPlanInstance);
         
-        entidadDTO.setIdConciliacion(codConciliacion);
-        entidadDTO.setNombreConciliacion(nombreConciliacion);
+        entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
+        entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
         
         entidadDTO.setIdEscenario(codEscenario);
         entidadDTO.setNombreEscenario(nombreEscenario);

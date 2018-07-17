@@ -5,10 +5,13 @@
  */
 package co.com.claro.service.rest;
 
+import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EjecucionDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.EjecucionProcesoDTO;
+import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.EjecucionProceso;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.excepciones.MensajeError;
 import java.time.Instant;
 import static java.util.Comparator.comparing;
@@ -44,6 +47,9 @@ public class EjecucionProcesoREST {
 
     @EJB
     protected EjecucionDAO managerDAO;
+    
+    @EJB
+    protected ConciliacionDAO padreDAO;
     
     /**
      * Obtiene las Conciliaciones Paginadas
@@ -124,9 +130,24 @@ public class EjecucionProcesoREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(EjecucionProcesoDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        //EjecucionProceso entidadPadreJPA;
+        Conciliacion entidadPadreJPA;
         EjecucionProceso entidadHijaJPA = entidad.toEntity();
-        managerDAO.create(entidadHijaJPA);
+        entidadHijaJPA.setConciliacion(null);        
+
+        if ( entidad.getIdConciliacion() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdConciliacion());
+            } else {
+                managerDAO.create(entidadHijaJPA);
+                entidadHijaJPA.setConciliacion(entidadPadreJPA);
+                managerDAO.edit(entidadHijaJPA);
+                entidadPadreJPA.addEjecucionProceso(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
+            }
+        } else {
+            managerDAO.create(entidadHijaJPA);
+        }
         return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }
     
@@ -140,20 +161,32 @@ public class EjecucionProcesoREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(EjecucionProcesoDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        EjecucionProceso ejecucionProcesoJPA = managerDAO.find(entidad.getId());
-        if (ejecucionProcesoJPA != null) {
-            ejecucionProcesoJPA.setFechaEjecucion(Date.from(Instant.now()));
-            ejecucionProcesoJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : ejecucionProcesoJPA.getNombre());
-            ejecucionProcesoJPA.setCodConciliacion(entidad.getIdConciliacion()!= null ? entidad.getIdConciliacion(): ejecucionProcesoJPA.getCodConciliacion());
-            ejecucionProcesoJPA.setCodEscenario(entidad.getIdEscenario() != null ? entidad.getIdEscenario() : ejecucionProcesoJPA.getCodEscenario());
-            ejecucionProcesoJPA.setComponenteEjecutado(entidad.getComponenteEjecutado() != null ? entidad.getComponenteEjecutado() : ejecucionProcesoJPA.getComponenteEjecutado());
-            ejecucionProcesoJPA.setEstadoEjecucion(entidad.getEstadoEjecucion()!= null ? entidad.getEstadoEjecucion(): ejecucionProcesoJPA.getEstadoEjecucion());
-            ejecucionProcesoJPA.setFechaEjecucionExitosa(entidad.getFechaEjecucionExitosa() != null ? entidad.getFechaEjecucionExitosa() : ejecucionProcesoJPA.getFechaEjecucionExitosa());
-            ejecucionProcesoJPA.setIdPlanInstance(entidad.getIdPlanInstance()!= null ? entidad.getIdPlanInstance(): ejecucionProcesoJPA.getIdPlanInstance());
-            ejecucionProcesoJPA.setNombreConciliacion(entidad.getNombreConciliacion()!= null ? entidad.getNombreConciliacion(): ejecucionProcesoJPA.getNombreConciliacion());
-            ejecucionProcesoJPA.setNombreEscenario(entidad.getNombreEscenario() != null ? entidad.getNombreEscenario(): ejecucionProcesoJPA.getNombreEscenario());
-            managerDAO.edit(ejecucionProcesoJPA);
-            return Response.status(Response.Status.OK).entity(ejecucionProcesoJPA.toDTO()).build();
+        Conciliacion entidadPadreJPA = null;
+        if (entidad.getIdConciliacion() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdConciliacion());
+            }
+        }
+        //Hallar La entidad actual para actualizarla
+        EjecucionProceso entidadHijaJPA = managerDAO.find(entidad.getId());
+        if (entidadHijaJPA != null) {
+            entidadHijaJPA.setFechaEjecucion(Date.from(Instant.now()));
+            entidadHijaJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : entidadHijaJPA.getNombre());
+            entidadHijaJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadHijaJPA.getConciliacion());
+            entidadHijaJPA.setCodEscenario(entidad.getIdEscenario() != null ? entidad.getIdEscenario() : entidadHijaJPA.getCodEscenario());
+            entidadHijaJPA.setComponenteEjecutado(entidad.getComponenteEjecutado() != null ? entidad.getComponenteEjecutado() : entidadHijaJPA.getComponenteEjecutado());
+            entidadHijaJPA.setEstadoEjecucion(entidad.getEstadoEjecucion()!= null ? entidad.getEstadoEjecucion(): entidadHijaJPA.getEstadoEjecucion());
+            entidadHijaJPA.setFechaEjecucionExitosa(entidad.getFechaEjecucionExitosa() != null ? entidad.getFechaEjecucionExitosa() : entidadHijaJPA.getFechaEjecucionExitosa());
+            entidadHijaJPA.setIdPlanInstance(entidad.getIdPlanInstance()!= null ? entidad.getIdPlanInstance(): entidadHijaJPA.getIdPlanInstance());
+            entidadHijaJPA.setNombreConciliacion(entidad.getNombreConciliacion()!= null ? entidad.getNombreConciliacion(): entidadHijaJPA.getNombreConciliacion());
+            entidadHijaJPA.setNombreEscenario(entidad.getNombreEscenario() != null ? entidad.getNombreEscenario(): entidadHijaJPA.getNombreEscenario());
+            managerDAO.edit(entidadHijaJPA);
+            if ((entidadPadreJPA != null)){
+                entidadPadreJPA.addEjecucionProceso(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
+            }
+            return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
       
