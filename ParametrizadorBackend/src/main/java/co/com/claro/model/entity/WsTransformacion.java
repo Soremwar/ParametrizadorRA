@@ -193,7 +193,7 @@ public class WsTransformacion implements Serializable {
         entidadDTO.setNombreWs(nombreWs);
         entidadDTO.setPaqueteWs(paqueteWs);
         entidadDTO.setUsuario(usuario);
-        entidadDTO.setPeriodicidadWs(periodicidadWs);
+        //entidadDTO.setPeriodicidadWs(periodicidadWs);
         
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
