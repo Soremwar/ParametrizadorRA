@@ -155,6 +155,7 @@ public class WsTransformacionREST{
             entidadHijaJPA.setNombreWs(entidad.getNombreWs()!= null ? entidad.getNombreWs(): entidadHijaJPA.getNombreWs());
             entidadHijaJPA.setPaqueteWs(entidad.getPaqueteWs()!= null ? entidad.getPaqueteWs(): entidadHijaJPA.getPaqueteWs());
             entidadHijaJPA.setUsuario(entidad.getUsuario()!= null ? entidad.getUsuario() : entidadHijaJPA.getUsuario());
+            entidadHijaJPA.setPeriodicidadWs(entidad.getPeriodicidadWs()!= null ? entidad.getPeriodicidadWs(): entidadHijaJPA.getPeriodicidadWs());
             entidadHijaJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadHijaJPA.getConciliacion());
             managerDAO.edit(entidadHijaJPA);
             if ((entidadPadreJPA != null)){

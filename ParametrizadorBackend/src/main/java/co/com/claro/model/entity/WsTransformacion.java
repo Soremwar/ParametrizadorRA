@@ -60,6 +60,11 @@ public class WsTransformacion implements Serializable {
     
     @Basic(optional = false)
     @Size(min = 1, max = 200)
+    @Column(name = "PERIODICIDAD_WS")
+    private String periodicidadWs;
+    
+    @Basic(optional = false)
+    @Size(min = 1, max = 200)
     @Column(name = "PAQUETE_WS")
     private String paqueteWs;
     
@@ -118,6 +123,14 @@ public class WsTransformacion implements Serializable {
 
     public void setPaqueteWs(String paqueteWs) {
         this.paqueteWs = paqueteWs;
+    }
+
+    public String getPeriodicidadWs() {
+        return periodicidadWs;
+    }
+
+    public void setPeriodicidadWs(String periodicidadWs) {
+        this.periodicidadWs = periodicidadWs;
     }
 
     public Date getFechaCreacion() {
@@ -180,6 +193,7 @@ public class WsTransformacion implements Serializable {
         entidadDTO.setNombreWs(nombreWs);
         entidadDTO.setPaqueteWs(paqueteWs);
         entidadDTO.setUsuario(usuario);
+        entidadDTO.setPeriodicidadWs(periodicidadWs);
         
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);

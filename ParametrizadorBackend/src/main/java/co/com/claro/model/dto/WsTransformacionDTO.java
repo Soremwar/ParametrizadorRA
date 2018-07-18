@@ -5,7 +5,6 @@
  */
 package co.com.claro.model.dto;
 
-import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.WsTransformacion;
 import java.io.Serializable;
@@ -22,6 +21,7 @@ public class WsTransformacionDTO implements Serializable{
     private Integer id;
     private String nombreWs;
     private String paqueteWs;
+    private String periodicidadWs;
     private Date fechaCreacion;
     private Date fechaActualizacion;
     private String usuario;
@@ -58,6 +58,14 @@ public class WsTransformacionDTO implements Serializable{
 
     public void setPaqueteWs(String paqueteWs) {
         this.paqueteWs = paqueteWs;
+    }
+
+    public String getPeriodicidadWs() {
+        return periodicidadWs;
+    }
+
+    public void setPeriodicidadWs(String periodicidadWs) {
+        this.periodicidadWs = periodicidadWs;
     }
 
     public Date getFechaCreacion() {
@@ -100,6 +108,7 @@ public class WsTransformacionDTO implements Serializable{
         entity.setFechaCreacion(fechaCreacion);
         entity.setNombreWs(nombreWs);
         entity.setPaqueteWs(paqueteWs);
+        entity.setPeriodicidadWs(periodicidadWs);
         entity.setUsuario(usuario);
         
         entity.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
