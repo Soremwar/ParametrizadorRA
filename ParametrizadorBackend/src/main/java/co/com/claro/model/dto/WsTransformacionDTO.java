@@ -108,7 +108,7 @@ public class WsTransformacionDTO implements Serializable{
         entity.setFechaCreacion(fechaCreacion);
         entity.setNombreWs(nombreWs);
         entity.setPaqueteWs(paqueteWs);
-        entity.setPeriodicidadWs(periodicidadWs);
+        //entity.setPeriodicidadWs(periodicidadWs);
         entity.setUsuario(usuario);
         
         entity.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
