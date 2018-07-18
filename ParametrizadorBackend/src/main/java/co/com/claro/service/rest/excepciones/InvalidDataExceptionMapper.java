@@ -18,7 +18,7 @@ public class InvalidDataExceptionMapper implements ExceptionMapper<DataNotFoundE
 
     @Override
     public Response toResponse(DataNotFoundException exception) {
-        MensajeError mensaje = new MensajeError(404, "Datos Invalidos", exception.getCause().toString());
+        Mensaje mensaje = new Mensaje(404, "Datos Invalidos", exception.getCause().toString());
         return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
     }
     

@@ -14,15 +14,15 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 
 @XmlRootElement
-public class MensajeError implements Serializable{
+public class Mensaje implements Serializable{
     private int codigo;
     private String mensaje;
     private String descripcion; 
 
-    public MensajeError() {
+    public Mensaje() {
         
     }
-    public MensajeError(int codigo, String mensaje, String descripcion) {
+    public Mensaje(int codigo, String mensaje, String descripcion) {
         this.codigo = codigo;
         this.mensaje = mensaje;
         this.descripcion = descripcion;

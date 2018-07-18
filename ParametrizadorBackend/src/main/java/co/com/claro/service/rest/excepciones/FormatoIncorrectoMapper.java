@@ -18,7 +18,7 @@ public class FormatoIncorrectoMapper implements ExceptionMapper<FormatoIncorrect
 
     @Override
     public Response toResponse(FormatoIncorrecto exception) {
-        MensajeError mensaje = new MensajeError(Response.Status.BAD_REQUEST.getStatusCode(), "Formato Incorrecto", exception.getCause().toString());
+        Mensaje mensaje = new Mensaje(Response.Status.BAD_REQUEST.getStatusCode(), "Formato Incorrecto", exception.getCause().toString());
         return Response.status(Response.Status.BAD_REQUEST).entity(mensaje).build();
     }
     

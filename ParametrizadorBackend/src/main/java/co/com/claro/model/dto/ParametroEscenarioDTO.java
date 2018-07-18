@@ -5,7 +5,6 @@
  */
 package co.com.claro.model.dto;
 
-import co.com.claro.model.entity.Parametro;
 import co.com.claro.model.entity.ParametroEscenario;
 import java.io.Serializable;
 import java.util.Date;
@@ -19,8 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ParametroEscenarioDTO  implements Serializable{
 
  
+    private Integer id;
     private Integer idEscenario;
-  private Integer id;
     private String parametro;
     private String valor;
     private String descripcion;

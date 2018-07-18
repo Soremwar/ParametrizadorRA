@@ -12,7 +12,7 @@ import co.com.claro.model.dto.EjecucionProcesoDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.EjecucionProceso;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
-import co.com.claro.service.rest.excepciones.MensajeError;
+import co.com.claro.service.rest.excepciones.Mensaje;
 import java.time.Instant;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -202,13 +202,13 @@ public class EjecucionProcesoREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         EjecucionProceso ejecucionProceso = managerDAO.find(id);
-        MensajeError mensaje;
+        Mensaje mensaje;
         if (ejecucionProceso == null) {
-                mensaje = new MensajeError(404, "Not Found", "Registro no encontrado " + id);
+                mensaje = new Mensaje(404, "Not Found", "Registro no encontrado " + id);
                 return Response.status(Response.Status.OK).entity(mensaje).build();    
         } else {
             managerDAO.remove(managerDAO.find(id));
-            mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
+            mensaje = new Mensaje(200, "OK", "Registro borrado exitosamente");
         }
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }

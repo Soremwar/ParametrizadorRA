@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,7 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "ParametroEscenario.findByFechaActualizacion", query = "SELECT p FROM Parametro p WHERE p.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "ParametroEscenario.findByUsuario", query = "SELECT p FROM Parametro p WHERE p.usuario = :usuario")
     , @NamedQuery(name = "ParametroEscenario.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) LIKE lower(:parametro) or lower(p.descripcion) LIKE lower(:descripcion)")})
-
+@Cacheable(false)
 public class ParametroEscenario implements Serializable {
 
     private static final long serialVersionUID = 1L;

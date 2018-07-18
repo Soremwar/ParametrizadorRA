@@ -12,7 +12,7 @@ import co.com.claro.model.dto.ParametroEscenarioDTO;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.ParametroEscenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
-import co.com.claro.service.rest.excepciones.MensajeError;
+import co.com.claro.service.rest.excepciones.Mensaje;
 import java.time.Instant;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -111,17 +111,18 @@ public class ParametroEscenarioREST{
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response add(ParametroEscenarioDTO entidad) {
+    public Response add(ParametroEscenarioDTO entidad)  {
         logger.log(Level.INFO, "entidad:{0}", entidad);
         Escenario entidadPadreJPA;
         ParametroEscenario entidadHijaJPA = entidad.toEntity();
         entidadHijaJPA.setEscenario(null);
+        try {
         if ( entidad.getIdEscenario() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
             if (entidadPadreJPA == null) {
                 throw new DataNotFoundException("Datos no encontrados " + entidad.getIdEscenario());
             } else {
-                managerDAO.create(entidadHijaJPA);
+                managerDAO.create2(entidadHijaJPA);
                 entidadHijaJPA.setEscenario(entidadPadreJPA);
                 managerDAO.edit(entidadHijaJPA);
                 entidadPadreJPA.addParametro(entidadHijaJPA);
@@ -129,6 +130,10 @@ public class ParametroEscenarioREST{
             }
         } else {
             managerDAO.create(entidadHijaJPA);
+        }
+        }catch (Exception e) {
+            Mensaje mensaje = new Mensaje(Response.Status.CONFLICT.getStatusCode(), Response.Status.CONFLICT.getReasonPhrase(), e.getMessage());
+            return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
         }
         return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }  
@@ -188,7 +193,7 @@ public class ParametroEscenarioREST{
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);
         }
-        MensajeError mensaje = new MensajeError(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        Mensaje mensaje = new Mensaje(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     

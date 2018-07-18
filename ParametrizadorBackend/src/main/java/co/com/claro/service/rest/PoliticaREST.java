@@ -6,7 +6,7 @@ import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.entity.Politica;
-import co.com.claro.service.rest.excepciones.MensajeError;
+import co.com.claro.service.rest.excepciones.Mensaje;
 import java.time.Instant;
 import java.util.ArrayList;
 import static java.util.Comparator.comparing;
@@ -159,7 +159,7 @@ public class PoliticaREST{
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         managerDAO.remove(managerDAO.find(id));
-        MensajeError mensaje = new MensajeError(200, "OK", "Registro borrado exitosamente");
+        Mensaje mensaje = new Mensaje(200, "OK", "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     

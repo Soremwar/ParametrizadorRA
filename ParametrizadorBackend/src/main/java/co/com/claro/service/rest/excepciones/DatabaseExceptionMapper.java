@@ -19,7 +19,7 @@ import org.eclipse.persistence.exceptions.DatabaseException;
 public class DatabaseExceptionMapper implements ExceptionMapper<DatabaseException>{
     @Override
     public Response toResponse(DatabaseException exception) {
-        MensajeError mensaje = new MensajeError(501, "Error inconsistencia de datos", exception.getMessage() +"... " + exception.getCause() +"... " + exception.getLocalizedMessage());
+        Mensaje mensaje = new Mensaje(501, "Error inconsistencia de datos", exception.getMessage() +"... " + exception.getCause() +"... " + exception.getLocalizedMessage());
         return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
     }
 }

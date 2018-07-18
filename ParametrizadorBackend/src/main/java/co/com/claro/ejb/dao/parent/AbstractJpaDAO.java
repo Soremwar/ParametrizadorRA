@@ -22,13 +22,21 @@ public abstract class AbstractJpaDAO<T> {
 
     public void create(T entity) {
         getEntityManager().persist(entity);
-        getEntityManager().flush();
+    }
+    
+    
+    public void create2(T entity) throws Exception {
+        try {
+            getEntityManager().persist(entity);
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+        //getEntityManager().flush();
 
     }
-
     public T edit(T entity) {
         getEntityManager().merge(entity);
-        getEntityManager().flush();
+        //getEntityManager().flush();
         if (entity == null) {
             throw new DataNotFoundException("No se encontro la entidad " + entity);
         }

@@ -9,6 +9,7 @@ import javax.persistence.PersistenceException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import org.eclipse.persistence.exceptions.DatabaseException;
 
 /**
  *
@@ -20,12 +21,12 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
     @Override
     public Response toResponse(Throwable exception) {
  
-        MensajeError mensaje = new MensajeError(500, exception.toString(), "ERROR INTERNO..." + exception.getCause() );
+        Mensaje mensaje = new Mensaje(500, exception.toString(), "Error" + exception.getCause().getMessage() );
         if (exception.getCause() instanceof DataNotFoundException) {
-            mensaje = new MensajeError(404, Response.Status.NOT_FOUND.getReasonPhrase(), exception.getCause().getMessage());
+            mensaje = new Mensaje(404, Response.Status.NOT_FOUND.getReasonPhrase(), exception.getCause().getMessage());
             return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
-        } else if (exception.getCause() instanceof PersistenceException) {
-            mensaje = new MensajeError(409, Response.Status.CONFLICT.getReasonPhrase(), exception.getCause().getMessage());
+        } else if (exception.getCause() instanceof PersistenceException || exception.getCause() instanceof DatabaseException) {
+            mensaje = new Mensaje(409, Response.Status.CONFLICT.getReasonPhrase(), exception.getCause().getMessage());
             return Response.status(Response.Status.CONFLICT).entity(mensaje).build();
             
         } 

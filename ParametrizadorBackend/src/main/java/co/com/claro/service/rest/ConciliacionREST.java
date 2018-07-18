@@ -9,7 +9,7 @@ import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
-import co.com.claro.service.rest.excepciones.MensajeError;
+import co.com.claro.service.rest.excepciones.Mensaje;
 import java.time.Instant;
 import java.util.ArrayList;
 import static java.util.Comparator.comparing;
@@ -193,7 +193,7 @@ public class ConciliacionREST{
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);
         }
-        MensajeError mensaje = new MensajeError(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        Mensaje mensaje = new Mensaje(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
 

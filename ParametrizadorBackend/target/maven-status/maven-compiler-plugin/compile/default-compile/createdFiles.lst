@@ -23,7 +23,6 @@ co/com/claro/model/entity/EjecucionProceso.class
 co/com/claro/model/entity/Politica.class
 co/com/claro/model/entity/Conciliacion_.class
 co/com/claro/model/entity/Indicador.class
-co/com/claro/service/rest/excepciones/MensajeError.class
 co/com/claro/model/dto/ParametroEscenarioDTO.class
 co/com/claro/model/dto/PoliticaDTO.class
 co/com/claro/model/entity/Conciliacion.class
@@ -66,6 +65,7 @@ service/PoliticaFacadeREST.class
 co/com/claro/ejb/dao/ParametroDAO.class
 co/com/claro/model/entity/parent/Padre.class
 co/com/claro/model/dto/ConciliacionDTO.class
+co/com/claro/service/rest/excepciones/Mensaje.class
 co/com/claro/model/entity/WsTransformacion.class
 co/com/claro/ejb/dao/parent/AbstractJpaDAO.class
 co/com/claro/model/entity/WsTransformacion_.class

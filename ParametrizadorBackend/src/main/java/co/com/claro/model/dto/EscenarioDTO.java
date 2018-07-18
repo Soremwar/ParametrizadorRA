@@ -8,6 +8,7 @@ package co.com.claro.model.dto;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Escenario;
 import java.io.Serializable;
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,6 +25,8 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
     //Campos propios
     private String usuarioAsignado;
     private String impacto;
+    
+    private List<ParametroEscenarioDTO> parametros;
 
 
     public String getUsuarioAsignado() {
@@ -58,6 +61,15 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
         this.idConciliacion = idConciliacion;
     }
 
+    public List<ParametroEscenarioDTO> getParametros() {
+        return parametros;
+    }
+
+    public void setParametros(List<ParametroEscenarioDTO> parametros) {
+        this.parametros = parametros;
+    }
+
+    
     public Escenario toEntity(){
         Escenario p = new Escenario();
         //Campos comunes
