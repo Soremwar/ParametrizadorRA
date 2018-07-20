@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package co.com.claro.service.rest.excepciones;
+package co.com.claro.service.rest.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -14,26 +15,37 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 
 @XmlRootElement
-public class Mensaje implements Serializable{
+public class WrapperResponseEntity implements Serializable{
     private int codigo;
     private String mensaje;
     private String descripcion; 
+    
+    @JsonIgnore
+    private int httpStatus;
 
-    public Mensaje() {
+    public WrapperResponseEntity() {
         
     }
-    public Mensaje(int codigo, String mensaje, String descripcion) {
+    
+    public WrapperResponseEntity(HttpCodeType httpCode, String descripcion) {
+        this.codigo = httpCode.getCode();
+        this.mensaje = httpCode.getMsg();
+        this.descripcion = descripcion;
+        this.httpStatus = httpCode.getCode();
+    }
+    
+    public WrapperResponseEntity(Integer codigo, String mensaje, String descripcion) {
         this.codigo = codigo;
         this.mensaje = mensaje;
         this.descripcion = descripcion;
     }
     
-    public int getCodigo() {
+    public Integer getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
+    public void setCodigo(Integer code) {
+        this.codigo = code;
     }
 
     public String getMensaje() {
@@ -50,6 +62,10 @@ public class Mensaje implements Serializable{
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+    
+    public int httpStatus(){
+        return httpStatus;
     }
 
 }

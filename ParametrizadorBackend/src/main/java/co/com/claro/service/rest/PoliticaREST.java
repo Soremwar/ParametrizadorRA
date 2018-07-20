@@ -6,7 +6,8 @@ import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.entity.Politica;
-import co.com.claro.service.rest.excepciones.Mensaje;
+import co.com.claro.service.rest.response.WrapperResponseEntity;
+import co.com.claro.service.rest.parent.AbstractParentREST;
 import java.time.Instant;
 import java.util.ArrayList;
 import static java.util.Comparator.comparing;
@@ -34,7 +35,7 @@ import javax.ws.rs.core.Response;
  * @author Andres Bedoya
  */
 @Path("politicas")
-public class PoliticaREST {
+public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @Transient
     private static final Logger logger = Logger.getLogger(PoliticaREST.class.getSimpleName());
     
@@ -44,13 +45,6 @@ public class PoliticaREST {
     @EJB
     protected ConciliacionDAO conciliacionDAO;
 
-    /**
-     * Obtiene las Politicas Paginadas
-     * @param offset Desde cual item se retorna
-     * @param limit Limite de items a retornar
-     * @param orderby Indica por cual campo descriptivo va a guardar (id, nombre, fechaCreacion)
-     * @return Toda la lista de politicas que corresponden con el criterio
-     */
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<PoliticaDTO> find(
@@ -68,20 +62,16 @@ public class PoliticaREST {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public PoliticaDTO getById(@PathParam("id") Integer id){
+    public PoliticaDTO findById(@PathParam("id") Integer id){
         logger.log(Level.INFO, "id:{0}", id);
         Politica entidad = managerDAO.findByAllTreeById(id);
         return entidad.toDTO();
 
     }
 
-    /**
-     * Encontrar Politicas que no tengan conciliacion
-     * @return
-     */
+    
     @GET
     @Path("/findPoliticasSinConciliacion")
-    @Produces({MediaType.APPLICATION_JSON})
     public List<PoliticaDTO> findPoliticasSinConciliacion(){
         List<Politica> lst = managerDAO.findPoliticaSinConciliacion();
         List<PadreDTO> lstDTO = new ArrayList<>();        
@@ -91,11 +81,7 @@ public class PoliticaREST {
         List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
-     /**
-     * Busca las politicas por cualquier columna
-     * @param texto Texto a buscar en cualquier texto
-     * @return Lista de Politicas que cumplen con el criterio
-     */
+
     @GET
     @Path("/findByAny")
     @Produces({MediaType.APPLICATION_JSON})
@@ -110,11 +96,6 @@ public class PoliticaREST {
         return lstFinal;
     }
    
-    /**
-     * Crea una nueva politica
-     * @param entidad Entidad que se va a agregar
-     * @return el la entidad recien creada
-     */
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
@@ -125,11 +106,6 @@ public class PoliticaREST {
         return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
     }
     
-    /**
-     * Actualiza una politica por su Id
-     * @param entidad
-     * @return el resultado de la operacion
-     */
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
@@ -159,17 +135,15 @@ public class PoliticaREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         managerDAO.remove(managerDAO.find(id));
-        Mensaje mensaje = new Mensaje(200, "OK", "Registro borrado exitosamente");
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(200, "OK", "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
-    
-    /*
+       
     @GET
     @Path("/count")
     @Produces({MediaType.APPLICATION_JSON})
-    @Override
     public int count(){
-        return super.count();
-    }*/
- 
+        return managerDAO.count();
+    }
+
 }

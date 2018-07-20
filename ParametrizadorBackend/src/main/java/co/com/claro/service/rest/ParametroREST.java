@@ -9,7 +9,7 @@ import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ParametroDTO;
 import co.com.claro.model.entity.Parametro;
-import co.com.claro.service.rest.excepciones.Mensaje;
+import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -146,7 +146,7 @@ public class ParametroREST{
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         managerDAO.remove(managerDAO.find(id));
-        Mensaje mensaje = new Mensaje(200, "OK", "Registro borrado exitosamente");
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(200, "OK", "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     

@@ -8,7 +8,7 @@ import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.WsTransformacion;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
-import co.com.claro.service.rest.excepciones.Mensaje;
+import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -186,7 +186,7 @@ public class WsTransformacionREST{
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);
         }
-        Mensaje mensaje = new Mensaje(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     /**

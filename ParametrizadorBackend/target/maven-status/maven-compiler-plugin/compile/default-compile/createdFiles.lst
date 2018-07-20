@@ -23,6 +23,7 @@ co/com/claro/model/entity/EjecucionProceso.class
 co/com/claro/model/entity/Politica.class
 co/com/claro/model/entity/Conciliacion_.class
 co/com/claro/model/entity/Indicador.class
+co/com/claro/service/rest/parent/AbstractParentREST.class
 co/com/claro/model/dto/ParametroEscenarioDTO.class
 co/com/claro/model/dto/PoliticaDTO.class
 co/com/claro/model/entity/Conciliacion.class

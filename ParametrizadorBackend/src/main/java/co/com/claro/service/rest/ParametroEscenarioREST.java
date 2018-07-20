@@ -12,7 +12,7 @@ import co.com.claro.model.dto.ParametroEscenarioDTO;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.ParametroEscenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
-import co.com.claro.service.rest.excepciones.Mensaje;
+import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -132,7 +132,7 @@ public class ParametroEscenarioREST{
             managerDAO.create(entidadHijaJPA);
         }
         }catch (Exception e) {
-            Mensaje mensaje = new Mensaje(Response.Status.CONFLICT.getStatusCode(), Response.Status.CONFLICT.getReasonPhrase(), e.getMessage());
+            WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.CONFLICT.getStatusCode(), Response.Status.CONFLICT.getReasonPhrase(), e.getMessage());
             return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
         }
         return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
@@ -193,7 +193,7 @@ public class ParametroEscenarioREST{
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);
         }
-        Mensaje mensaje = new Mensaje(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     

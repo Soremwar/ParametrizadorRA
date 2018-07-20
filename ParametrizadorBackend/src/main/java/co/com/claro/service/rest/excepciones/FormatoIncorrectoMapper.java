@@ -5,6 +5,7 @@
  */
 package co.com.claro.service.rest.excepciones;
 
+import co.com.claro.service.rest.response.WrapperResponseEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -18,7 +19,7 @@ public class FormatoIncorrectoMapper implements ExceptionMapper<FormatoIncorrect
 
     @Override
     public Response toResponse(FormatoIncorrecto exception) {
-        Mensaje mensaje = new Mensaje(Response.Status.BAD_REQUEST.getStatusCode(), "Formato Incorrecto", exception.getCause().toString());
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.BAD_REQUEST.getStatusCode(), "Formato Incorrecto", exception.getCause().toString());
         return Response.status(Response.Status.BAD_REQUEST).entity(mensaje).build();
     }
     

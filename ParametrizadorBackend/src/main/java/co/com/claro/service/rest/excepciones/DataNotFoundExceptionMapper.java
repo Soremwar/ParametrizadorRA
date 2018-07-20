@@ -5,6 +5,7 @@
  */
 package co.com.claro.service.rest.excepciones;
 
+import co.com.claro.service.rest.response.WrapperResponseEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -18,7 +19,7 @@ public class DataNotFoundExceptionMapper implements ExceptionMapper<DataNotFound
 
     @Override
     public Response toResponse(DataNotFoundException exception) {
-        Mensaje mensaje = new Mensaje(404, "No se encontraron datos", exception.getCause().toString());
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(404, "No se encontraron datos", exception.getCause().toString());
         return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
     }
     

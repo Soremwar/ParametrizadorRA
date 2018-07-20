@@ -8,7 +8,7 @@ import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
-import co.com.claro.service.rest.excepciones.Mensaje;
+import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
-import javax.ejb.ApplicationException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -186,7 +185,7 @@ public class EscenarioREST {
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);
         }
-        Mensaje mensaje = new Mensaje(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     

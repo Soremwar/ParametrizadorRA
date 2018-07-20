@@ -5,6 +5,7 @@
  */
 package co.com.claro.service.rest.excepciones;
 
+import co.com.claro.service.rest.response.WrapperResponseEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -19,7 +20,7 @@ import org.eclipse.persistence.exceptions.DatabaseException;
 public class DatabaseExceptionMapper implements ExceptionMapper<DatabaseException>{
     @Override
     public Response toResponse(DatabaseException exception) {
-        Mensaje mensaje = new Mensaje(501, "Error inconsistencia de datos", exception.getMessage() +"... " + exception.getCause() +"... " + exception.getLocalizedMessage());
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(501, "Error inconsistencia de datos", exception.getMessage() +"... " + exception.getCause() +"... " + exception.getLocalizedMessage());
         return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
     }
 }

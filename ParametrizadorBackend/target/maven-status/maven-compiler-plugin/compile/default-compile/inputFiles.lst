@@ -46,6 +46,7 @@
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/utils/comparators/EntityNameComparator.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/EjecucionProcesoDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/InvalidDataException.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/parent/AbstractParentREST.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/Mensaje.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/PoliticaDAO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/Usuario.java

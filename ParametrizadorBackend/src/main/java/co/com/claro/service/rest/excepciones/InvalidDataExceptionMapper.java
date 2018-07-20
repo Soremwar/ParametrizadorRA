@@ -5,6 +5,7 @@
  */
 package co.com.claro.service.rest.excepciones;
 
+import co.com.claro.service.rest.response.WrapperResponseEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -18,7 +19,7 @@ public class InvalidDataExceptionMapper implements ExceptionMapper<DataNotFoundE
 
     @Override
     public Response toResponse(DataNotFoundException exception) {
-        Mensaje mensaje = new Mensaje(404, "Datos Invalidos", exception.getCause().toString());
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(404, "Datos Invalidos", exception.getCause().toString());
         return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
     }
     
