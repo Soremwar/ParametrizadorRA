@@ -12,6 +12,7 @@ import co.com.claro.model.dto.WsTransformacionDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
+import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
@@ -271,7 +272,7 @@ public class Conciliacion implements Serializable {
         }
 
         if (ejecucionesProceso != null) {
-            List<EjecucionProcesoDTO> lstEjecuciones = ejecucionesProceso.stream().map((ejecucionProcesoDTO) -> ejecucionProcesoDTO.toDTO()).collect(toList());
+            List<EjecucionProcesoDTO> lstEjecuciones = ejecucionesProceso.stream().map((ejecucionProcesoDTO) -> ejecucionProcesoDTO.toDTO()).sorted(comparing(EjecucionProcesoDTO::getFechaEjecucion)).collect(toList());
             entidadDTO.setEjecucionesProceso(lstEjecuciones);
         }
 

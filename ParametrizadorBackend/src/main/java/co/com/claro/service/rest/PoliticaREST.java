@@ -34,10 +34,10 @@ import javax.ws.rs.core.Response;
  * @author Andres Bedoya
  */
 @Path("politicas")
-public class PoliticaREST{
+public class PoliticaREST {
     @Transient
     private static final Logger logger = Logger.getLogger(PoliticaREST.class.getSimpleName());
-
+    
     @EJB
     protected PoliticaDAO managerDAO;
     
@@ -59,7 +59,7 @@ public class PoliticaREST{
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
         List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(PoliticaDTO::getId)).collect(toList());
+        List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(PadreDTO::getId)).collect(toList());
         UtilListas.ordenarLista(lstDTO, orderby);
         List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
         return lstFinal;
@@ -163,11 +163,13 @@ public class PoliticaREST{
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
     
+    /*
     @GET
     @Path("/count")
     @Produces({MediaType.APPLICATION_JSON})
+    @Override
     public int count(){
-        return managerDAO.count();
-    }
+        return super.count();
+    }*/
  
 }

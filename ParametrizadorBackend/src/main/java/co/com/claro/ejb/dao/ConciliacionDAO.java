@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.persistence.TypedQuery;
 
 /**
@@ -25,7 +26,7 @@ import javax.persistence.TypedQuery;
 @Stateless
 public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
     private static final Logger logger = Logger.getLogger(ConciliacionDAO.class.getSimpleName());
-    @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
+    @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU", type = PersistenceContextType.TRANSACTION)
     private EntityManager em;
 
     public ConciliacionDAO() {

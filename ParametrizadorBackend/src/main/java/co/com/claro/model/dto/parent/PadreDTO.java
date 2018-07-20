@@ -13,7 +13,7 @@ import java.util.Date;
  * @author andres
  */
 
-public class PadreDTO implements Serializable {
+public abstract class PadreDTO implements Serializable {
     private Integer id;
 
     private String nombre;
@@ -62,4 +62,6 @@ public class PadreDTO implements Serializable {
     public void setFechaActualizacion(Date fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
     }
+    
+
 }

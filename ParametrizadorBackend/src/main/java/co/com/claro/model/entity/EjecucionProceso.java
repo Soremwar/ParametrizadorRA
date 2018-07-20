@@ -7,6 +7,7 @@ package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.EjecucionProcesoDTO;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Cacheable;
@@ -47,7 +48,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "EjecucionProceso.findByFechaEjecucion", query = "SELECT l FROM EjecucionProceso l WHERE l.fechaEjecucion = :fechaEjecucion")
     , @NamedQuery(name = "EjecucionProceso.findByFechaEjecucionExitosa", query = "SELECT l FROM EjecucionProceso l WHERE l.fechaEjecucionExitosa = :fechaEjecucionExitosa")
     , @NamedQuery(name = "EjecucionProceso.findByComponenteEjecutado", query = "SELECT l FROM EjecucionProceso l WHERE l.componenteEjecutado = :componenteEjecutado")})
-//@Cacheable(false)
+@Cacheable(false)
 public class EjecucionProceso implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -156,7 +157,7 @@ public class EjecucionProceso implements Serializable {
     }
 
     public void setFechaEjecucion(Date fechaEjecucion) {
-        this.fechaEjecucion = fechaEjecucion;
+        this.fechaEjecucion = fechaEjecucion != null ? fechaEjecucion : Date.from(Instant.now());
     }
 
     public Date getFechaEjecucionExitosa() {

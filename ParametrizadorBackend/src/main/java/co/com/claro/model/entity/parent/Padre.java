@@ -14,7 +14,7 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 
-public class Padre {
+public abstract class Padre<T> {
     @Id
     protected Integer id;
 
@@ -25,6 +25,6 @@ public class Padre {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+    public abstract T toDTO();  
 
 }
