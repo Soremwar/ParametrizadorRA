@@ -11,7 +11,7 @@ package co.com.claro.service.rest.response;
  */
 public enum ResponseCode implements HttpCodeType {
     
-    OK(200, "成功"),
+    OK(200, "Success"),
 
     BAD_REQUEST(400, "Bad Request"),
 
@@ -44,6 +44,7 @@ public enum ResponseCode implements HttpCodeType {
             this.msg = msg;
     }
 
+    @Override
     public int getCode() {
             return code;
     }
@@ -52,6 +53,7 @@ public enum ResponseCode implements HttpCodeType {
             this.code = code;
     }
 
+    @Override
     public String getMsg() {
             return msg;
     }
