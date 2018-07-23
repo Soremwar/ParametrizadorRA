@@ -6,6 +6,7 @@
 package co.com.claro.service.rest.parent;
 
 import co.com.claro.model.dto.PoliticaDTO;
+import co.com.claro.model.dto.parent.PadreDTO;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -24,7 +25,7 @@ import javax.ws.rs.core.Response;
  * @author andresbedoya
  * @param <T>
  */
-public abstract class AbstractParentREST<T> {
+public abstract class AbstractParentREST<T extends PadreDTO> {
 
     /**
      *

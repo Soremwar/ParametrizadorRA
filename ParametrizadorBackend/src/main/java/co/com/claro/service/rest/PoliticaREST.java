@@ -47,6 +47,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
+    @Override
     public List<PoliticaDTO> find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
@@ -72,6 +73,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     
     @GET
     @Path("/findPoliticasSinConciliacion")
+    @Produces({MediaType.APPLICATION_JSON})
     public List<PoliticaDTO> findPoliticasSinConciliacion(){
         List<Politica> lst = managerDAO.findPoliticaSinConciliacion();
         List<PadreDTO> lstDTO = new ArrayList<>();        
