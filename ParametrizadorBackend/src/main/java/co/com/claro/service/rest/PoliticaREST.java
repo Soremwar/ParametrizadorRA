@@ -35,7 +35,7 @@ import javax.ws.rs.core.Response;
  * @author Andres Bedoya
  */
 @Path("politicas")
-public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
+public class PoliticaREST {//extends AbstractParentREST<PoliticaDTO>{
     @Transient
     private static final Logger logger = Logger.getLogger(PoliticaREST.class.getSimpleName());
     
@@ -47,7 +47,6 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    @Override
     public List<PoliticaDTO> find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
