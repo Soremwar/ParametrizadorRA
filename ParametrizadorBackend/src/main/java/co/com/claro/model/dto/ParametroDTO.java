@@ -18,12 +18,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ParametroDTO  implements Serializable{
 
     private Integer id;
+   private Integer codPadre;
     private String parametro;
     private String valor;
     private String descripcion;
     private Date fechaCreacion;
     private Date fechaActualizacion;
     private String usuario;
+    private String tipo;
 
     public Integer getId() {
         return id;
@@ -80,6 +82,23 @@ public class ParametroDTO  implements Serializable{
     public void setValor(String valor) {
         this.valor = valor;
     }
+
+    public Integer getCodPadre() {
+        return codPadre;
+    }
+
+    public void setCodPadre(Integer codPadre) {
+        this.codPadre = codPadre;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+    
     
     public Parametro toEntity(){
         Parametro p = new Parametro();
@@ -91,6 +110,8 @@ public class ParametroDTO  implements Serializable{
         p.setFechaCreacion(this.getFechaCreacion());
         p.setFechaActualizacion(this.getFechaActualizacion());
         p.setDescripcion(this.descripcion);
+        p.setCodPadre(codPadre);
+        p.setTipo(tipo);
         return p;
         
     }

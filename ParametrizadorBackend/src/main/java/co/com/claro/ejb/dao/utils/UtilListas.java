@@ -12,7 +12,6 @@ import co.com.claro.model.dto.EjecucionProcesoDTO;
 import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.IndicadorDTO;
 import co.com.claro.model.dto.ParametroDTO;
-import co.com.claro.model.dto.ParametroEscenarioDTO;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import java.util.Collections;
@@ -76,21 +75,6 @@ public class UtilListas {
         return lstDTO;
     }
     
-    
-    /**
-     *
-     * @param lstDTO
-     * @param orderby
-     * @return
-     */
-    public static List<ParametroEscenarioDTO> ordenarListaParametrosEscenario(List<ParametroEscenarioDTO> lstDTO, String orderby) {
-        if (orderby != null && orderby.equals("parametro")) {
-            lstDTO.sort((ParametroEscenarioDTO h1, ParametroEscenarioDTO h2) -> h1.getParametro().compareTo(h2.getParametro()));
-        } else if (orderby != null && orderby.equals("descripcion")) {
-            lstDTO.sort((ParametroEscenarioDTO h1, ParametroEscenarioDTO h2) -> h1.getDescripcion().compareTo(h2.getDescripcion()));
-        }        
-        return lstDTO;
-    }
     
     /**
      *

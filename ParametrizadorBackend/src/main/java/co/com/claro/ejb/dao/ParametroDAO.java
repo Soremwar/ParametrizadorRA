@@ -69,6 +69,23 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro>{
         }
         return results;
     }
+    
+        /**
+     * Buscar un registro por un tupla de tipo y codpadre
+     * @param busqueda Campo por el cual va a buscar en todos los campos descriptivos
+     * @return Lista de Parametros que cumplan con el criterio
+     */
+    public List<Parametro> findByCodPadre(String tipo, Integer codPadre){
+        logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{tipo,codPadre});     
+        TypedQuery<Parametro> query = em.createNamedQuery("Parametro.findByCodPadre", Parametro.class);
+        query.setParameter("tipo", "%" + tipo + "%");
+        query.setParameter("codPadre", codPadre);
+        List<Parametro> results = query.getResultList();
+        if (results == null) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }
+        return results;
+    }
    
 }
 

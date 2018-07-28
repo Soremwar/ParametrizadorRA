@@ -35,7 +35,7 @@ import javax.ws.rs.core.Response;
  * @author Andres Bedoya
  */
 @Path("politicas")
-public class PoliticaREST {//extends AbstractParentREST<PoliticaDTO>{
+public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @Transient
     private static final Logger logger = Logger.getLogger(PoliticaREST.class.getSimpleName());
     
@@ -45,8 +45,9 @@ public class PoliticaREST {//extends AbstractParentREST<PoliticaDTO>{
     @EJB
     protected ConciliacionDAO conciliacionDAO;
 
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
+    //@GET
+    //@Produces({MediaType.APPLICATION_JSON})
+    @Override
     public List<PoliticaDTO> find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
@@ -136,7 +137,7 @@ public class PoliticaREST {//extends AbstractParentREST<PoliticaDTO>{
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         managerDAO.remove(managerDAO.find(id));
-        WrapperResponseEntity mensaje = new WrapperResponseEntity(200, "OK", "Registro borrado exitosamente");
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
        

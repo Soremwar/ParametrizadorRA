@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static java.util.stream.Collectors.toList;
+//import static java.util.stream.Collectors.toList;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Transient;
@@ -66,7 +66,7 @@ public class ParametroEscenarioREST{
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2} ", new Object[]{offset, limit, orderby});     
         List<ParametroEscenario> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<ParametroEscenarioDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ParametroEscenarioDTO::getId)).collect(toList());
+        List<ParametroEscenarioDTO> lstDTO = null; //lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ParametroEscenarioDTO::getId)).collect(toList());
         lstDTO = UtilListas.ordenarListaParametrosEscenario(lstDTO, orderby);
         List<ParametroEscenarioDTO> lstFinal = (List<ParametroEscenarioDTO>)(List<?>) lstDTO;
         return lstFinal;
@@ -98,7 +98,7 @@ public class ParametroEscenarioREST{
     public List<ParametroEscenarioDTO> findByAnyColumn(@QueryParam("texto") String texto){
         logger.log(Level.INFO, "texto:{0}", texto);      
         List<ParametroEscenario> lst = managerDAO.findByAnyColumn(texto);
-        List<ParametroEscenarioDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ParametroEscenarioDTO::getId)).collect(toList());
+        List<ParametroEscenarioDTO> lstDTO = null; //lst.stream().map(item -> item.toDTO()).sorted(comparing(ParametroEscenarioDTO::getId)).collect(toList());
         List<ParametroEscenarioDTO> lstFinal = (List<ParametroEscenarioDTO>)(List<?>) lstDTO;
         return lstFinal;        
     }

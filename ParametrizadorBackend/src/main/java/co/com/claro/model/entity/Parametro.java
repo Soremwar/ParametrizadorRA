@@ -40,7 +40,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Parametro.findByFechaCreacion", query = "SELECT p FROM Parametro p WHERE p.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Parametro.findByFechaActualizacion", query = "SELECT p FROM Parametro p WHERE p.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "Parametro.findByUsuario", query = "SELECT p FROM Parametro p WHERE p.usuario = :usuario")
-    , @NamedQuery(name = "Parametro.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) LIKE lower(:parametro) or lower(p.descripcion) LIKE lower(:descripcion)")})
+    , @NamedQuery(name = "Parametro.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) LIKE lower(:parametro) or lower(p.descripcion) LIKE lower(:descripcion)")
+    , @NamedQuery(name = "Parametro.findByColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) = lower(:parametro) or lower(p.descripcion) = lower(:descripcion)")
+    , @NamedQuery(name = "Parametro.findByCodPadre", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.tipo) LIKE lower(:tipo) and p.codPadre = :codPadre")})
 
 public class Parametro implements Serializable {
 
@@ -59,6 +61,10 @@ public class Parametro implements Serializable {
     @Column(name = "VALOR")
     private String valor;
     
+    @Size(max = 200)
+    @Column(name = "TIPO")
+    private String tipo;
+    
     @Size(max = 2147483647)
     @Column(name = "DESCRIPCION")
     private String descripcion;
@@ -76,6 +82,9 @@ public class Parametro implements Serializable {
     @Size(max = 200)
     @Column(name = "USUARIO")
     private String usuario;
+    
+    @Column(name = "COD_PADRE")
+    private Integer codPadre;
 
     public Parametro() {
     }
@@ -145,6 +154,23 @@ public class Parametro implements Serializable {
         this.usuario = usuario;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public Integer getCodPadre() {
+        return codPadre;
+    }
+
+    public void setCodPadre(Integer codPadre) {
+        this.codPadre = codPadre;
+    }
+
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -179,6 +205,8 @@ public class Parametro implements Serializable {
         entidadDTO.setUsuario(usuario);
         entidadDTO.setFechaActualizacion(fechaActualizacion);
         entidadDTO.setFechaCreacion(fechaCreacion);
+        entidadDTO.setCodPadre(codPadre);
+        entidadDTO.setTipo(tipo);
         
         return entidadDTO;
     }

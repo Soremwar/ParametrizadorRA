@@ -6,7 +6,6 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.EscenarioDTO;
-import co.com.claro.model.dto.ParametroEscenarioDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
@@ -79,17 +78,13 @@ public class Escenario implements Serializable {
     
     @Column(name = "USUARIO_ASIGNADO")
     private String usuarioAsignado;
-    
+        
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "escenario")
+    private List<Indicador> indicadores;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION")
     private Conciliacion conciliacion;
-    
-    @OneToMany(fetch=FetchType.LAZY, mappedBy = "escenario")
-    private List<Indicador> indicadores;
-    
-    @OneToMany(fetch=FetchType.LAZY, mappedBy = "escenario")
-    private List<ParametroEscenario> parametroEscenario;
 
     public Escenario() {
     }
@@ -179,16 +174,6 @@ public class Escenario implements Serializable {
     }
     
     
-    public void addParametro(ParametroEscenario parametro) {
-        this.parametroEscenario.add(parametro);
-        parametro.setEscenario(this);
-    }
-    
-    public void removeParametro(ParametroEscenario parametro) {
-        this.parametroEscenario.remove(parametro);
-        parametro.setEscenario(null);
-    }
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -228,10 +213,6 @@ public class Escenario implements Serializable {
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
         
-        if (parametroEscenario != null) {
-            List<ParametroEscenarioDTO> lstParametros = parametroEscenario.stream().map((parametroDTO) -> parametroDTO.toDTO()).collect(toList());
-            entidadDTO.setParametros(lstParametros);
-        }
         return entidadDTO;
     }
 

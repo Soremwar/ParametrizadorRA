@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static java.util.stream.Collectors.toList;
+//import static java.util.stream.Collectors.toList;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Transient;
@@ -60,7 +60,7 @@ public class ParametroREST{
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2} ", new Object[]{offset, limit, orderby});     
         List<Parametro> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<ParametroDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ParametroDTO::getId)).collect(toList());
+        List<ParametroDTO> lstDTO = null; //lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ParametroDTO::getId)).collect(toList());
         lstDTO = UtilListas.ordenarListaParametros(lstDTO, orderby);
         List<ParametroDTO> lstFinal = (List<ParametroDTO>)(List<?>) lstDTO;
         return lstFinal;
@@ -91,7 +91,7 @@ public class ParametroREST{
     public List<ParametroDTO> findByAnyColumn(@QueryParam("texto") String texto){
         logger.log(Level.INFO, "texto:{0}", texto);      
         List<Parametro> lst = managerDAO.findByAnyColumn(texto);
-        List<ParametroDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ParametroDTO::getId)).collect(toList());
+        List<ParametroDTO> lstDTO = null; //lst.stream().map(item -> item.toDTO()).sorted(comparing(ParametroDTO::getId)).collect(toList());
         List<ParametroDTO> lstFinal = (List<ParametroDTO>)(List<?>) lstDTO;
         return lstFinal;        
     }

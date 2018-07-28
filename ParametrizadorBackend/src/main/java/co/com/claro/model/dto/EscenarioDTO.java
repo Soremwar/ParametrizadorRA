@@ -26,9 +26,6 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
     private String usuarioAsignado;
     private String impacto;
     
-    private List<ParametroEscenarioDTO> parametros;
-
-
     public String getUsuarioAsignado() {
         return usuarioAsignado;
     }
@@ -59,14 +56,6 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
 
     public void setIdConciliacion(Integer idConciliacion) {
         this.idConciliacion = idConciliacion;
-    }
-
-    public List<ParametroEscenarioDTO> getParametros() {
-        return parametros;
-    }
-
-    public void setParametros(List<ParametroEscenarioDTO> parametros) {
-        this.parametros = parametros;
     }
 
     

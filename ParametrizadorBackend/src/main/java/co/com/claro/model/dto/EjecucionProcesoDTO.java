@@ -33,9 +33,6 @@ public class EjecucionProcesoDTO implements Serializable{
     private Date fechaEjecucion;
     private Date fechaEjecucionExitosa;
     
-    private List<ParametroEscenarioDTO> parametros;
-
-
     public Integer getIdConciliacion() {
         return idConciliacion;
     }
@@ -124,16 +121,6 @@ public class EjecucionProcesoDTO implements Serializable{
         this.nombre = nombre;
     }
 
-    public List<ParametroEscenarioDTO> getParametros() {
-        return parametros;
-    }
-
-    public void setParametros(List<ParametroEscenarioDTO> parametros) {
-        this.parametros = parametros;
-    }
-
-    
-    
     public EjecucionProceso toEntity(){
         EjecucionProceso p = new EjecucionProceso();
         //Campos Entidad

@@ -5,21 +5,16 @@
  */
 package co.com.claro.model.entity;
 
-import co.com.claro.model.dto.ParametroEscenarioDTO;
+import co.com.claro.model.dto.ParametroDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -34,20 +29,21 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author andresbedoya
  */
 @Entity
-@Table(name = "TBL_GAI_PARAMETROS_ESCENARIO")
+@Table(name = "TBL_GAI_PARAMETROS")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ParametroEscenario.findAll", query = "SELECT p FROM Parametro p")
-    , @NamedQuery(name = "ParametroEscenario.findByCodParametro", query = "SELECT p FROM Parametro p WHERE p.id = :codParametro")
-    , @NamedQuery(name = "ParametroEscenario.findByParametro", query = "SELECT p FROM Parametro p WHERE p.parametro = :parametro")
-    , @NamedQuery(name = "ParametroEscenario.findByValor", query = "SELECT p FROM Parametro p WHERE p.valor = :valor")
-    , @NamedQuery(name = "ParametroEscenario.findByDescripcion", query = "SELECT p FROM Parametro p WHERE p.descripcion = :descripcion")
-    , @NamedQuery(name = "ParametroEscenario.findByFechaCreacion", query = "SELECT p FROM Parametro p WHERE p.fechaCreacion = :fechaCreacion")
-    , @NamedQuery(name = "ParametroEscenario.findByFechaActualizacion", query = "SELECT p FROM Parametro p WHERE p.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "ParametroEscenario.findByUsuario", query = "SELECT p FROM Parametro p WHERE p.usuario = :usuario")
-    , @NamedQuery(name = "ParametroEscenario.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) LIKE lower(:parametro) or lower(p.descripcion) LIKE lower(:descripcion)")})
-@Cacheable(false)
-public class ParametroEscenario implements Serializable {
+    @NamedQuery(name = "Parametro.findAll", query = "SELECT p FROM Parametro p")
+    , @NamedQuery(name = "Parametro.findByCodParametro", query = "SELECT p FROM Parametro p WHERE p.id = :codParametro")
+    , @NamedQuery(name = "Parametro.findByParametro", query = "SELECT p FROM Parametro p WHERE p.parametro = :parametro")
+    , @NamedQuery(name = "Parametro.findByValor", query = "SELECT p FROM Parametro p WHERE p.valor = :valor")
+    , @NamedQuery(name = "Parametro.findByDescripcion", query = "SELECT p FROM Parametro p WHERE p.descripcion = :descripcion")
+    , @NamedQuery(name = "Parametro.findByFechaCreacion", query = "SELECT p FROM Parametro p WHERE p.fechaCreacion = :fechaCreacion")
+    , @NamedQuery(name = "Parametro.findByFechaActualizacion", query = "SELECT p FROM Parametro p WHERE p.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "Parametro.findByUsuario", query = "SELECT p FROM Parametro p WHERE p.usuario = :usuario")
+    , @NamedQuery(name = "Parametro.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) LIKE lower(:parametro) or lower(p.descripcion) LIKE lower(:descripcion)")
+    , @NamedQuery(name = "Parametro.findByColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) = lower(:parametro) or lower(p.descripcion) = lower(:descripcion)")})
+
+public class Parametro implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -82,26 +78,14 @@ public class ParametroEscenario implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "COD_ESCENARIO", referencedColumnName = "COD_ESCENARIO")
-    private Escenario escenario;
-
-    public Escenario getEscenario() {
-        return escenario;
+    public Parametro() {
     }
 
-    public void setEscenario(Escenario escenario) {
-        this.escenario = escenario;
-    }
-    
-    public ParametroEscenario() {
-    }
-
-    public ParametroEscenario(Integer codParametro) {
+    public Parametro(Integer codParametro) {
         this.id = codParametro;
     }
 
-    public ParametroEscenario(Integer codParametro, Date fechaCreacion) {
+    public Parametro(Integer codParametro, Date fechaCreacion) {
         this.id = codParametro;
         this.fechaCreacion = fechaCreacion;
     }
@@ -172,10 +156,10 @@ public class ParametroEscenario implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ParametroEscenario)) {
+        if (!(object instanceof Parametro)) {
             return false;
         }
-        ParametroEscenario other = (ParametroEscenario) object;
+        Parametro other = (Parametro) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -187,8 +171,8 @@ public class ParametroEscenario implements Serializable {
         return "co.com.claro.ejb.dao.Parametro[ codParametro=" + id + " ]";
     }
     
-    public ParametroEscenarioDTO toDTO(){
-        ParametroEscenarioDTO entidadDTO = new ParametroEscenarioDTO();
+    public ParametroDTO toDTO(){
+        ParametroDTO entidadDTO = new ParametroDTO();
         entidadDTO.setId(id);
         entidadDTO.setParametro(parametro);
         entidadDTO.setDescripcion(descripcion);
@@ -196,7 +180,6 @@ public class ParametroEscenario implements Serializable {
         entidadDTO.setUsuario(usuario);
         entidadDTO.setFechaActualizacion(fechaActualizacion);
         entidadDTO.setFechaCreacion(fechaCreacion);
-        entidadDTO.setIdEscenario(escenario != null ? escenario.getId() : null);
         
         return entidadDTO;
     }
