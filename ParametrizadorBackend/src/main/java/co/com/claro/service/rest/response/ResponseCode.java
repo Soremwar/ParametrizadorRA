@@ -22,6 +22,8 @@ public enum ResponseCode implements HttpCodeType {
     NOT_FOUND(404, "Not found"),
 
     METHOD_NOT_ALLOWED(405, "Method not allowed"),
+    
+    CONFLICT(409, "Conflicto en la base de datos"),
 
     UNSUPPORTED_MEDIA_TYPE(415, "Unsopported media type"),
 
