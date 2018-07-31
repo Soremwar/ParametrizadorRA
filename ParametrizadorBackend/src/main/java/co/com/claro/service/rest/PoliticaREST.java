@@ -45,8 +45,8 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @EJB
     protected ConciliacionDAO conciliacionDAO;
 
-    //@GET
-    //@Produces({MediaType.APPLICATION_JSON})
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
     @Override
     public List<PoliticaDTO> find(
             @QueryParam("offset") int offset,
