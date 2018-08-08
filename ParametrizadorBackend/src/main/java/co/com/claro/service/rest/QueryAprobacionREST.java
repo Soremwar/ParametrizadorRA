@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service;
+package co.com.claro.service.rest;
 
-import co.com.claro.model.entity.Escenario;
+import co.com.claro.model.entity.QueryAprobacion;
+import co.com.claro.ejb.dao.service.AbstractFacade;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -25,27 +26,27 @@ import javax.ws.rs.core.MediaType;
  * @author andresbedoya
  */
 @Stateless
-@Path("co.com.claro.model.entity.escenario")
-public class EscenarioFacadeREST extends AbstractFacade<Escenario> {
+@Path("aprobacionquery")
+public class QueryAprobacionREST extends AbstractFacade<QueryAprobacion> {
 
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
 
-    public EscenarioFacadeREST() {
-        super(Escenario.class);
+    public QueryAprobacionREST() {
+        super(QueryAprobacion.class);
     }
 
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(Escenario entity) {
+    public void create(QueryAprobacion entity) {
         super.create(entity);
     }
 
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Integer id, Escenario entity) {
+    public void edit(@PathParam("id") Integer id, QueryAprobacion entity) {
         super.edit(entity);
     }
 
@@ -58,21 +59,21 @@ public class EscenarioFacadeREST extends AbstractFacade<Escenario> {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Escenario find(@PathParam("id") Integer id) {
+    public QueryAprobacion find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
     @Override
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Escenario> findAll() {
+    public List<QueryAprobacion> findAll() {
         return super.findAll();
     }
 
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Escenario> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
+    public List<QueryAprobacion> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }
 

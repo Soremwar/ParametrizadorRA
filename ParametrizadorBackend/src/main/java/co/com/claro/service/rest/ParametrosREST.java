@@ -9,7 +9,6 @@ import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ParametroDTO;
 import co.com.claro.model.entity.Parametro;
-import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
 import static java.util.Comparator.comparing;
@@ -150,6 +149,8 @@ public class ParametrosREST{
             entidadHijaJPA.setValor(entidad.getValor() != null ? entidad.getValor() : entidadHijaJPA.getValor());
             entidadHijaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadHijaJPA.getDescripcion());
             entidadHijaJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadHijaJPA.getUsuario());
+            entidadHijaJPA.setTipo(entidad.getTipo() != null ? entidad.getTipo() : entidadHijaJPA.getTipo());
+            entidadHijaJPA.setCodPadre(entidad.getCodPadre() != null ? entidad.getCodPadre() : entidadHijaJPA.getCodPadre());
             managerDAO.edit(entidadHijaJPA);
             return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
         }
