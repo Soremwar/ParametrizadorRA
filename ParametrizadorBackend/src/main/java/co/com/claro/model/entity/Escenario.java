@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import static java.util.stream.Collectors.toList;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -129,7 +128,7 @@ public class Escenario implements Serializable {
 
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion != null ? fechaCreacion : Date.from(Instant.now());
-     }
+    }
 
     public Date getFechaActualizacion() {
         return fechaActualizacion;

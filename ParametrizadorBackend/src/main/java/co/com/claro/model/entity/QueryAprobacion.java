@@ -5,12 +5,19 @@
  */
 package co.com.claro.model.entity;
 
+import co.com.claro.model.dto.QueryAprobacionDTO;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -28,12 +35,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "TBL_GAI_APROBACION_QUERIES")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "AprobacionQuery.findAll", query = "SELECT a FROM AprobacionQuery a")
-    , @NamedQuery(name = "AprobacionQuery.findByCodAprobacionQueries", query = "SELECT a FROM AprobacionQuery a WHERE a.codAprobacionQueries = :codAprobacionQueries")
-    , @NamedQuery(name = "AprobacionQuery.findByEstadoAprobacion", query = "SELECT a FROM AprobacionQuery a WHERE a.estadoAprobacion = :estadoAprobacion")
-    , @NamedQuery(name = "AprobacionQuery.findByFechaCreacion", query = "SELECT a FROM AprobacionQuery a WHERE a.fechaCreacion = :fechaCreacion")
-    , @NamedQuery(name = "AprobacionQuery.findByFechaActualizacion", query = "SELECT a FROM AprobacionQuery a WHERE a.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "AprobacionQuery.findByUsuario", query = "SELECT a FROM AprobacionQuery a WHERE a.usuario = :usuario")})
+    @NamedQuery(name = "QueryAprobacion.findAll", query = "SELECT a FROM QueryAprobacion a")
+    , @NamedQuery(name = "QueryAprobacion.findByCodAprobacionQueries", query = "SELECT a FROM QueryAprobacion a WHERE a.codAprobacionQueries = :codAprobacionQueries")
+    , @NamedQuery(name = "QueryAprobacion.findByEstadoAprobacion", query = "SELECT a FROM QueryAprobacion a WHERE a.estadoAprobacion = :estadoAprobacion")
+    , @NamedQuery(name = "QueryAprobacion.findByFechaCreacion", query = "SELECT a FROM QueryAprobacion a WHERE a.fechaCreacion = :fechaCreacion")
+    , @NamedQuery(name = "QueryAprobacion.findByFechaActualizacion", query = "SELECT a FROM QueryAprobacion a WHERE a.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "QueryAprobacion.findByUsuario", query = "SELECT a FROM QueryAprobacion a WHERE a.usuario = :usuario")})
 public class QueryAprobacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,6 +49,7 @@ public class QueryAprobacion implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "COD_APROBACION_QUERIES")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer codAprobacionQueries;
     
     @Column(name = "ESTADO_APROBACION")
@@ -63,6 +71,10 @@ public class QueryAprobacion implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
 
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COD_CONCILIACION")
+    private Conciliacion conciliacion;
+    
     public QueryAprobacion() {
     }
 
@@ -116,6 +128,14 @@ public class QueryAprobacion implements Serializable {
         this.usuario = usuario;
     }
 
+    public Conciliacion getConciliacion() {
+        return conciliacion;
+    }
+
+    public void setConciliacion(Conciliacion conciliacion) {
+        this.conciliacion = conciliacion;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -138,7 +158,20 @@ public class QueryAprobacion implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.AprobacionQuery[ codAprobacionQueries=" + codAprobacionQueries + " ]";
+        return "co.com.claro.ejb.dao.QueryAprobacion[ codAprobacionQueries=" + codAprobacionQueries + " ]";
     }
     
+    public QueryAprobacionDTO toDTO(){
+        QueryAprobacionDTO entidadDTO = new QueryAprobacionDTO();
+        entidadDTO.setId(codAprobacionQueries);
+        entidadDTO.setFechaActualizacion(fechaActualizacion);
+        entidadDTO.setFechaCreacion(fechaCreacion);
+        entidadDTO.setNombreConciliacion(usuario);
+        entidadDTO.setUsuario(usuario);
+        
+        entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
+        entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
+        
+        return entidadDTO;
+    }
 }

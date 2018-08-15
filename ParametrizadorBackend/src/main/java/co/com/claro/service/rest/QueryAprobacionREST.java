@@ -5,12 +5,25 @@
  */
 package co.com.claro.service.rest;
 
+import co.com.claro.ejb.dao.ConciliacionDAO;
+import co.com.claro.ejb.dao.QueryAprobacionDAO;
+import co.com.claro.model.dto.QueryAprobacionDTO;
+import co.com.claro.model.dto.parent.PadreDTO;
+import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.QueryAprobacion;
-import co.com.claro.ejb.dao.service.AbstractFacade;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import co.com.claro.service.rest.response.WrapperResponseEntity;
+import java.time.Instant;
+import java.util.ArrayList;
+import static java.util.Comparator.comparing;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,7 +32,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -27,66 +42,110 @@ import javax.ws.rs.core.MediaType;
  */
 @Stateless
 @Path("aprobacionquery")
-public class QueryAprobacionREST extends AbstractFacade<QueryAprobacion> {
+public class QueryAprobacionREST {
+    @Transient
+    private static final Logger logger = Logger.getLogger(QueryAprobacionREST.class.getSimpleName());
 
-    @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
-    private EntityManager em;
+    @EJB
+    protected QueryAprobacionDAO managerDAO;
 
-    public QueryAprobacionREST() {
-        super(QueryAprobacion.class);
-    }
-
-    @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(QueryAprobacion entity) {
-        super.create(entity);
-    }
-
-    @PUT
+    @EJB
+    protected ConciliacionDAO padreDAO;
+    
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<QueryAprobacionDTO> find(
+            @QueryParam("offset") int offset,
+            @QueryParam("limit") int limit,
+            @QueryParam("orderby") String orderby) {
+        logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
+        List<QueryAprobacion> lst = managerDAO.findRange(new int[]{offset, limit});
+        List<QueryAprobacionDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(QueryAprobacionDTO::getId)).collect(toList());
+        //UtilListas.ordenarLista(lstDTO, orderby);
+        List<QueryAprobacionDTO> lstFinal = (List<QueryAprobacionDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }   
+    
+    @GET
     @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Integer id, QueryAprobacion entity) {
-        super.edit(entity);
+    @Produces({MediaType.APPLICATION_JSON})
+    public QueryAprobacionDTO findById(@PathParam("id") Integer id){
+        logger.log(Level.INFO, "id:{0}", id);
+        QueryAprobacion entidad = managerDAO.find(id);
+        return entidad.toDTO();
+
     }
 
+
+    @GET
+    @Path("/findByAny")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<QueryAprobacionDTO> findByAnyColumn(@QueryParam("texto") String texto){
+        logger.log(Level.INFO, "texto:{0}", texto);        
+        List<QueryAprobacion> lst = managerDAO.findByAnyColumn(texto);
+        List<QueryAprobacionDTO> lstDTO = new ArrayList<>();        
+        lst.forEach((entidad) -> {
+            lstDTO.add(entidad.toDTO());
+        });
+        List<QueryAprobacionDTO> lstFinal = (List<QueryAprobacionDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }
+   
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response add(QueryAprobacionDTO entidad) {
+        logger.log(Level.INFO, "entidad:{0}", entidad);
+        QueryAprobacion entidadAux = entidad.toEntity();
+        managerDAO.create(entidadAux);
+        return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
+    }
+    
+    @PUT
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response update(QueryAprobacionDTO entidad) {
+        logger.log(Level.INFO, "entidad:{0}", entidad);  
+        Conciliacion entidadPadreJPA = null;
+        if (entidad.getIdConciliacion() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdConciliacion());
+            }
+        }
+        //Hallar La entidad actual para actualizarla
+        QueryAprobacion queryAprobacionJPA = managerDAO.find(entidad.getId());
+        if (queryAprobacionJPA != null) {
+            queryAprobacionJPA.setFechaActualizacion(Date.from(Instant.now()));
+            queryAprobacionJPA.setEstadoAprobacion(entidad.getEstadoAprobacion() != null ? entidad.getEstadoAprobacion() : queryAprobacionJPA.getEstadoAprobacion());
+            queryAprobacionJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : queryAprobacionJPA.getUsuario());
+            queryAprobacionJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null) : queryAprobacionJPA.getConciliacion());
+            managerDAO.edit(queryAprobacionJPA);
+            return Response.status(Response.Status.OK).entity(queryAprobacionJPA.toDTO()).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+    
+     /**
+     * Borra una politica por su Id
+     * @param id Identificador de la entidad
+     * @return El resultado de la operacion en codigo HTTP
+     */
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response remove(@PathParam("id") Integer id) {
+        managerDAO.remove(managerDAO.find(id));
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        return Response.status(Response.Status.OK).entity(mensaje).build();
     }
-
+       
     @GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public QueryAprobacion find(@PathParam("id") Integer id) {
-        return super.find(id);
+    @Path("/count")
+    @Produces({MediaType.APPLICATION_JSON})
+    public int count(){
+        return managerDAO.count();
     }
 
-    @GET
-    @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<QueryAprobacion> findAll() {
-        return super.findAll();
-    }
-
-    @GET
-    @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<QueryAprobacion> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
-    }
-
-    @GET
-    @Path("count")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String countREST() {
-        return String.valueOf(super.count());
-    }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
     
 }

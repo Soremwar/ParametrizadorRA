@@ -42,7 +42,7 @@ public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
      * @param range
      * @return Retorna todos los registros
      */
-    public List<QueryEscenario> findByAllTree(int[] range){
+    public List<QueryEscenario> findByAll(int[] range){
         TypedQuery<QueryEscenario> query = em.createNamedQuery("QueryEscenario.findAll", QueryEscenario.class);
         query.setMaxResults(range[1]);// - range[0] + 1);
         query.setFirstResult(range[0]);           
@@ -90,6 +90,28 @@ public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
         return results;
+    }
+    
+    
+     /**
+     * Buscar el texto en todas columnas con paginado
+     * @param codQueryEscenario identificador     
+     * @return Lista de QueryEscenarios que cumplan con el criterio
+     */
+    public QueryEscenario findById(Integer codQueryEscenario){
+        logger.log(Level.INFO, "codQueryEscenario:{0}", new Object[]{codQueryEscenario});  
+        TypedQuery<QueryEscenario> query = em.createNamedQuery("QueryEscenario.findByCodQueryEscenario", QueryEscenario.class);
+        query.setParameter("codQueryEscenario", "%" + codQueryEscenario + "%");
+        List<QueryEscenario> results = query.getResultList();
+        QueryEscenario foundEntity = null;
+        if(!results.isEmpty()){
+            // ignores multiple results
+            foundEntity = results.get(0);
+        }
+        if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }
+        return foundEntity;
     }
         
 }

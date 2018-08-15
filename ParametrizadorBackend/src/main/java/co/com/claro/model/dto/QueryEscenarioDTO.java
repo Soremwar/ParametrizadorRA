@@ -5,8 +5,9 @@
  */
 package co.com.claro.model.dto;
 
-import co.com.claro.model.entity.Indicador;
+import co.com.claro.model.entity.QueryEscenario;
 import java.io.Serializable;
+import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -17,14 +18,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class QueryEscenarioDTO implements Serializable{
 
     //Campos padre
-    private Integer idEscenario;
-    private String nombreEscenario;
+    private Integer id;
     
     //Campos entidad
-    private Integer id;
-    private String nombreFormula;
-    private String descripcion;
-    private String textoFormula;
+    private String nombreQuery;
+    private String query;
+    private Date fechaCreacion;
+    private Date fechaActualizacion;
+    private Integer orden;
+    private String usuario;
 
     public Integer getId() {
         return id;
@@ -33,56 +35,67 @@ public class QueryEscenarioDTO implements Serializable{
     public void setId(Integer id) {
         this.id = id;
     }
-
-    public String getDescripcion() {
-        return descripcion;
+    
+    public String getNombreQuery() {
+        return nombreQuery;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setNombreQuery(String nombreQuery) {
+        this.nombreQuery = nombreQuery;
     }
 
-    public String getNombreFormula() {
-        return nombreFormula;
+    public String getQuery() {
+        return query;
     }
 
-    public void setNombreFormula(String nombreFormula) {
-        this.nombreFormula = nombreFormula;
+    public void setQuery(String query) {
+        this.query = query;
     }
 
-    public String getTextoFormula() {
-        return textoFormula;
+    public Date getFechaCreacion() {
+        return fechaCreacion;
     }
 
-    public void setTextoFormula(String textoFormula) {
-        this.textoFormula = textoFormula;
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
-    public Integer getIdEscenario() {
-        return idEscenario;
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
     }
 
-    public void setIdEscenario(Integer idEscenario) {
-        this.idEscenario = idEscenario;
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getNombreEscenario() {
-        return nombreEscenario;
+    public Integer getOrden() {
+        return orden;
     }
 
-    public void setNombreEscenario(String nombreEscenario) {
-        this.nombreEscenario = nombreEscenario;
+    public void setOrden(Integer orden) {
+        this.orden = orden;
     }
-    public Indicador toEntity(){
-        Indicador p = new Indicador();
-        //Campos Entidad
-        p.setId(this.getId());
-        p.setNombreFormula(this.nombreFormula);
-        p.setDescripcion(this.getDescripcion());
-        p.setTextoFormula(this.getTextoFormula());
-       
 
-        return p;
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+
+    public QueryEscenario toEntity(){
+        QueryEscenario entity = new QueryEscenario();
+        
+        entity.setId(id);
+        entity.setQuery(query);
+        entity.setNombreQuery(nombreQuery);
+        entity.setFechaCreacion(fechaCreacion);
+        entity.setFechaActualizacion(fechaActualizacion);
+        entity.setUsuario(usuario);
+    
+        return entity;
         
     }
 }

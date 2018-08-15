@@ -60,19 +60,19 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
 
     
     public Escenario toEntity(){
-        Escenario p = new Escenario();
+        Escenario entity = new Escenario();
         //Campos comunes
-        p.setId(this.getId());
-        p.setNombre(this.getNombre());
-        p.setUsuario(this.getUsuario());
-        p.setFechaCreacion(this.getFechaCreacion());
-        p.setFechaActualizacion(this.getFechaActualizacion());
+        entity.setId(this.getId());
+        entity.setNombre(this.getNombre());
+        entity.setUsuario(this.getUsuario());
+        entity.setFechaCreacion(this.getFechaCreacion());
+        entity.setFechaActualizacion(this.getFechaActualizacion());
 
         //Campos de la entidad
-        p.setUsuarioAsignado(usuarioAsignado);
-        p.setImpacto(this.impacto);
+        entity.setUsuarioAsignado(usuarioAsignado);
+        entity.setImpacto(this.impacto);
         //p.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
-        return p;
+        return entity;
         
     }
 }

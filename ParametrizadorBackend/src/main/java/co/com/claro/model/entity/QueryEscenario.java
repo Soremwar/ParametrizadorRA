@@ -5,12 +5,18 @@
  */
 package co.com.claro.model.entity;
 
+import co.com.claro.model.dto.QueryEscenarioDTO;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -29,21 +35,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "QueryEscenario.findAll", query = "SELECT q FROM QueryEscenario q")
-    , @NamedQuery(name = "QueryEscenario.findByCodQueryEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.queryEscenarioPK.codQueryEscenario = :codQueryEscenario")
+    , @NamedQuery(name = "QueryEscenario.findByCodQueryEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.id = :id")
     , @NamedQuery(name = "QueryEscenario.findByNombreQuery", query = "SELECT q FROM QueryEscenario q WHERE q.nombreQuery = :nombreQuery")
     , @NamedQuery(name = "QueryEscenario.findByQuery", query = "SELECT q FROM QueryEscenario q WHERE q.query = :query")
     , @NamedQuery(name = "QueryEscenario.findByOrden", query = "SELECT q FROM QueryEscenario q WHERE q.orden = :orden")
     , @NamedQuery(name = "QueryEscenario.findByFechaCreacion", query = "SELECT q FROM QueryEscenario q WHERE q.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "QueryEscenario.findByFechaActualizacion", query = "SELECT q FROM QueryEscenario q WHERE q.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "QueryEscenario.findByUsuario", query = "SELECT q FROM QueryEscenario q WHERE q.usuario = :usuario")
-    , @NamedQuery(name = "QueryEscenario.findByCodEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.queryEscenarioPK.codEscenario = :codEscenario")})
+    , @NamedQuery(name = "QueryEscenario.findByCodEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.escenario.id = :codEscenario")})
 
 public class QueryEscenario implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
-    @EmbeddedId
-    protected QueryEscenarioPK queryEscenarioPK;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "COD_QUERY_ESCENARIO")
+    private Integer id;
     
     @Basic(optional = false)
     @NotNull
@@ -74,32 +84,28 @@ public class QueryEscenario implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
 
+    @JoinColumn(name = "COD_ESCENARIO", referencedColumnName = "COD_ESCENARIO")
+    @ManyToOne
+    private Escenario escenario;
+    
     public QueryEscenario() {
     }
 
-    public QueryEscenario(QueryEscenarioPK queryEscenarioPK) {
-        this.queryEscenarioPK = queryEscenarioPK;
-    }
-
-    public QueryEscenario(QueryEscenarioPK queryEscenarioPK, String nombreQuery, Date fechaCreacion, String usuario) {
-        this.queryEscenarioPK = queryEscenarioPK;
+    public QueryEscenario(Integer id, String nombreQuery, Date fechaCreacion, String usuario) {
+        this.id = id;
         this.nombreQuery = nombreQuery;
         this.fechaCreacion = fechaCreacion;
         this.usuario = usuario;
     }
 
-    public QueryEscenario(int codQueryEscenario, int codEscenario) {
-        this.queryEscenarioPK = new QueryEscenarioPK(codQueryEscenario, codEscenario);
+    public Integer getId() {
+        return id;
     }
 
-    public QueryEscenarioPK getQueryEscenarioPK() {
-        return queryEscenarioPK;
+    public void setId(Integer id) {
+        this.id = id;
     }
-
-    public void setQueryEscenarioPK(QueryEscenarioPK queryEscenarioPK) {
-        this.queryEscenarioPK = queryEscenarioPK;
-    }
-
+    
     public String getNombreQuery() {
         return nombreQuery;
     }
@@ -129,7 +135,7 @@ public class QueryEscenario implements Serializable {
     }
 
     public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+        this.fechaCreacion = fechaCreacion != null ? fechaCreacion : Date.from(Instant.now());
     }
 
     public Date getFechaActualizacion() {
@@ -148,21 +154,29 @@ public class QueryEscenario implements Serializable {
         this.usuario = usuario;
     }
 
+    public Escenario getEscenario() {
+        return escenario;
+    }
+
+    public void setEscenario(Escenario escenario) {
+        this.escenario = escenario;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (queryEscenarioPK != null ? queryEscenarioPK.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work  in the case the id fields are not set
         if (!(object instanceof QueryEscenario)) {
             return false;
         }
         QueryEscenario other = (QueryEscenario) object;
-        if ((this.queryEscenarioPK == null && other.queryEscenarioPK != null) || (this.queryEscenarioPK != null && !this.queryEscenarioPK.equals(other.queryEscenarioPK))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -170,7 +184,20 @@ public class QueryEscenario implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.QueryEscenario[ queryEscenarioPK=" + queryEscenarioPK + " ]";
+        return "com.claro.parametrizador.Politica[ codPolitica=" + id + " ]";
     }
+
     
+    public QueryEscenarioDTO toDTO(){
+        QueryEscenarioDTO entidadDTO = new QueryEscenarioDTO();
+        
+        entidadDTO.setId(id);
+        entidadDTO.setFechaCreacion(this.getFechaCreacion());
+        entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
+        entidadDTO.setNombreQuery(nombreQuery);
+        entidadDTO.setUsuario(usuario);
+        entidadDTO.setOrden(orden);
+        
+        return entidadDTO;
+    }
 }

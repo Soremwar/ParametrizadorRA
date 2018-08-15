@@ -5,13 +5,19 @@
  */
 package co.com.claro.service.rest;
 
+import co.com.claro.ejb.dao.QueryEscenarioDAO;
+import co.com.claro.model.dto.QueryEscenarioDTO;
 import co.com.claro.model.entity.QueryEscenario;
-import co.com.claro.model.entity.QueryEscenarioPK;
-import co.com.claro.ejb.dao.service.AbstractFacade;
+import co.com.claro.service.rest.response.WrapperResponseEntity;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,8 +26,9 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -29,89 +36,121 @@ import javax.ws.rs.core.PathSegment;
  */
 @Stateless
 @Path("queryescenario")
-public class QueryEscenarioREST extends AbstractFacade<QueryEscenario> {
+public class QueryEscenarioREST {
+    @Transient
+    private static final Logger logger = Logger.getLogger(QueryEscenarioREST.class.getSimpleName());
+    
+    @EJB
+    protected QueryEscenarioDAO managerDAO;
 
-    @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
-    private EntityManager em;
-
-    private QueryEscenarioPK getPrimaryKey(PathSegment pathSegment) {
-        /*
-         * pathSemgent represents a URI path segment and any associated matrix parameters.
-         * URI path part is supposed to be in form of 'somePath;codQueryEscenario=codQueryEscenarioValue;codEscenario=codEscenarioValue'.
-         * Here 'somePath' is a result of getPath() method invocation and
-         * it is ignored in the following code.
-         * Matrix parameters are used as field names to build a primary key instance.
-         */
-        co.com.claro.model.entity.QueryEscenarioPK key = new co.com.claro.model.entity.QueryEscenarioPK();
-        javax.ws.rs.core.MultivaluedMap<String, String> map = pathSegment.getMatrixParameters();
-        java.util.List<String> codQueryEscenario = map.get("codQueryEscenario");
-        if (codQueryEscenario != null && !codQueryEscenario.isEmpty()) {
-            key.setCodQueryEscenario(new java.lang.Integer(codQueryEscenario.get(0)));
-        }
-        java.util.List<String> codEscenario = map.get("codEscenario");
-        if (codEscenario != null && !codEscenario.isEmpty()) {
-            key.setCodEscenario(new java.lang.Integer(codEscenario.get(0)));
-        }
-        return key;
+    /**
+     * Obtiene las QueryEscenarioes Paginadas
+     * @param offset Desde cual item se retorna
+     * @param limit Limite de items a retornar
+     * @param orderby Indica por cual campo descriptivo va a guardar (id, nombre, fechaCreacion)
+     * @return Toda la lista de conciliaciones que corresponden con el criterio
+     */
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<QueryEscenarioDTO> find(
+            @QueryParam("offset") int offset,
+            @QueryParam("limit") int limit,
+            @QueryParam("orderby") String orderby) {
+        logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
+        List<QueryEscenario> lst = managerDAO.findRange(new int[]{offset, limit});
+        //List<QueryEscenarioDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId)).collect(toList());
+        //UtilListas.ordenarLista(lstDTO, orderby);
+        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>)(List<?>) lst;
+        return lstFinal;
     }
 
-    public QueryEscenarioREST() {
-        super(QueryEscenario.class);
-    }
-
-    @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(QueryEscenario entity) {
-        super.create(entity);
-    }
-
-    @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") PathSegment id, QueryEscenario entity) {
-        super.edit(entity);
-    }
-
-    @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") PathSegment id) {
-        co.com.claro.model.entity.QueryEscenarioPK key = getPrimaryKey(id);
-        super.remove(super.find(key));
-    }
-
+    /**
+     * Obtiene una QueryEscenario por id
+     * @param id Identificador de conciliacion
+     * @return Una QueryEscenario que coincide con el criterio
+     */
+    
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public QueryEscenario find(@PathParam("id") PathSegment id) {
-        co.com.claro.model.entity.QueryEscenarioPK key = getPrimaryKey(id);
-        return super.find(key);
-    }
-
-    @GET
-    @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<QueryEscenario> findAll() {
-        return super.findAll();
-    }
-
-    @GET
-    @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<QueryEscenario> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
-    }
-
-    @GET
-    @Path("count")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String countREST() {
-        return String.valueOf(super.count());
-    }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
+    @Produces({MediaType.APPLICATION_JSON})
+    public QueryEscenarioDTO getById(@PathParam("id") int id){
+        logger.log(Level.INFO, "id:{0}" , id);
+        QueryEscenario entidad = managerDAO.findById(id);
+        return entidad.toDTO();
     }
     
+    
+    /**
+     * Busca las conciliaciones por cualquier columna
+     * @param texto Texto a buscar en cualquier texto
+     * @return Lista de QueryEscenarios que cumplen con el criterio
+     */
+    @GET
+    @Path("/findByAny")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<QueryEscenarioDTO> findByAnyColumn(@QueryParam("texto") String texto){
+        logger.log(Level.INFO, "texto:{0}", texto);
+        List<QueryEscenario> lst = managerDAO.findByAnyColumn(texto);
+        List<QueryEscenarioDTO> lstDTO = new ArrayList<>();
+        lst.forEach((entidad) -> {
+            lstDTO.add(entidad.toDTO());
+        });
+        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }
+
+     /**
+     * Crea una nueva politica
+     * @param entidad Entidad que se va a agregar
+     * @return el la entidad recien creada
+     */
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response add(QueryEscenarioDTO entidad) {
+        logger.log(Level.INFO, "entidad:{0}", entidad);
+        QueryEscenario entidadAux = entidad.toEntity();
+        managerDAO.create(entidadAux);
+        return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
+    }
+    
+     @PUT
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response update(QueryEscenarioDTO entidad) {
+        logger.log(Level.INFO, "entidad:{0}", entidad);  
+        //Hallar La entidad actual para actualizarla
+        QueryEscenario queryEscenarioJPA = managerDAO.findById(entidad.getId());
+        if (queryEscenarioJPA != null) {
+            queryEscenarioJPA.setFechaActualizacion(Date.from(Instant.now()));
+            queryEscenarioJPA.setNombreQuery(entidad.getNombreQuery() != null ? entidad.getNombreQuery() : queryEscenarioJPA.getNombreQuery());
+            queryEscenarioJPA.setOrden(entidad.getOrden() != null ? entidad.getOrden() : queryEscenarioJPA.getOrden());
+            queryEscenarioJPA.setQuery(entidad.getQuery() != null ? entidad.getQuery() : queryEscenarioJPA.getQuery());
+            queryEscenarioJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : queryEscenarioJPA.getUsuario());
+            managerDAO.edit(queryEscenarioJPA);
+            return Response.status(Response.Status.OK).entity(queryEscenarioJPA.toDTO()).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+    
+     /**
+     * Borra una politica por su Id
+     * @param id Identificador de la entidad
+     * @return El resultado de la operacion en codigo HTTP
+     */
+    @DELETE
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response remove(@PathParam("id") Integer id) {
+        managerDAO.remove(managerDAO.find(id));
+        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        return Response.status(Response.Status.OK).entity(mensaje).build();
+    }
+       
+    @GET
+    @Path("/count")
+    @Produces({MediaType.APPLICATION_JSON})
+    public int count(){
+        return managerDAO.count();
+    }
 }

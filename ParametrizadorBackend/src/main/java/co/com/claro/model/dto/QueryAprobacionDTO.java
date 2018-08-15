@@ -7,7 +7,9 @@ package co.com.claro.model.dto;
 
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Escenario;
+import co.com.claro.model.entity.QueryAprobacion;
 import java.io.Serializable;
+import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -15,22 +17,57 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author andres
  */
 @XmlRootElement
-public class QueryAprobacionDTO extends PadreDTO implements Serializable{
+public class QueryAprobacionDTO implements Serializable{
 
+    private Integer id;
+    private Integer estadoAprobacion;
+    private Date fechaCreacion;
+    private Date fechaActualizacion;
     //Campos padre
     private Integer idConciliacion;
     private String nombreConciliacion;
-
-    //Campos propios
-    private String usuarioAsignado;
-    private String impacto;
+    private String usuario;
     
-    public String getUsuarioAsignado() {
-        return usuarioAsignado;
+
+
+    public Integer getId() {
+        return id;
     }
 
-    public void setUsuarioAsignado(String usuarioAsignado) {
-        this.usuarioAsignado = usuarioAsignado;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getEstadoAprobacion() {
+        return estadoAprobacion;
+    }
+
+    public void setEstadoAprobacion(Integer estadoAprobacion) {
+        this.estadoAprobacion = estadoAprobacion;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
+    }
+    
+    public Integer getIdConciliacion() {
+        return idConciliacion;
+    }
+
+    public void setIdConciliacion(Integer idConciliacion) {
+        this.idConciliacion = idConciliacion;
     }
 
     public String getNombreConciliacion() {
@@ -41,37 +78,24 @@ public class QueryAprobacionDTO extends PadreDTO implements Serializable{
         this.nombreConciliacion = nombreConciliacion;
     }
 
-    public String getImpacto() {
-        return impacto;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setImpacto(String impacto) {
-        this.impacto = impacto;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
-
-    public Integer getIdConciliacion() {
-        return idConciliacion;
-    }
-
-    public void setIdConciliacion(Integer idConciliacion) {
-        this.idConciliacion = idConciliacion;
-    }
-
     
-    public Escenario toEntity(){
-        Escenario p = new Escenario();
+    public QueryAprobacion toEntity(){
+        QueryAprobacion entity = new QueryAprobacion();
         //Campos comunes
-        p.setId(this.getId());
-        p.setNombre(this.getNombre());
-        p.setUsuario(this.getUsuario());
-        p.setFechaCreacion(this.getFechaCreacion());
-        p.setFechaActualizacion(this.getFechaActualizacion());
-
-        //Campos de la entidad
-        p.setUsuarioAsignado(usuarioAsignado);
-        p.setImpacto(this.impacto);
-        //p.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
-        return p;
+        entity.setCodAprobacionQueries(id);
+        entity.setEstadoAprobacion(estadoAprobacion);
+        entity.setFechaCreacion(fechaCreacion);
+        entity.setFechaActualizacion(fechaActualizacion);
+        entity.setUsuario(usuario);
+        
+        return entity;
         
     }
 }
