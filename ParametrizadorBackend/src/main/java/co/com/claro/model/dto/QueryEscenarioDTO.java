@@ -19,6 +19,8 @@ public class QueryEscenarioDTO implements Serializable{
 
     //Campos padre
     private Integer id;
+    private Integer idEscenario;
+    private String nombreEscenario;
     
     //Campos entidad
     private String nombreQuery;
@@ -84,6 +86,21 @@ public class QueryEscenarioDTO implements Serializable{
         this.usuario = usuario;
     }
 
+    public Integer getIdEscenario() {
+        return idEscenario;
+    }
+
+    public void setIdEscenario(Integer idEscenario) {
+        this.idEscenario = idEscenario;
+    }
+
+    public String getNombreEscenario() {
+        return nombreEscenario;
+    }
+
+    public void setNombreEscenario(String nombreEscenario) {
+        this.nombreEscenario = nombreEscenario;
+    }
 
     public QueryEscenario toEntity(){
         QueryEscenario entity = new QueryEscenario();
@@ -91,6 +108,7 @@ public class QueryEscenarioDTO implements Serializable{
         entity.setId(id);
         entity.setQuery(query);
         entity.setNombreQuery(nombreQuery);
+        entity.setOrden(orden);
         entity.setFechaCreacion(fechaCreacion);
         entity.setFechaActualizacion(fechaActualizacion);
         entity.setUsuario(usuario);

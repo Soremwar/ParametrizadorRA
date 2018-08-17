@@ -30,35 +30,28 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
     @Override
     public Response toResponse(Throwable e) {
         WrapperResponseEntity response = null;
-        
+        String mensaje = "";
+        String descripcion = e.getCause() != null ? e.getCause().getMessage() : e.toString();
+        int indexStart = descripcion.indexOf("CTRAINT_");
+        if (indexStart > 0) {
+            int indexEnd = descripcion.indexOf(" ", indexStart) - 1;
+            mensaje = descripcion.substring(indexStart, indexEnd);
+        }
+
         if (e instanceof NotFoundException || e.getCause() instanceof DataNotFoundException) {
-            response = new WrapperResponseEntity(ResponseCode.NOT_FOUND, e.getCause() != null ? e.getCause().getMessage() : e.toString());
+            response = new WrapperResponseEntity(ResponseCode.NOT_FOUND, mensaje, descripcion);
 	} else if (e instanceof NotAllowedException) {
-            response = new WrapperResponseEntity(ResponseCode.FORBIDDEN, e.getCause() != null ? e.getCause().getMessage() : e.toString());
+            response = new WrapperResponseEntity(ResponseCode.FORBIDDEN, mensaje, descripcion);
 	} else if (e instanceof JsonProcessingException) {
-            response = new WrapperResponseEntity(ResponseCode.ERROR_JSON, e.getCause() != null ? e.getCause().getMessage() : e.toString());
+            response = new WrapperResponseEntity(ResponseCode.ERROR_JSON, mensaje, descripcion);
 	} else if (e instanceof NotSupportedException) {
-            response = new WrapperResponseEntity(ResponseCode.UNSUPPORTED_MEDIA_TYPE, e.getCause() != null ? e.getCause().getMessage() : e.toString());
+            response = new WrapperResponseEntity(ResponseCode.UNSUPPORTED_MEDIA_TYPE, mensaje, descripcion);
 	} else if (e instanceof PersistenceException || e instanceof DatabaseException) {
-           response = new WrapperResponseEntity(ResponseCode.CONFLICT, e.getCause() != null ? e.getCause().getMessage() : e.toString());            
+           response = new WrapperResponseEntity(ResponseCode.CONFLICT, mensaje, descripcion);            
         }
         if(response == null) {
-            response = new WrapperResponseEntity(ResponseCode.INTERNAL_SERVER_ERROR, e.getCause() != null ? e.getCause().getMessage() : e.toString());
+            response = new WrapperResponseEntity(ResponseCode.INTERNAL_SERVER_ERROR, mensaje, descripcion);
 	}
-        /*if (exception.getCause() instanceof DataNotFoundException) {
-            mensaje = new WrapperResponseEntity(404, Response.Status.NOT_FOUND.getReasonPhrase(), exception.getCause().getMessage());
-            return Response.status(Response.Status.NOT_FOUND).entity(mensaje).build();
-        } else if (exception.getCause() instanceof NotAllowedException) {
-            mensaje = new WrapperResponseEntity(404, Response.Status.FORBIDDEN.getReasonPhrase(), exception.getCause().getMessage());
-            return Response.status(Response.Status.FORBIDDEN).entity(mensaje).build();
-        } else if (exception.getCause() instanceof NotSupportedException) {
-            mensaje = new WrapperResponseEntity(404, Response.Status.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(), exception.getCause().getMessage());
-            return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity(mensaje).build();        
-        } else if (exception.getCause() instanceof PersistenceException || exception.getCause() instanceof DatabaseException) {
-            mensaje = new WrapperResponseEntity(409, Response.Status.CONFLICT.getReasonPhrase(), exception.getCause().getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(mensaje).build();
-            
-        } */
         return Response.status(response.httpStatus()).type(MediaType.APPLICATION_JSON).entity(response).build();
     }
     

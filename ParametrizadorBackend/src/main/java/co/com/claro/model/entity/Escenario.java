@@ -80,6 +80,9 @@ public class Escenario implements Serializable {
         
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "escenario")
     private List<Indicador> indicadores;
+    
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "escenario")
+    private List<QueryEscenario> queryEscenarios;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION")
@@ -170,6 +173,16 @@ public class Escenario implements Serializable {
     public void removeIndicador(Indicador indicador) {
         this.indicadores.remove(indicador);
         indicador.setEscenario(null);
+    }
+    
+    public void addQueryEscenario(QueryEscenario queryEscenario) {
+        this.queryEscenarios.add(queryEscenario);
+        queryEscenario.setEscenario(this);
+    }
+    
+    public void removeIndicador(QueryEscenario queryEscenario) {
+        this.queryEscenarios.remove(queryEscenario);
+        queryEscenario.setEscenario(null);
     }
     
     

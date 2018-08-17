@@ -63,6 +63,7 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro>{
         TypedQuery<Parametro> query = em.createNamedQuery("Parametro.findByAnyColumn", Parametro.class);
         query.setParameter("parametro", "%" + busqueda + "%");
         query.setParameter("descripcion", "%" + busqueda + "%");
+        query.setParameter("tipo", "%" + busqueda + "%");
         List<Parametro> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

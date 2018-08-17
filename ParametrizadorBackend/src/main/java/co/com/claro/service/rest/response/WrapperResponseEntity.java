@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class WrapperResponseEntity implements Serializable{
     private int codigo;
     private String mensaje;
+    private String constraint;
     private String descripcion; 
     
     @JsonIgnore
@@ -27,9 +28,13 @@ public class WrapperResponseEntity implements Serializable{
         
     }
     
-    public WrapperResponseEntity(HttpCodeType httpCode, String descripcion) {
+    public WrapperResponseEntity(HttpCodeType httpCode, String mensaje, String descripcion) {
         this.codigo = httpCode.getCode();
-        this.mensaje = httpCode.getMsg();
+        if (mensaje != null && !mensaje.isEmpty()) {
+            this.mensaje = mensaje;
+        } else {
+            this.mensaje = httpCode.getMsg();
+        }
         this.descripcion = descripcion;
         this.httpStatus = httpCode.getCode();
     }
@@ -63,6 +68,15 @@ public class WrapperResponseEntity implements Serializable{
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+
+    public String getConstraint() {
+        return constraint;
+    }
+
+    public void setConstraint(String constraint) {
+        this.constraint = constraint;
+    }
+    
     
     public int httpStatus(){
         return httpStatus;

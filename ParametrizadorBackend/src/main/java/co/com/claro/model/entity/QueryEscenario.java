@@ -50,14 +50,11 @@ public class QueryEscenario implements Serializable {
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COD_QUERY_ESCENARIO")
     private Integer id;
     
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 200)
+    @Size(max = 200)
     @Column(name = "NOMBRE_QUERY")
     private String nombreQuery;
     
@@ -68,8 +65,8 @@ public class QueryEscenario implements Serializable {
     @Column(name = "ORDEN")
     private Integer orden;
     
-    @Basic(optional = false)
-    @NotNull
+    //@Basic(optional = false)
+    //@NotNull
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
@@ -78,9 +75,7 @@ public class QueryEscenario implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
     
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 200)
+    @Size(max = 200)
     @Column(name = "USUARIO")
     private String usuario;
 
@@ -184,7 +179,7 @@ public class QueryEscenario implements Serializable {
 
     @Override
     public String toString() {
-        return "com.claro.parametrizador.Politica[ codPolitica=" + id + " ]";
+        return "com.claro.parametrizador.Politica[ codPolitica =" + id + " ]";
     }
 
     
@@ -192,8 +187,8 @@ public class QueryEscenario implements Serializable {
         QueryEscenarioDTO entidadDTO = new QueryEscenarioDTO();
         
         entidadDTO.setId(id);
-        entidadDTO.setFechaCreacion(this.getFechaCreacion());
-        entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
+        entidadDTO.setFechaCreacion(fechaCreacion);
+        entidadDTO.setFechaActualizacion(fechaActualizacion);
         entidadDTO.setNombreQuery(nombreQuery);
         entidadDTO.setUsuario(usuario);
         entidadDTO.setOrden(orden);

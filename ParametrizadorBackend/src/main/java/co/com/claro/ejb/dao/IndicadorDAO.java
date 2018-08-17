@@ -64,6 +64,7 @@ public class IndicadorDAO extends AbstractJpaDAO<Indicador>{
         query.setParameter("nombre", "%" + busqueda + "%");
         query.setParameter("descripcion", "%" + busqueda + "%");
         query.setParameter("textoFormula", "%" + busqueda + "%");
+        query.setParameter("nombreescenario", "%" + busqueda + "%");
         List<Indicador> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

@@ -5,9 +5,12 @@
  */
 package co.com.claro.service.rest;
 
+import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.QueryEscenarioDAO;
 import co.com.claro.model.dto.QueryEscenarioDTO;
+import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.QueryEscenario;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -42,6 +45,9 @@ public class QueryEscenarioREST {
     
     @EJB
     protected QueryEscenarioDAO managerDAO;
+    
+    @EJB
+    protected EscenarioDAO padreDAO;
 
     /**
      * Obtiene las QueryEscenarioes Paginadas
@@ -109,12 +115,27 @@ public class QueryEscenarioREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(QueryEscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        QueryEscenario entidadAux = entidad.toEntity();
-        managerDAO.create(entidadAux);
-        return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
+        Escenario entidadPadreJPA;
+        QueryEscenario entidadHijaJPA = entidad.toEntity();
+        entidadHijaJPA.setEscenario(null);
+        if ( entidad.getIdEscenario() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdEscenario());
+            } else {
+                managerDAO.create(entidadHijaJPA);
+                entidadHijaJPA.setEscenario(entidadPadreJPA);
+                managerDAO.edit(entidadHijaJPA);
+                entidadPadreJPA.addQueryEscenario(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
+            }
+        } else {
+            managerDAO.create(entidadHijaJPA);
+        }
+        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }
     
-     @PUT
+    @PUT
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(QueryEscenarioDTO entidad) {
@@ -142,7 +163,16 @@ public class QueryEscenarioREST {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
-        managerDAO.remove(managerDAO.find(id));
+        QueryEscenario hijo = managerDAO.find(id);
+        Escenario entidadPadreJPA = null;
+        if (hijo.getEscenario() != null) {
+            entidadPadreJPA = padreDAO.find(hijo.getEscenario().getId());
+            entidadPadreJPA.removeIndicador(hijo);
+        }
+        managerDAO.remove(hijo);
+        if (entidadPadreJPA != null) {
+            padreDAO.edit(entidadPadreJPA);
+        }
         WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }

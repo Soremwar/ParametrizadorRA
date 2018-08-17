@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Indicador.findByNombreFormula", query = "SELECT i FROM Indicador i WHERE i.nombreFormula = :nombreFormula")
     , @NamedQuery(name = "Indicador.findByDescripcion", query = "SELECT i FROM Indicador i WHERE i.descripcion = :descripcion")
     , @NamedQuery(name = "Indicador.findByTextoFormula", query = "SELECT i FROM Indicador i WHERE i.textoFormula = :textoFormula")
-    , @NamedQuery(name = "Indicador.findByAnyColumn", query = "SELECT DISTINCT(i) FROM Indicador i WHERE lower(i.nombreFormula) LIKE lower(:nombre) or lower(i.descripcion) LIKE lower(:descripcion) or LOWER(i.textoFormula) LIKE lower(:textoFormula)")})
+    , @NamedQuery(name = "Indicador.findByAnyColumn", query = "SELECT DISTINCT(i) FROM Indicador i WHERE lower(i.nombreFormula) LIKE lower(:nombre) or lower(i.descripcion) LIKE lower(:descripcion) or LOWER(i.textoFormula) LIKE lower(:textoFormula) or LOWER(i.escenario.nombre) LIKE lower(:nombreescenario)")})
 public class Indicador implements Serializable {
 
     private static final long serialVersionUID = 1L;
