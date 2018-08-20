@@ -5,8 +5,6 @@
  */
 package co.com.claro.model.dto;
 
-import co.com.claro.model.dto.parent.PadreDTO;
-import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.QueryAprobacion;
 import java.io.Serializable;
 import java.util.Date;
@@ -89,7 +87,7 @@ public class QueryAprobacionDTO implements Serializable{
     public QueryAprobacion toEntity(){
         QueryAprobacion entity = new QueryAprobacion();
         //Campos comunes
-        entity.setCodAprobacionQueries(id);
+        entity.setId(id);
         entity.setEstadoAprobacion(estadoAprobacion);
         entity.setFechaCreacion(fechaCreacion);
         entity.setFechaActualizacion(fechaActualizacion);

@@ -61,9 +61,8 @@ public class QueryAprobacionDAO extends AbstractJpaDAO<QueryAprobacion>{
     public List<QueryAprobacion> findByAnyColumn(String busqueda){
         logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});     
         TypedQuery<QueryAprobacion> query = em.createNamedQuery("QueryAprobacion.findByAnyColumn", QueryAprobacion.class);
-        query.setParameter("nombre", "%" + busqueda + "%");
-        query.setParameter("descripcion", "%" + busqueda + "%");
-        query.setParameter("textoFormula", "%" + busqueda + "%");
+        query.setParameter("estadoAprobacion", "%" + busqueda + "%");
+        query.setParameter("nombreConciliacion", "%" + busqueda + "%");
         List<QueryAprobacion> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
@@ -71,26 +70,6 @@ public class QueryAprobacionDAO extends AbstractJpaDAO<QueryAprobacion>{
         return results;
     }
         
-    
-    /**
-     * Buscar el texto en todas columnas con paginado
-     * @param busqueda cadena de texto por el cual va a buscar
-     * @param offset desde que registro va a buscar
-     * @param limit limite de registros
-     * @return Lista de QueryAprobacions que cumplan con el criterio
-     */
-    public List<QueryAprobacion> findByAnyColumn(String busqueda, int offset, int limit){
-        logger.log(Level.INFO, "busqueda:{0}offset:{0}offset:{0}", new Object[]{busqueda, offset, limit});  
-        TypedQuery<QueryAprobacion> query = em.createNamedQuery("QueryAprobacion.findByAnyColumn", QueryAprobacion.class);
-        query.setParameter("nombreQueryAprobacion", "%" + busqueda + "%");
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        List<QueryAprobacion> results = query.getResultList();
-        if (results == null || results.isEmpty()) {
-            throw new DataNotFoundException("No se encontraron datos de Busqueda");
-        }
-        return results;
-    }
         
 }
 

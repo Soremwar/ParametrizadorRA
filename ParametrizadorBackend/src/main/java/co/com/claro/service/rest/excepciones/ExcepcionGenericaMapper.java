@@ -7,6 +7,7 @@ package co.com.claro.service.rest.excepciones;
 
 import co.com.claro.service.rest.response.ResponseCode;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
+import javax.ejb.TransactionRolledbackLocalException;
 import javax.persistence.PersistenceException;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.NotFoundException;
@@ -34,7 +35,7 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
         String descripcion = e.getCause() != null ? e.getCause().getMessage() : e.toString();
         int indexStart = descripcion.indexOf("CTRAINT_");
         if (indexStart > 0) {
-            int indexEnd = descripcion.indexOf(" ", indexStart) - 1;
+            int indexEnd = descripcion.indexOf(" ", indexStart) - 2;
             mensaje = descripcion.substring(indexStart, indexEnd);
         }
 
@@ -46,7 +47,7 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
             response = new WrapperResponseEntity(ResponseCode.ERROR_JSON, mensaje, descripcion);
 	} else if (e instanceof NotSupportedException) {
             response = new WrapperResponseEntity(ResponseCode.UNSUPPORTED_MEDIA_TYPE, mensaje, descripcion);
-	} else if (e instanceof PersistenceException || e instanceof DatabaseException) {
+	} else if (e.getCause() instanceof PersistenceException || e.getCause() instanceof DatabaseException || e.getCause() instanceof TransactionRolledbackLocalException) {
            response = new WrapperResponseEntity(ResponseCode.CONFLICT, mensaje, descripcion);            
         }
         if(response == null) {

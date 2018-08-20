@@ -112,6 +112,9 @@ public class Conciliacion implements Serializable {
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
     private Collection<EjecucionProceso> ejecucionesProceso;
     
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
+    private Collection<QueryAprobacion> queriesAprobacion;
+    
     public Conciliacion() {
     }
 
@@ -220,6 +223,16 @@ public class Conciliacion implements Serializable {
     public void removeEjecucionPRoceso(EjecucionProceso ejecucionProceso) {
         this.ejecucionesProceso.remove(ejecucionProceso);
         ejecucionProceso.setConciliacion(null);
+    }
+    
+    public void addQueryAprobacion(QueryAprobacion queryAprobacion) {
+        this.queriesAprobacion.add(queryAprobacion);
+        queryAprobacion.setConciliacion(this);
+    }
+    
+    public void removeEjecucionPRoceso(QueryAprobacion queryAprobacion) {
+        this.queriesAprobacion.remove(queryAprobacion);
+        queryAprobacion.setConciliacion(null);
     }
     
     @Override

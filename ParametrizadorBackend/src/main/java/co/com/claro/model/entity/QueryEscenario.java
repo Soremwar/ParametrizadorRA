@@ -10,8 +10,10 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,7 +24,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -42,7 +43,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "QueryEscenario.findByFechaCreacion", query = "SELECT q FROM QueryEscenario q WHERE q.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "QueryEscenario.findByFechaActualizacion", query = "SELECT q FROM QueryEscenario q WHERE q.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "QueryEscenario.findByUsuario", query = "SELECT q FROM QueryEscenario q WHERE q.usuario = :usuario")
-    , @NamedQuery(name = "QueryEscenario.findByCodEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.escenario.id = :codEscenario")})
+    , @NamedQuery(name = "QueryEscenario.findByCodEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.escenario.id = :codEscenario")
+    , @NamedQuery(name = "QueryEscenario.findByAnyColumn", query = "SELECT DISTINCT(q) FROM QueryEscenario q WHERE lower(q.nombreQuery) LIKE lower(:nombreQuery) or lower(q.query) LIKE lower(:query) or lower(q.escenario.nombre) LIKE lower(:queryEscenarioNombre)")})
 
 public class QueryEscenario implements Serializable {
 
@@ -65,8 +67,7 @@ public class QueryEscenario implements Serializable {
     @Column(name = "ORDEN")
     private Integer orden;
     
-    //@Basic(optional = false)
-    //@NotNull
+
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
@@ -79,8 +80,8 @@ public class QueryEscenario implements Serializable {
     @Column(name = "USUARIO")
     private String usuario;
 
-    @JoinColumn(name = "COD_ESCENARIO", referencedColumnName = "COD_ESCENARIO")
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COD_ESCENARIO")
     private Escenario escenario;
     
     public QueryEscenario() {
@@ -179,7 +180,7 @@ public class QueryEscenario implements Serializable {
 
     @Override
     public String toString() {
-        return "com.claro.parametrizador.Politica[ codPolitica =" + id + " ]";
+        return "com.claro.parametrizador.QueryEscenario[ id =" + id + " ]";
     }
 
     
@@ -190,6 +191,7 @@ public class QueryEscenario implements Serializable {
         entidadDTO.setFechaCreacion(fechaCreacion);
         entidadDTO.setFechaActualizacion(fechaActualizacion);
         entidadDTO.setNombreQuery(nombreQuery);
+        entidadDTO.setQuery(query);
         entidadDTO.setUsuario(usuario);
         entidadDTO.setOrden(orden);
         

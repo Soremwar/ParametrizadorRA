@@ -61,9 +61,9 @@ public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
     public List<QueryEscenario> findByAnyColumn(String busqueda){
         logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});     
         TypedQuery<QueryEscenario> query = em.createNamedQuery("QueryEscenario.findByAnyColumn", QueryEscenario.class);
-        query.setParameter("nombre", "%" + busqueda + "%");
-        query.setParameter("descripcion", "%" + busqueda + "%");
-        query.setParameter("textoFormula", "%" + busqueda + "%");
+        query.setParameter("nombreQuery", "%" + busqueda + "%");
+        query.setParameter("query", "%" + busqueda + "%");
+        query.setParameter("queryEscenarioNombre", "%" + busqueda + "%");
         List<QueryEscenario> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
@@ -72,33 +72,12 @@ public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
     }
         
     
-    /**
-     * Buscar el texto en todas columnas con paginado
-     * @param busqueda cadena de texto por el cual va a buscar
-     * @param offset desde que registro va a buscar
-     * @param limit limite de registros
-     * @return Lista de QueryEscenarios que cumplan con el criterio
-     */
-    public List<QueryEscenario> findByAnyColumn(String busqueda, int offset, int limit){
-        logger.log(Level.INFO, "busqueda:{0}offset:{0}offset:{0}", new Object[]{busqueda, offset, limit});  
-        TypedQuery<QueryEscenario> query = em.createNamedQuery("QueryEscenario.findByAnyColumn", QueryEscenario.class);
-        query.setParameter("nombreQueryEscenario", "%" + busqueda + "%");
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        List<QueryEscenario> results = query.getResultList();
-        if (results == null || results.isEmpty()) {
-            throw new DataNotFoundException("No se encontraron datos de Busqueda");
-        }
-        return results;
-    }
-    
-    
      /**
      * Buscar el texto en todas columnas con paginado
      * @param codQueryEscenario identificador     
      * @return Lista de QueryEscenarios que cumplan con el criterio
      */
-    public QueryEscenario findById(Integer codQueryEscenario){
+    /*public QueryEscenario findById(Integer codQueryEscenario){
         logger.log(Level.INFO, "codQueryEscenario:{0}", new Object[]{codQueryEscenario});  
         TypedQuery<QueryEscenario> query = em.createNamedQuery("QueryEscenario.findByCodQueryEscenario", QueryEscenario.class);
         query.setParameter("codQueryEscenario", "%" + codQueryEscenario + "%");
@@ -112,7 +91,7 @@ public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
         return foundEntity;
-    }
+    }*/
         
 }
 

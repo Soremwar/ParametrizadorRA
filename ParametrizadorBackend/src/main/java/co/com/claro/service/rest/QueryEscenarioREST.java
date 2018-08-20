@@ -7,17 +7,19 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.QueryEscenarioDAO;
+import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.QueryEscenarioDTO;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.QueryEscenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
-import java.util.ArrayList;
+import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Transient;
@@ -54,6 +56,7 @@ public class QueryEscenarioREST {
      * @param offset Desde cual item se retorna
      * @param limit Limite de items a retornar
      * @param orderby Indica por cual campo descriptivo va a guardar (id, nombre, fechaCreacion)
+     * @param texto
      * @return Toda la lista de conciliaciones que corresponden con el criterio
      */
     @GET
@@ -61,12 +64,19 @@ public class QueryEscenarioREST {
     public List<QueryEscenarioDTO> find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
-            @QueryParam("orderby") String orderby) {
-        logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
-        List<QueryEscenario> lst = managerDAO.findRange(new int[]{offset, limit});
-        //List<QueryEscenarioDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId)).collect(toList());
-        //UtilListas.ordenarLista(lstDTO, orderby);
-        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>)(List<?>) lst;
+            @QueryParam("orderby") String orderby,
+            @QueryParam("texto") String texto) {
+        logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}texto:{3}", new Object[]{offset, limit, orderby, texto});
+        List<QueryEscenarioDTO> lstDTO;
+        List<QueryEscenario> lst;
+        if (texto != null && !texto.isEmpty()) {
+            lst = managerDAO.findByAnyColumn(texto);
+        } else {
+            lst = managerDAO.findRange(new int[]{offset, limit});
+        }
+        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId)).collect(toList());
+        UtilListas.ordenarQueryEjecucion(lstDTO, orderby);
+        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
 
@@ -81,29 +91,10 @@ public class QueryEscenarioREST {
     @Produces({MediaType.APPLICATION_JSON})
     public QueryEscenarioDTO getById(@PathParam("id") int id){
         logger.log(Level.INFO, "id:{0}" , id);
-        QueryEscenario entidad = managerDAO.findById(id);
+        QueryEscenario entidad = managerDAO.find(id);
         return entidad.toDTO();
     }
     
-    
-    /**
-     * Busca las conciliaciones por cualquier columna
-     * @param texto Texto a buscar en cualquier texto
-     * @return Lista de QueryEscenarios que cumplen con el criterio
-     */
-    @GET
-    @Path("/findByAny")
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<QueryEscenarioDTO> findByAnyColumn(@QueryParam("texto") String texto){
-        logger.log(Level.INFO, "texto:{0}", texto);
-        List<QueryEscenario> lst = managerDAO.findByAnyColumn(texto);
-        List<QueryEscenarioDTO> lstDTO = new ArrayList<>();
-        lst.forEach((entidad) -> {
-            lstDTO.add(entidad.toDTO());
-        });
-        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>)(List<?>) lstDTO;
-        return lstFinal;
-    }
 
      /**
      * Crea una nueva politica
@@ -141,7 +132,7 @@ public class QueryEscenarioREST {
     public Response update(QueryEscenarioDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
         //Hallar La entidad actual para actualizarla
-        QueryEscenario queryEscenarioJPA = managerDAO.findById(entidad.getId());
+        QueryEscenario queryEscenarioJPA = managerDAO.find(entidad.getId());
         if (queryEscenarioJPA != null) {
             queryEscenarioJPA.setFechaActualizacion(Date.from(Instant.now()));
             queryEscenarioJPA.setNombreQuery(entidad.getNombreQuery() != null ? entidad.getNombreQuery() : queryEscenarioJPA.getNombreQuery());

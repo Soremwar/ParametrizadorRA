@@ -12,6 +12,7 @@ import co.com.claro.model.dto.EjecucionProcesoDTO;
 import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.IndicadorDTO;
 import co.com.claro.model.dto.ParametroDTO;
+import co.com.claro.model.dto.QueryEscenarioDTO;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import java.util.Collections;
@@ -121,5 +122,22 @@ public class UtilListas {
         }        
         return lstDTO;
     }
+    
+    
+    /**
+     * 
+     * @param lstDTO
+     * @param orderby
+     * @return 
+     */
+    public static List<QueryEscenarioDTO> ordenarQueryEjecucion(List<QueryEscenarioDTO> lstDTO, String orderby) {
+        if (orderby != null && orderby.equals("nombre")) {
+            lstDTO.sort((QueryEscenarioDTO h1, QueryEscenarioDTO h2) -> h1.getNombreQuery().compareTo(h2.getNombreQuery()));
+        } else if (orderby != null && orderby.equals("orden")) {
+            lstDTO.sort((QueryEscenarioDTO h1, QueryEscenarioDTO h2) -> h1.getOrden().compareTo(h2.getOrden()));
+        }        
+        return lstDTO;
+    }
+    
       
 }

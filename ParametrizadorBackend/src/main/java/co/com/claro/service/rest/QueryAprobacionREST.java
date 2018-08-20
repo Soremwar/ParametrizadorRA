@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
  * @author andresbedoya
  */
 @Stateless
-@Path("aprobacionquery")
+@Path("queryaprobacion")
 public class QueryAprobacionREST {
     @Transient
     private static final Logger logger = Logger.getLogger(QueryAprobacionREST.class.getSimpleName());
@@ -57,11 +57,18 @@ public class QueryAprobacionREST {
     public List<QueryAprobacionDTO> find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
-            @QueryParam("orderby") String orderby) {
-        logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
-        List<QueryAprobacion> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<QueryAprobacionDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(QueryAprobacionDTO::getId)).collect(toList());
-        //UtilListas.ordenarLista(lstDTO, orderby);
+            @QueryParam("orderby") String orderby,
+            @QueryParam("texto") String texto) {
+        logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}texto:{3}", new Object[]{offset, limit, orderby, texto});
+        List<QueryAprobacionDTO> lstDTO;
+        List<QueryAprobacion> lst;
+        if (texto != null && !texto.isEmpty()) {
+            lst = managerDAO.findByAnyColumn(texto);
+        } else {
+            lst = managerDAO.findRange(new int[]{offset, limit});
+        }
+        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryAprobacionDTO::getId)).collect(toList());
+        //UtilListas.ordenarQueryEjecucion(lstDTO, orderby);
         List<QueryAprobacionDTO> lstFinal = (List<QueryAprobacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }   
@@ -96,9 +103,24 @@ public class QueryAprobacionREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(QueryAprobacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        QueryAprobacion entidadAux = entidad.toEntity();
-        managerDAO.create(entidadAux);
-        return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
+        Conciliacion entidadPadreJPA;
+        QueryAprobacion entidadHijaJPA = entidad.toEntity();
+        entidadHijaJPA.setConciliacion(null);
+        if ( entidad.getIdConciliacion() != null) {
+            entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
+            if (entidadPadreJPA == null) {
+                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdConciliacion());
+            } else {
+                managerDAO.create(entidadHijaJPA);
+                entidadHijaJPA.setConciliacion(entidadPadreJPA);
+                managerDAO.edit(entidadHijaJPA);
+                entidadPadreJPA.addQueryAprobacion(entidadHijaJPA);
+                padreDAO.edit(entidadPadreJPA);
+            }
+        } else {
+            managerDAO.create(entidadHijaJPA);
+        }
+        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
     }
     
     @PUT
