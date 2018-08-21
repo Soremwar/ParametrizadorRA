@@ -25,6 +25,7 @@ import javax.persistence.TypedQuery;
 @Stateless
 public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
     private static final Logger logger = Logger.getLogger(EscenarioDAO.class.getSimpleName());
+    
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
 

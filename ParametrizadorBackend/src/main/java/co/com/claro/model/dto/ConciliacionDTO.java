@@ -9,7 +9,7 @@ import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.Politica;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -26,9 +26,9 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private String camposTablaDestino;
     private String descripcion;
     
-    private List<EscenarioDTO> escenarios;
-    private List<WsTransformacionDTO> transformaciones;
-    private List<EjecucionProcesoDTO> ejecucionesProceso;
+    private Set<EscenarioDTO> escenarios;
+    private Set<WsTransformacionDTO> transformaciones;
+    private Set<EjecucionProcesoDTO> ejecucionesProceso;
    
 
     public Integer getIdPolitica() {
@@ -72,28 +72,28 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     }
     
     
-    public List<EscenarioDTO> getEscenarios() {
+    public Set<EscenarioDTO> getEscenarios() {
         return escenarios;
     }
 
-    public void setEscenarios(List<EscenarioDTO> escenarios) {
+    public void setEscenarios(Set<EscenarioDTO> escenarios) {
         this.escenarios = escenarios;
     }
 
-    public List<EjecucionProcesoDTO> getEjecucionesProceso() {
+    public Set<EjecucionProcesoDTO> getEjecucionesProceso() {
         return ejecucionesProceso;
     }
 
-    public void setEjecucionesProceso(List<EjecucionProcesoDTO> ejecucionesProceso) {
+    public void setEjecucionesProceso(Set<EjecucionProcesoDTO> ejecucionesProceso) {
         this.ejecucionesProceso = ejecucionesProceso;
     }
 
     
-    public List<WsTransformacionDTO> getTransformaciones() {
+    public Set<WsTransformacionDTO> getTransformaciones() {
         return transformaciones;
     }
 
-    public void setTransformaciones(List<WsTransformacionDTO> transformaciones) {
+    public void setTransformaciones(Set<WsTransformacionDTO> transformaciones) {
         this.transformaciones = transformaciones;
     }
     

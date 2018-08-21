@@ -8,7 +8,6 @@ package co.com.claro.model.dto;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Escenario;
 import java.io.Serializable;
-import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**

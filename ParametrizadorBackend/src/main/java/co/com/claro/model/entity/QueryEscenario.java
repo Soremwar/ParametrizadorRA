@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "QueryEscenario.findAll", query = "SELECT q FROM QueryEscenario q")
-    , @NamedQuery(name = "QueryEscenario.findByCodQueryEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.id = :id")
+    , @NamedQuery(name = "QueryEscenario.findByCodQueryEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.id = :codQueryEscenario")
     , @NamedQuery(name = "QueryEscenario.findByNombreQuery", query = "SELECT q FROM QueryEscenario q WHERE q.nombreQuery = :nombreQuery")
     , @NamedQuery(name = "QueryEscenario.findByQuery", query = "SELECT q FROM QueryEscenario q WHERE q.query = :query")
     , @NamedQuery(name = "QueryEscenario.findByOrden", query = "SELECT q FROM QueryEscenario q WHERE q.orden = :orden")
@@ -49,6 +49,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class QueryEscenario implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     
     @Id
     @Basic(optional = false)
@@ -187,7 +188,7 @@ public class QueryEscenario implements Serializable {
     public QueryEscenarioDTO toDTO(){
         QueryEscenarioDTO entidadDTO = new QueryEscenarioDTO();
         
-        entidadDTO.setId(id);
+        entidadDTO.setId(this.getId());
         entidadDTO.setFechaCreacion(fechaCreacion);
         entidadDTO.setFechaActualizacion(fechaActualizacion);
         entidadDTO.setNombreQuery(nombreQuery);

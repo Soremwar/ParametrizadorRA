@@ -15,6 +15,8 @@ import java.util.Collection;
 import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -104,7 +106,7 @@ public class Conciliacion implements Serializable {
     private Politica politica;
     
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
-    private List<Escenario> escenarios;
+    private Collection<Escenario> escenarios;
 
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
     private Collection<WsTransformacion> transformaciones;
@@ -257,7 +259,7 @@ public class Conciliacion implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.Conciliacion[ codConciliacion=" + id + "  ]";
+        return "co.com.claro.ejb.dao.Conciliacion[ id=" + id + "  ]";
     }
     
     public ConciliacionDTO toDTO(){
@@ -275,17 +277,17 @@ public class Conciliacion implements Serializable {
         entidadDTO.setTablaDestino(tablaDestino);
         entidadDTO.setUsuario(usuario);
         if (escenarios != null) {
-            List<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(toList());
+            Set<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());
             entidadDTO.setEscenarios(lstEscenarios);
         }
         
         if (transformaciones != null) {
-            List<WsTransformacionDTO> lstTransformaciones = transformaciones.stream().map((transformacionDTO) -> transformacionDTO.toDTO()).collect(toList());
+            Set<WsTransformacionDTO> lstTransformaciones = transformaciones.stream().map((transformacionDTO) -> transformacionDTO.toDTO()).collect(Collectors.toSet());
             entidadDTO.setTransformaciones(lstTransformaciones);
         }
 
         if (ejecucionesProceso != null) {
-            List<EjecucionProcesoDTO> lstEjecuciones = ejecucionesProceso.stream().map((ejecucionProcesoDTO) -> ejecucionProcesoDTO.toDTO()).sorted(comparing(EjecucionProcesoDTO::getFechaEjecucion)).collect(toList());
+            Set<EjecucionProcesoDTO> lstEjecuciones = ejecucionesProceso.stream().map((ejecucionProcesoDTO) -> ejecucionProcesoDTO.toDTO()).sorted(comparing(EjecucionProcesoDTO::getFechaEjecucion)).collect(Collectors.toSet());
             entidadDTO.setEjecucionesProceso(lstEjecuciones);
         }
 

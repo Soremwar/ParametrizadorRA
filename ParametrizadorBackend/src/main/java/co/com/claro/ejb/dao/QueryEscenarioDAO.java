@@ -25,6 +25,7 @@ import javax.persistence.TypedQuery;
 @Stateless
 public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
     private static final Logger logger = Logger.getLogger(QueryEscenarioDAO.class.getSimpleName());
+    
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
 
@@ -70,28 +71,6 @@ public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
         }
         return results;
     }
-        
-    
-     /**
-     * Buscar el texto en todas columnas con paginado
-     * @param codQueryEscenario identificador     
-     * @return Lista de QueryEscenarios que cumplan con el criterio
-     */
-    /*public QueryEscenario findById(Integer codQueryEscenario){
-        logger.log(Level.INFO, "codQueryEscenario:{0}", new Object[]{codQueryEscenario});  
-        TypedQuery<QueryEscenario> query = em.createNamedQuery("QueryEscenario.findByCodQueryEscenario", QueryEscenario.class);
-        query.setParameter("codQueryEscenario", "%" + codQueryEscenario + "%");
-        List<QueryEscenario> results = query.getResultList();
-        QueryEscenario foundEntity = null;
-        if(!results.isEmpty()){
-            // ignores multiple results
-            foundEntity = results.get(0);
-        }
-        if (results == null || results.isEmpty()) {
-            throw new DataNotFoundException("No se encontraron datos de Busqueda");
-        }
-        return foundEntity;
-    }*/
         
 }
 

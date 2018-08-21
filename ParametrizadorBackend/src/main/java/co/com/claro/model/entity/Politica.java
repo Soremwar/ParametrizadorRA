@@ -5,10 +5,13 @@
  */
 package co.com.claro.model.entity;
 
+import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -210,7 +213,7 @@ public class Politica implements Serializable {
         entidadDTO.setUsuario(usuario);
         entidadDTO.setDescripcion(descripcion);
         if (conciliaciones != null) {            
-            //List<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((conciliacionDTO) -> conciliacionDTO.toDTO()).collect(toList());
+            //Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((conciliacionDTO) -> conciliacionDTO.toDTO()).collect(Collectors.toSet());
             //entidadDTO.setConciliaciones(lstConciliaciones);
             entidadDTO.setConciliaciones(conciliaciones.toDTO());
         }
