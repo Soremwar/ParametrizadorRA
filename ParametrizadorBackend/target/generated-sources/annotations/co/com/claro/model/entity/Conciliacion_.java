@@ -8,11 +8,10 @@ import co.com.claro.model.entity.WsTransformacion;
 import java.util.Date;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.CollectionAttribute;
-import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-08-19T08:53:35")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2018-08-29T08:40:45")
 @StaticMetamodel(Conciliacion.class)
 public class Conciliacion_ { 
 
@@ -27,7 +26,7 @@ public class Conciliacion_ {
     public static volatile SingularAttribute<Conciliacion, Date> fechaCreacion;
     public static volatile SingularAttribute<Conciliacion, String> usuario;
     public static volatile SingularAttribute<Conciliacion, Integer> id;
-    public static volatile ListAttribute<Conciliacion, Escenario> escenarios;
+    public static volatile CollectionAttribute<Conciliacion, Escenario> escenarios;
     public static volatile SingularAttribute<Conciliacion, String> tablaDestino;
 
 }

@@ -195,7 +195,11 @@ public class QueryEscenario implements Serializable {
         entidadDTO.setQuery(query);
         entidadDTO.setUsuario(usuario);
         entidadDTO.setOrden(orden);
-        
+        entidadDTO.setIdEscenario(escenario != null ? escenario.getId() : null);
+        entidadDTO.setNombreEscenario(escenario != null ? escenario.getNombre() : null);
+        entidadDTO.setIdConciliacion(escenario != null && escenario.getConciliacion() != null ? escenario.getConciliacion().getId() : null);
+        entidadDTO.setNombreConciliacion(escenario != null && escenario.getConciliacion() != null ? escenario.getConciliacion().getNombre() : null);
+
         return entidadDTO;
     }
 }

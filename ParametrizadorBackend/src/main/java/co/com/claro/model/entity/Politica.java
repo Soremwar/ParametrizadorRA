@@ -5,13 +5,10 @@
  */
 package co.com.claro.model.entity;
 
-import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

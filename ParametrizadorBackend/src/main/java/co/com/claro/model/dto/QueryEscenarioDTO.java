@@ -21,6 +21,8 @@ public class QueryEscenarioDTO implements Serializable{
     private Integer id;
     private Integer idEscenario;
     private String nombreEscenario;
+    private Integer idConciliacion;
+    private String nombreConciliacion;
     
     //Campos entidad
     private String nombreQuery;
@@ -100,6 +102,22 @@ public class QueryEscenarioDTO implements Serializable{
 
     public void setNombreEscenario(String nombreEscenario) {
         this.nombreEscenario = nombreEscenario;
+    }
+
+    public Integer getIdConciliacion() {
+        return idConciliacion;
+    }
+
+    public void setIdConciliacion(Integer idConciliacion) {
+        this.idConciliacion = idConciliacion;
+    }
+
+    public String getNombreConciliacion() {
+        return nombreConciliacion;
+    }
+
+    public void setNombreConciliacion(String nombreConciliacion) {
+        this.nombreConciliacion = nombreConciliacion;
     }
 
     public QueryEscenario toEntity(){
