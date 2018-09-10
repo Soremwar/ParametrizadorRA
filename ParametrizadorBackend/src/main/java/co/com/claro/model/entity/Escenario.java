@@ -6,10 +6,13 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.EscenarioDTO;
+import co.com.claro.model.dto.QueryEscenarioDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -224,6 +227,10 @@ public class Escenario implements Serializable {
         entidadDTO.setImpacto(impacto);
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
+        if (queryEscenarios != null) {
+            Set<QueryEscenarioDTO> lstqueryEscenarios = queryEscenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());
+            entidadDTO.setQueryescenarios(lstqueryEscenarios);
+        }
         
         return entidadDTO;
     }
