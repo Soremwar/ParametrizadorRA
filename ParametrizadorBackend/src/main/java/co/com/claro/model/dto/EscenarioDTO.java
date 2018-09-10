@@ -8,6 +8,7 @@ package co.com.claro.model.dto;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Escenario;
 import java.io.Serializable;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -24,6 +25,8 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
     //Campos propios
     private String usuarioAsignado;
     private String impacto;
+    
+   private Set<QueryEscenarioDTO> queryescenarios;
     
     public String getUsuarioAsignado() {
         return usuarioAsignado;
@@ -55,6 +58,14 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
 
     public void setIdConciliacion(Integer idConciliacion) {
         this.idConciliacion = idConciliacion;
+    }
+
+    public Set<QueryEscenarioDTO> getQueryescenarios() {
+        return queryescenarios;
+    }
+
+    public void setQueryescenarios(Set<QueryEscenarioDTO> queryescenarios) {
+        this.queryescenarios = queryescenarios;
     }
 
     
