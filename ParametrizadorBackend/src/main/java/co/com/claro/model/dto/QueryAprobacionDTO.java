@@ -25,6 +25,7 @@ public class QueryAprobacionDTO implements Serializable{
     private Integer idConciliacion;
     private String nombreConciliacion;
     private String usuario;
+    private String mensaje;
     
 
 
@@ -83,6 +84,14 @@ public class QueryAprobacionDTO implements Serializable{
     public void setUsuario(String usuario) {
         this.usuario = usuario;
     }
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
     
     public QueryAprobacion toEntity(){
         QueryAprobacion entity = new QueryAprobacion();
@@ -92,6 +101,7 @@ public class QueryAprobacionDTO implements Serializable{
         entity.setFechaCreacion(fechaCreacion);
         entity.setFechaActualizacion(fechaActualizacion);
         entity.setUsuario(usuario);
+        entity.setMensaje(mensaje);
         
         return entity;
         

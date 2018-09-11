@@ -21,6 +21,7 @@ co/com/claro/model/entity/EjecucionProceso.class
 co/com/claro/model/entity/Conciliacion_.class
 co/com/claro/webservice/odi/GetWebServiceVersionRequest.class
 co/com/claro/service/rest/parent/AbstractParentREST.class
+co/com/claro/model/entity/QueryEscenario_.class
 co/com/claro/ejb/dao/ResultadoDAO.class
 co/com/claro/service/rest/PoliticaREST.class
 co/com/claro/webservice/odi/RestartLoadPlanRequestType.class
@@ -46,6 +47,7 @@ co/com/claro/model/dto/QueryEscenarioDTO.class
 co/com/claro/ejb/dao/utils/comparators/EntityNameComparator.class
 co/com/claro/webservice/odi/OdiGetLoadPlanStatusRequest.class
 co/com/claro/webservice/odi/OdiInvokeCallback.class
+co/com/claro/model/entity/QueryEscenario.class
 co/com/claro/model/entity/Parametro_.class
 co/com/claro/webservice/odi/OdiRestartSessWithCallbackRequest.class
 co/com/claro/service/rest/excepciones/DatabaseExceptionMapper.class

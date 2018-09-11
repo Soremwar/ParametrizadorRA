@@ -67,6 +67,10 @@ public class QueryAprobacion implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "USUARIO")
     private String usuario;
+    
+
+    @Column(name = "MENSAJE")
+    private String mensaje;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION")
@@ -129,6 +133,14 @@ public class QueryAprobacion implements Serializable {
         return conciliacion;
     }
 
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
     public void setConciliacion(Conciliacion conciliacion) {
         this.conciliacion = conciliacion;
     }
@@ -166,9 +178,11 @@ public class QueryAprobacion implements Serializable {
         entidadDTO.setNombreConciliacion(usuario);
         entidadDTO.setEstadoAprobacion(estadoAprobacion);
         entidadDTO.setUsuario(usuario);
+        entidadDTO.setMensaje(mensaje);
         
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
+        
         
         return entidadDTO;
     }
