@@ -29,6 +29,7 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private Set<EscenarioDTO> escenarios;
     private Set<WsTransformacionDTO> transformaciones;
     private Set<EjecucionProcesoDTO> ejecucionesProceso;
+    private Set<QueryAprobacionDTO> queryAprobaciones;
    
 
     public Integer getIdPolitica() {
@@ -95,6 +96,14 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
 
     public void setTransformaciones(Set<WsTransformacionDTO> transformaciones) {
         this.transformaciones = transformaciones;
+    }
+
+    public Set<QueryAprobacionDTO> getQueryAprobaciones() {
+        return queryAprobaciones;
+    }
+
+    public void setQueryAprobaciones(Set<QueryAprobacionDTO> queryAprobaciones) {
+        this.queryAprobaciones = queryAprobaciones;
     }
     
     public Conciliacion toEntity(){

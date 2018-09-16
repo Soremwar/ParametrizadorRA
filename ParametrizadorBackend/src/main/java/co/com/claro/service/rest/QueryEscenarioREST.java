@@ -95,6 +95,26 @@ public class QueryEscenarioREST {
         return entidad.toDTO();
     }
     
+    
+        /**
+     * Obtiene una QueryEscenario por id
+     * @param id Identificador de conciliacion
+     * @return Una QueryEscenario que coincide con el criterio
+     */
+    
+    @GET
+    @Path("/conciliacion/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<QueryEscenarioDTO> getByIdConciliacion(@PathParam("id") String id){
+        logger.log(Level.INFO, "id:{0}" , id);
+        List<QueryEscenarioDTO> lstDTO;
+        List<QueryEscenario> lst;
+        lst = managerDAO.findByConciliacion(id);
+        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId)).collect(toList());
+        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }
+    
 
      /**
      * Crea una nueva politica

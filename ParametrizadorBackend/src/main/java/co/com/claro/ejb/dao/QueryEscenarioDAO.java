@@ -71,6 +71,22 @@ public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
         }
         return results;
     }
+    
+    /**
+     * Buscar la misma cadena en todos los campos descriptivos
+     * @param busqueda Campo por el cual va a buscar en todos los campos descriptivos
+     * @return Lista de QueryEscenarios que cumplan con el criterio
+     */
+    public List<QueryEscenario> findByConciliacion(String busqueda){
+        logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});     
+        TypedQuery<QueryEscenario> query = em.createNamedQuery("QueryEscenario.findByCodConciliacion", QueryEscenario.class);
+        query.setParameter("codConciliacion", "%" + busqueda + "%");
+        List<QueryEscenario> results = query.getResultList();
+        if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }
+        return results;
+    }
         
 }
 

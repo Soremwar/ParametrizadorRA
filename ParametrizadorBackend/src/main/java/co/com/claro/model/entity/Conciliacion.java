@@ -8,16 +8,15 @@ package co.com.claro.model.entity;
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EjecucionProcesoDTO;
 import co.com.claro.model.dto.EscenarioDTO;
+import co.com.claro.model.dto.QueryAprobacionDTO;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
 import static java.util.Comparator.comparing;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import static java.util.stream.Collectors.toList;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -222,7 +221,7 @@ public class Conciliacion implements Serializable {
         ejecucionProceso.setConciliacion(this);
     }
     
-    public void removeEjecucionPRoceso(EjecucionProceso ejecucionProceso) {
+    public void removeEjecucionProceso(EjecucionProceso ejecucionProceso) {
         this.ejecucionesProceso.remove(ejecucionProceso);
         ejecucionProceso.setConciliacion(null);
     }
@@ -232,7 +231,7 @@ public class Conciliacion implements Serializable {
         queryAprobacion.setConciliacion(this);
     }
     
-    public void removeEjecucionPRoceso(QueryAprobacion queryAprobacion) {
+    public void removeQueryAprobacion(QueryAprobacion queryAprobacion) {
         this.queriesAprobacion.remove(queryAprobacion);
         queryAprobacion.setConciliacion(null);
     }
@@ -291,6 +290,11 @@ public class Conciliacion implements Serializable {
             entidadDTO.setEjecucionesProceso(lstEjecuciones);
         }
 
+        if (queriesAprobacion != null) {
+            Set<QueryAprobacionDTO> lstAprobaciones = queriesAprobacion.stream().map((queriesAprobacionDTO) -> queriesAprobacionDTO.toDTO()).sorted(comparing(QueryAprobacionDTO::getFechaCreacion)).collect(Collectors.toSet());
+            entidadDTO.setQueryAprobaciones(lstAprobaciones);
+        }
+        
         //Campos padre
         entidadDTO.setIdPolitica(politica != null ? politica.getId() : null);
         entidadDTO.setNombrePolitica(politica != null ? politica.getNombre() : null);        
