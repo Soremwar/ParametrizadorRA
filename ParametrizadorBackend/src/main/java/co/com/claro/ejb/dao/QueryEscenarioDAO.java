@@ -77,10 +77,10 @@ public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
      * @param busqueda Campo por el cual va a buscar en todos los campos descriptivos
      * @return Lista de QueryEscenarios que cumplan con el criterio
      */
-    public List<QueryEscenario> findByConciliacion(String busqueda){
-        logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});     
+    public List<QueryEscenario> findByConciliacion(int idConciliacion){
+        logger.log(Level.INFO, "busqueda:{0}", new Object[]{idConciliacion});     
         TypedQuery<QueryEscenario> query = em.createNamedQuery("QueryEscenario.findByCodConciliacion", QueryEscenario.class);
-        query.setParameter("codConciliacion", "%" + busqueda + "%");
+        query.setParameter("codConciliacion", idConciliacion);
         List<QueryEscenario> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

@@ -105,7 +105,7 @@ public class QueryEscenarioREST {
     @GET
     @Path("/conciliacion/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<QueryEscenarioDTO> getByIdConciliacion(@PathParam("id") String id){
+    public List<QueryEscenarioDTO> getByIdConciliacion(@PathParam("id") int id){
         logger.log(Level.INFO, "id:{0}" , id);
         List<QueryEscenarioDTO> lstDTO;
         List<QueryEscenario> lst;
