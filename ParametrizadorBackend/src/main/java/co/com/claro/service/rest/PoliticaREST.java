@@ -120,7 +120,6 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
             politicaJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : politicaJPA.getNombre());
             politicaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : politicaJPA.getDescripcion());
             politicaJPA.setObjetivo(entidad.getObjetivo() != null ? entidad.getObjetivo() : politicaJPA.getObjetivo());
-            politicaJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : politicaJPA.getUsuario());
             managerDAO.edit(politicaJPA);
             return Response.status(Response.Status.OK).entity(politicaJPA.toDTO()).build();
         }

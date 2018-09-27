@@ -48,7 +48,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Escenario.findByFechaActualizacion", query = "SELECT e FROM Escenario e WHERE e.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "Escenario.findByConciliacionNull", query = "SELECT e FROM Escenario e WHERE e.conciliacion IS null")
     , @NamedQuery(name = "Escenario.findByConciliacion", query = "SELECT e FROM Escenario e WHERE e.conciliacion = :codConciliacion")
-    , @NamedQuery(name = "Escenario.findByUsuario", query = "SELECT e FROM Escenario e WHERE e.usuario = :usuario")
     , @NamedQuery(name = "Escenario.findByAnyColumn", query = "SELECT DISTINCT(e) FROM Escenario e WHERE lower(e.nombre) LIKE lower(:nombreEscenario) or lower(e.impacto) LIKE lower(:impacto) or lower(e.conciliacion.nombre) LIKE lower(:nombreConciliacion)")})
         
 public class Escenario implements Serializable {
@@ -74,12 +73,6 @@ public class Escenario implements Serializable {
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
-    
-    @Column(name = "USUARIO")
-    private String usuario;
-    
-    @Column(name = "USUARIO_ASIGNADO")
-    private String usuarioAsignado;
         
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "escenario")
     private List<Indicador> indicadores;
@@ -143,22 +136,6 @@ public class Escenario implements Serializable {
     public void setFechaActualizacion(Date fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
     }
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
-    public String getUsuarioAsignado() {
-        return usuarioAsignado; 
-    }
-
-    public void setUsuarioAsignado(String usuarioAsignado) {
-        this.usuarioAsignado = usuarioAsignado;
-    }
     
     public Conciliacion getConciliacion() {
         return conciliacion;
@@ -221,7 +198,6 @@ public class Escenario implements Serializable {
         entidadDTO.setFechaCreacion(this.getFechaCreacion());
         entidadDTO.setFechaActualizacion(this.getFechaActualizacion());
         entidadDTO.setNombre(this.getNombre());
-        entidadDTO.setUsuario(usuario);
         
         //Campos de la entidad
         entidadDTO.setImpacto(impacto);

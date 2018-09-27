@@ -23,18 +23,9 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
     private String nombreConciliacion;
 
     //Campos propios
-    private String usuarioAsignado;
     private String impacto;
     
    private Set<QueryEscenarioDTO> queryescenarios;
-    
-    public String getUsuarioAsignado() {
-        return usuarioAsignado;
-    }
-
-    public void setUsuarioAsignado(String usuarioAsignado) {
-        this.usuarioAsignado = usuarioAsignado;
-    }
 
     public String getNombreConciliacion() {
         return nombreConciliacion;
@@ -74,12 +65,10 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
         //Campos comunes
         entity.setId(this.getId());
         entity.setNombre(this.getNombre());
-        entity.setUsuario(this.getUsuario());
         entity.setFechaCreacion(this.getFechaCreacion());
         entity.setFechaActualizacion(this.getFechaActualizacion());
 
         //Campos de la entidad
-        entity.setUsuarioAsignado(usuarioAsignado);
         entity.setImpacto(this.impacto);
         //p.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
         return entity;

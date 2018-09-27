@@ -25,6 +25,7 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private String tablaDestino;
     private String camposTablaDestino;
     private String descripcion;
+    private String usuarioAsignado;
     
     private Set<EscenarioDTO> escenarios;
     private Set<WsTransformacionDTO> transformaciones;
@@ -55,7 +56,15 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+    
+    public String getUsuarioAsignado() {
+        return usuarioAsignado;
+    }
 
+    public void setUsuarioAsignado(String usuarioAsignado) {
+        this.usuarioAsignado = usuarioAsignado;
+    }
+    
     public String getTablaDestino() {
         return tablaDestino;
     }
@@ -107,20 +116,22 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     }
     
     public Conciliacion toEntity(){
-        Conciliacion p = new Conciliacion();
+        Conciliacion entity = new Conciliacion();
+        
         //Campos Comunes
-        p.setId(this.getId());
-        p.setNombre(this.getNombre());
-        p.setUsuario(this.getUsuario());
-        p.setFechaCreacion(this.getFechaCreacion());
-        p.setFechaActualizacion(this.getFechaActualizacion());
+        entity.setId(this.getId());
+        entity.setNombre(this.getNombre());
+
+        entity.setFechaCreacion(this.getFechaCreacion());
+        entity.setFechaActualizacion(this.getFechaActualizacion());
         
         //Campos de la entidad
-        p.setDescripcion(this.descripcion);
-        p.setTablaDestino(this.tablaDestino);
-        p.setCamposTablaDestino(this.camposTablaDestino);
-        p.setPolitica(this.idPolitica != null ? new Politica(this.idPolitica) : null);
-        return p;
+        entity.setUsuarioAsignado(usuarioAsignado);
+        entity.setDescripcion(this.descripcion);
+        entity.setTablaDestino(this.tablaDestino);
+        entity.setCamposTablaDestino(this.camposTablaDestino);
+        entity.setPolitica(this.idPolitica != null ? new Politica(this.idPolitica) : null);
+        return entity;
         
     }
 }

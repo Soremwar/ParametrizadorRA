@@ -51,7 +51,6 @@ public class PoliticaDTO extends PadreDTO implements Serializable{
         //Campos comunes
         p.setId(this.getId());
         p.setNombre(this.getNombre());
-        p.setUsuario(this.getUsuario());
         p.setFechaCreacion(this.getFechaCreacion());
         p.setFechaActualizacion(this.getFechaActualizacion());
         

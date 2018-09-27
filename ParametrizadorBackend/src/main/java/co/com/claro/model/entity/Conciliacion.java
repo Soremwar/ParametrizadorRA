@@ -56,7 +56,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Conciliacion.findByFechaCreacion", query = "SELECT c FROM Conciliacion c WHERE c.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Conciliacion.findByNombreConciliacion", query = "SELECT c FROM Conciliacion c WHERE c.nombre = :nombreConciliacion")
     , @NamedQuery(name = "Conciliacion.findByTablaDestino", query = "SELECT c FROM Conciliacion c WHERE c.tablaDestino = :tablaDestino")
-    , @NamedQuery(name = "Conciliacion.findByUsuario", query = "SELECT c FROM Conciliacion c WHERE c.usuario = :usuario")
     , @NamedQuery(name = "Conciliacion.findByPoliticaNull", query = "SELECT c FROM Conciliacion c WHERE c.politica IS null")
     , @NamedQuery(name = "Conciliacion.findByPolitica", query = "SELECT c FROM Conciliacion c WHERE c.politica.id = :codPolitica")
     , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(c) FROM Conciliacion c WHERE lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.descripcion) LIKE lower(:descripcion) or LOWER(c.politica.nombre) LIKE lower(:nombrePolitica)")})
@@ -71,33 +70,34 @@ public class Conciliacion implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @Size(max = 255)
+    @Size(max = 100)
     @Column(name = "NOMBRE_CONCILIACION")
     private String nombre;
     
-    @Column(name = "CAMPOS_TABLA_DESTINO")
-    private String camposTablaDestino;
-    
-    @Size(max = 255)
+    @Size(max = 200)
     @Column(name = "DESCRIPCION")
     private String descripcion;
     
-    @Column(name = "FECHA_ACTUALIZACION")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaActualizacion;
+    @Size(max = 50)
+    @Column(name = "TABLA_DESTINO")
+    private String tablaDestino;
+    
+    @Size(max = 200)
+    @Column(name = "CAMPOS_TABLA_DESTINO")
+    private String camposTablaDestino;
     
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
+     
+    @Column(name = "FECHA_ACTUALIZACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaActualizacion;
     
-    @Size(max = 255)
-    @Column(name = "TABLA_DESTINO")
-    private String tablaDestino;
-    
-    @Size(max = 255)
-    @Column(name = "USUARIO")
-    private String usuario;
-    
+    @Size(max = 100)
+    @Column(name = "USUARIO_ASIGNADO")
+    private String usuarioAsignado;
+        
     //@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     //@JoinColumn(name = "COD_POLITICA")
     @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -178,15 +178,14 @@ public class Conciliacion implements Serializable {
     public void setTablaDestino(String tablaDestino) {
         this.tablaDestino = tablaDestino;
     }
-
-    public String getUsuario() {
-        return usuario;
+    
+    public String getUsuarioAsignado() {
+        return usuarioAsignado; 
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public void setUsuarioAsignado(String usuarioAsignado) {
+        this.usuarioAsignado = usuarioAsignado;
     }
-
     
     public Politica getPolitica() {
         return politica;
@@ -274,7 +273,6 @@ public class Conciliacion implements Serializable {
         entidadDTO.setDescripcion(descripcion);
         entidadDTO.setCamposTablaDestino(camposTablaDestino);
         entidadDTO.setTablaDestino(tablaDestino);
-        entidadDTO.setUsuario(usuario);
         if (escenarios != null) {
             Set<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());
             entidadDTO.setEscenarios(lstEscenarios);

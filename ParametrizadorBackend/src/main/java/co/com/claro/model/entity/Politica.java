@@ -47,7 +47,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Politica.findByFechaCreacion", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Politica.findByFechaActualizacion", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "Politica.findByColumn", query = "SELECT DISTINCT(p) FROM Politica p WHERE lower(p.nombre) LIKE lower(:nombrePolitica) and lower(p.descripcion) LIKE lower(:descripcion) and lower(p.objetivo) LIKE lower(:objetivo)")
-    , @NamedQuery(name = "Politica.findByUsuario", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.usuario = :usuario")
     , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN FETCH p.conciliaciones c WHERE lower(p.nombre) LIKE lower(:nombrePolitica) or lower(p.descripcion) LIKE lower(:descripcion) or lower(p.objetivo) LIKE lower(:objetivo) or lower(c.nombre) LIKE lower(:nombreConciliacion)")})
 
 public class Politica implements Serializable {
@@ -83,12 +82,7 @@ public class Politica implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @XmlTransient
     private Date fechaActualizacion;
-    
-    @Basic(optional = false)
-    @Size(min = 1, max = 200)
-    @Column(name = "USUARIO")
-    private String usuario;
-    
+       
     //@JsonIgnore
     //@OneToMany(fetch=FetchType.EAGER, mappedBy = "politica", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
     //private Collection<Conciliacion> conciliaciones;
@@ -151,14 +145,6 @@ public class Politica implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     //@XmlTransient
     public Conciliacion getConciliaciones() {
         return conciliaciones;
@@ -207,7 +193,6 @@ public class Politica implements Serializable {
         
         //Campos de la entidad
         entidadDTO.setObjetivo(objetivo);
-        entidadDTO.setUsuario(usuario);
         entidadDTO.setDescripcion(descripcion);
         if (conciliaciones != null) {            
             //Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((conciliacionDTO) -> conciliacionDTO.toDTO()).collect(Collectors.toSet());

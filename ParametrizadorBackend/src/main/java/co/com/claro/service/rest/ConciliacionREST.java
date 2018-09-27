@@ -161,7 +161,7 @@ public class ConciliacionREST{
             entidadHijaJPA.setTablaDestino(entidad.getTablaDestino() != null ? entidad.getTablaDestino() : entidadHijaJPA.getTablaDestino());
             entidadHijaJPA.setCamposTablaDestino(entidad.getCamposTablaDestino() != null ? entidad.getCamposTablaDestino() : entidadHijaJPA.getCamposTablaDestino());
             entidadHijaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadHijaJPA.getDescripcion());
-            entidadHijaJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadHijaJPA.getUsuario());
+            entidadHijaJPA.setUsuarioAsignado(entidad.getUsuarioAsignado() != null ? entidad.getUsuarioAsignado() : entidadHijaJPA.getUsuarioAsignado());
             entidadHijaJPA.setPolitica(entidad.getIdPolitica() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadHijaJPA.getPolitica());
             managerDAO.edit(entidadHijaJPA);
             if ((entidadPadreJPA != null)){
