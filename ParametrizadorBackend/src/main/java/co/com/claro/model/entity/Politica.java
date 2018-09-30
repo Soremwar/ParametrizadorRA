@@ -202,10 +202,12 @@ public class Politica implements Serializable {
 
         return entidadDTO;
     }
-    
+
     @Override
     public String toString() {
-        return "com.claro.parametrizador.Politica[ codPolitica=" + id + " ]";
+        return "Politica{" + "id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", objetivo=" + objetivo + ", fechaCreacion=" + fechaCreacion + ", fechaActualizacion=" + fechaActualizacion + ", conciliaciones=" + conciliaciones + '}';
     }
+    
+
 
 }

@@ -273,6 +273,7 @@ public class Conciliacion implements Serializable {
         entidadDTO.setDescripcion(descripcion);
         entidadDTO.setCamposTablaDestino(camposTablaDestino);
         entidadDTO.setTablaDestino(tablaDestino);
+        entidadDTO.setUsuarioAsignado(usuarioAsignado);
         if (escenarios != null) {
             Set<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());
             entidadDTO.setEscenarios(lstEscenarios);

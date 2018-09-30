@@ -2,11 +2,13 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
+import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
@@ -41,6 +43,12 @@ public class ConciliacionREST{
     @Transient
     private static final Logger logger = Logger.getLogger(ConciliacionREST.class.getSimpleName());
 
+    private String usuario = "admin";
+    private String modulo = "politica";
+    
+    @EJB
+    protected LogAuditoriaDAO logAuditoriaDAO;
+    
     @EJB
     protected PoliticaDAO padreDAO;
     
@@ -108,32 +116,34 @@ public class ConciliacionREST{
 
      /**
      * Crea una nueva politica
-     * @param entidad Entidad que se va a agregar
-     * @return el la entidad recien creada
+     * @param dto Entidad que se va a agregar
+     * @return el la dto recien creada
      */
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response add(ConciliacionDTO entidad) {
-        logger.log(Level.INFO, "entidad:{0}", entidad);
+    public Response add(ConciliacionDTO dto) {
+        logger.log(Level.INFO, "entidad:{0}", dto);
         Politica entidadPadreJPA;
-        Conciliacion entidadHijaJPA = entidad.toEntity();
-        entidadHijaJPA.setPolitica(null);
-        if ( entidad.getIdPolitica() != null) {
-            entidadPadreJPA = padreDAO.find(entidad.getIdPolitica());
+        Conciliacion entidadJPA = dto.toEntity();
+        entidadJPA.setPolitica(null);
+        if ( dto.getIdPolitica() != null) {
+            entidadPadreJPA = padreDAO.find(dto.getIdPolitica());
             if (entidadPadreJPA == null) {
-                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdPolitica());
+                throw new DataNotFoundException("Datos no encontrados " + dto.getIdPolitica());
             } else {
-                managerDAO.create(entidadHijaJPA);
-                entidadHijaJPA.setPolitica(entidadPadreJPA);
-                managerDAO.edit(entidadHijaJPA);
-                entidadPadreJPA.addConciliacion(entidadHijaJPA);
+                managerDAO.create(entidadJPA);
+                entidadJPA.setPolitica(entidadPadreJPA);
+                managerDAO.edit(entidadJPA);
+                entidadPadreJPA.addConciliacion(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
         } else {
-            managerDAO.create(entidadHijaJPA);
+            managerDAO.create(entidadJPA);
         }
-        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
+        LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        logAuditoriaDAO.create(logAud);
+        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
     
     /**
@@ -154,21 +164,23 @@ public class ConciliacionREST{
             }
         }
         //Hallar La entidad actual para actualizarla
-        Conciliacion entidadHijaJPA = managerDAO.find(entidad.getId());
-        if (entidadHijaJPA != null) {
-            entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
-            entidadHijaJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : entidadHijaJPA.getNombre());
-            entidadHijaJPA.setTablaDestino(entidad.getTablaDestino() != null ? entidad.getTablaDestino() : entidadHijaJPA.getTablaDestino());
-            entidadHijaJPA.setCamposTablaDestino(entidad.getCamposTablaDestino() != null ? entidad.getCamposTablaDestino() : entidadHijaJPA.getCamposTablaDestino());
-            entidadHijaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadHijaJPA.getDescripcion());
-            entidadHijaJPA.setUsuarioAsignado(entidad.getUsuarioAsignado() != null ? entidad.getUsuarioAsignado() : entidadHijaJPA.getUsuarioAsignado());
-            entidadHijaJPA.setPolitica(entidad.getIdPolitica() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadHijaJPA.getPolitica());
-            managerDAO.edit(entidadHijaJPA);
+        Conciliacion entidadJPA = managerDAO.find(entidad.getId());
+        if (entidadJPA != null) {
+            entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
+            entidadJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : entidadJPA.getNombre());
+            entidadJPA.setTablaDestino(entidad.getTablaDestino() != null ? entidad.getTablaDestino() : entidadJPA.getTablaDestino());
+            entidadJPA.setCamposTablaDestino(entidad.getCamposTablaDestino() != null ? entidad.getCamposTablaDestino() : entidadJPA.getCamposTablaDestino());
+            entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadJPA.getDescripcion());
+            entidadJPA.setUsuarioAsignado(entidad.getUsuarioAsignado() != null ? entidad.getUsuarioAsignado() : entidadJPA.getUsuarioAsignado());
+            entidadJPA.setPolitica(entidad.getIdPolitica() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadJPA.getPolitica());
+            managerDAO.edit(entidadJPA);
             if ((entidadPadreJPA != null)){
-                entidadPadreJPA.addConciliacion(entidadHijaJPA);
+                entidadPadreJPA.addConciliacion(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
-            return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
+            LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            logAuditoriaDAO.create(logAud);
+            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
       
@@ -183,13 +195,16 @@ public class ConciliacionREST{
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
-        Conciliacion hijo = managerDAO.find(id);
+        Conciliacion entidadJPA = managerDAO.find(id);
+        ConciliacionDTO dto = entidadJPA.toDTO();
         Politica entidadPadreJPA = null;
-        if (hijo.getPolitica() != null) {
-            entidadPadreJPA = padreDAO.find(hijo.getPolitica().getId());
-            entidadPadreJPA.removeConciliacion(hijo);
+        if (entidadJPA.getPolitica() != null) {
+            entidadPadreJPA = padreDAO.find(entidadJPA.getPolitica().getId());
+            entidadPadreJPA.removeConciliacion(entidadJPA);
         }
-        managerDAO.remove(hijo);
+        managerDAO.remove(entidadJPA);
+        LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
+        logAuditoriaDAO.create(logAud);
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);
         }

@@ -1,10 +1,12 @@
 package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
+import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.dto.PoliticaDTO;
+import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import co.com.claro.service.rest.parent.AbstractParentREST;
@@ -38,6 +40,12 @@ import javax.ws.rs.core.Response;
 public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @Transient
     private static final Logger logger = Logger.getLogger(PoliticaREST.class.getSimpleName());
+    
+    private String usuario = "admin";
+    private String modulo = "politica";
+    
+    @EJB
+    protected LogAuditoriaDAO logAuditoriaDAO;
     
     @EJB
     protected PoliticaDAO managerDAO;
@@ -101,41 +109,51 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response add(PoliticaDTO entidad) {
-        logger.log(Level.INFO, "entidad:{0}", entidad);
-        Politica entidadAux = entidad.toEntity();
-        managerDAO.create(entidadAux);
-        return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
+    public Response add(PoliticaDTO dto) {
+        logger.log(Level.INFO, "entidad:{0}", dto);
+        //Registrando log
+        Politica entidadJPA = dto.toEntity();
+        managerDAO.create(entidadJPA);
+        LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        logAuditoriaDAO.create(logAud);
+        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
     
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response update(PoliticaDTO entidad) {
-        logger.log(Level.INFO, "entidad:{0}", entidad);  
-        //Hallar La entidad actual para actualizarla
-        Politica politicaJPA = managerDAO.find(entidad.getId());
-        if (politicaJPA != null) {
-            politicaJPA.setFechaActualizacion(Date.from(Instant.now()));
-            politicaJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : politicaJPA.getNombre());
-            politicaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : politicaJPA.getDescripcion());
-            politicaJPA.setObjetivo(entidad.getObjetivo() != null ? entidad.getObjetivo() : politicaJPA.getObjetivo());
-            managerDAO.edit(politicaJPA);
-            return Response.status(Response.Status.OK).entity(politicaJPA.toDTO()).build();
-        }
+    public Response update(PoliticaDTO dto) {
+        logger.log(Level.INFO, "entidad:{0}", dto);  
+        //Hallar La dto actual para actualizarla
+        Politica entidadJPA = managerDAO.find(dto.getId());
+        if (entidadJPA != null) {
+            entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
+            entidadJPA.setNombre(dto.getNombre() != null ? dto.getNombre() : entidadJPA.getNombre());
+            entidadJPA.setDescripcion(dto.getDescripcion() != null ? dto.getDescripcion() : entidadJPA.getDescripcion());
+            entidadJPA.setObjetivo(dto.getObjetivo() != null ? dto.getObjetivo() : entidadJPA.getObjetivo());
+            managerDAO.edit(entidadJPA);
+            LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            logAuditoriaDAO.create(logAud);
+            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
+       }
         return Response.status(Response.Status.NOT_FOUND).build();
       }
     
      /**
      * Borra una politica por su Id
-     * @param id Identificador de la entidad
+     * @param id Identificador de la entidadJPA
      * @return El resultado de la operacion en codigo HTTP
      */
     @DELETE
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
+    @Override
     public Response remove(@PathParam("id") Integer id) {
-        managerDAO.remove(managerDAO.find(id));
+        Politica entidadJPA = managerDAO.find(id);
+        PoliticaDTO dto = entidadJPA.toDTO();
+        managerDAO.remove(entidadJPA);
+        LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
+        logAuditoriaDAO.create(logAud);
         WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }

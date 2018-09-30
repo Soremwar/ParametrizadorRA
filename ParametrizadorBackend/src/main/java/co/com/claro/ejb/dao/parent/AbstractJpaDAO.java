@@ -22,6 +22,7 @@ public abstract class AbstractJpaDAO<T> {
 
     public void create(T entity) {
         getEntityManager().persist(entity);
+        
     }
     
     
@@ -47,6 +48,7 @@ public abstract class AbstractJpaDAO<T> {
         getEntityManager().remove(getEntityManager().merge(entity));
     }
 
+    
     public T find(Object id) {
         getEntityManager().flush();
         Object item = getEntityManager().find(entityClass, id);

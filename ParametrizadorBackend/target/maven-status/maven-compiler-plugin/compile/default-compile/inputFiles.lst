@@ -9,6 +9,7 @@
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/IndicadorDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/QueryAprobacionDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/WsTransformacionREST.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/LogAuditoriaREST.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/response/ResponseCode.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/QueryEscenario.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/OdiRestartSessRequest.java
@@ -33,6 +34,7 @@
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/ParametrosREST.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/response/HttpCodeType.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/OdiCredentialType.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/LogAuditoria.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/ResultadoDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/OdiGetSessionsStatusRequest.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/WsTransformacionDAO.java
@@ -77,6 +79,7 @@
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/EjecucionProceso.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/OdiStartLoadPlanResponse.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/NewClass.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/LogAuditoriaDAO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/utils/LocalDateTimeConverter.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/entity/Indicador.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/OdiGetLoadPlanStatusResponse.java
@@ -86,11 +89,13 @@
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/OdiRestartLoadPlanType.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/OdiRestartLoadPlanResponse.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/ExcepcionGenericaMapper.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/Constantes.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/ejb/dao/utils/comparators/EntityNameComparator.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/EjecucionProcesoDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/excepciones/InvalidDataException.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/parent/AbstractParentREST.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/RequestPortType.java
+/Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/model/dto/LogAuditoriaDTO.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/service/rest/EjecucionProcesoREST.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/RequestPortTypeCallback.java
 /Users/andresbedoya/NetBeansProjects/ParametrizadorRA/ParametrizadorBackend/src/main/java/co/com/claro/webservice/odi/OdiStartLoadPlanRequest.java
