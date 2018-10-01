@@ -42,7 +42,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     private static final Logger logger = Logger.getLogger(PoliticaREST.class.getSimpleName());
     
     private String usuario = "admin";
-    private String modulo = "politica";
+    private String modulo = "politicas";
     
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;

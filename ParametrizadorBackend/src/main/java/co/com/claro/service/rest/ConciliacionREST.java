@@ -44,7 +44,7 @@ public class ConciliacionREST{
     private static final Logger logger = Logger.getLogger(ConciliacionREST.class.getSimpleName());
 
     private String usuario = "admin";
-    private String modulo = "politica";
+    private String modulo = "conciliaciones";
     
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;

@@ -42,7 +42,7 @@ public class EscenarioREST {
     private static final Logger logger = Logger.getLogger(EscenarioREST.class.getSimpleName());
     
     private String usuario = "admin";
-    private String modulo = "politica";
+    private String modulo = "escenarios";
     
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;
