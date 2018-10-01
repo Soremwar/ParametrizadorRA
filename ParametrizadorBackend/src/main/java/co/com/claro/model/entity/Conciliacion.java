@@ -257,9 +257,10 @@ public class Conciliacion implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.Conciliacion[ id=" + id + "  ]";
+        return "Conciliacion{" + "id=" + id + ", nombre=" + nombre + '}';
     }
-    
+
+
     public ConciliacionDTO toDTO(){
         ConciliacionDTO entidadDTO = new ConciliacionDTO();
         

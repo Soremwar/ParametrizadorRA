@@ -141,7 +141,7 @@ public class ConciliacionREST{
         } else {
             managerDAO.create(entidadJPA);
         }
-        LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
@@ -178,7 +178,7 @@ public class ConciliacionREST{
                 entidadPadreJPA.addConciliacion(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
-            LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
             logAuditoriaDAO.create(logAud);
             return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
@@ -203,7 +203,7 @@ public class ConciliacionREST{
             entidadPadreJPA.removeConciliacion(entidadJPA);
         }
         managerDAO.remove(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
         logAuditoriaDAO.create(logAud);
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);

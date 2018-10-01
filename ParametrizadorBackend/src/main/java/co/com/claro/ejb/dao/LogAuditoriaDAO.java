@@ -77,6 +77,12 @@ public class LogAuditoriaDAO extends AbstractJpaDAO<LogAuditoria>{
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
         return results;
-    }    
+    }
+
+    /*public void create(LogAuditoria entity) {
+        //entity.getDescripcion() = entity
+        getEntityManager().persist(entity);
+        
+    } */   
 }
 

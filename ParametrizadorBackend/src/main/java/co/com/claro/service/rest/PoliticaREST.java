@@ -114,7 +114,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
         //Registrando log
         Politica entidadJPA = dto.toEntity();
         managerDAO.create(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
@@ -132,7 +132,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
             entidadJPA.setDescripcion(dto.getDescripcion() != null ? dto.getDescripcion() : entidadJPA.getDescripcion());
             entidadJPA.setObjetivo(dto.getObjetivo() != null ? dto.getObjetivo() : entidadJPA.getObjetivo());
             managerDAO.edit(entidadJPA);
-            LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
             logAuditoriaDAO.create(logAud);
             return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
        }
@@ -152,7 +152,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
         Politica entidadJPA = managerDAO.find(id);
         PoliticaDTO dto = entidadJPA.toDTO();
         managerDAO.remove(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
         logAuditoriaDAO.create(logAud);
         WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
