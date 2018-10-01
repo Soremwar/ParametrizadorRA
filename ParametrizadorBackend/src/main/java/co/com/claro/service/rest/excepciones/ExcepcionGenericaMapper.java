@@ -33,7 +33,7 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
         WrapperResponseEntity response = null;
         String mensaje = "";
         String descripcion = e.getCause() != null ? e.getCause().getMessage() : e.toString();
-        int indexStart = descripcion.indexOf("CTRAINT_");
+        int indexStart = descripcion.indexOf("CT_");
         if (indexStart > 0) {
             int indexEnd = descripcion.indexOf(" ", indexStart) - 2;
             mensaje = descripcion.substring(indexStart, indexEnd);
