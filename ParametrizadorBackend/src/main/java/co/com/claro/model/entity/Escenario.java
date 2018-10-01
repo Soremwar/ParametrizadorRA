@@ -188,7 +188,7 @@ public class Escenario implements Serializable {
 
     @Override
     public String toString() {
-        return "com.entities.Escenario[ codEscenario=" + id + " ]";
+        return "Escenario{" + "id=" + id + ", nombre=" + nombre + '}';
     }
     
     public EscenarioDTO toDTO(){

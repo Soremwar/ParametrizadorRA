@@ -7,13 +7,17 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.IndicadorDAO;
+import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.IndicadorDTO;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.Indicador;
+import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
+import java.time.Instant;
 import static java.util.Comparator.comparing;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +46,11 @@ import javax.ws.rs.core.Response;
 public class IndicadorREST{
     @Transient
     private static final Logger logger = Logger.getLogger(IndicadorREST.class.getSimpleName());
+    @EJB
+    protected LogAuditoriaDAO logAuditoriaDAO;
+
+    private String usuario = "admin";
+    private String modulo = "indicadores";
     
     @EJB
     protected IndicadorDAO managerDAO;
@@ -113,23 +122,25 @@ public class IndicadorREST{
     public Response add(IndicadorDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
         Escenario entidadPadreJPA;
-        Indicador entidadHijaJPA = entidad.toEntity();
-        entidadHijaJPA.setEscenario(null);
+        Indicador entidadJPA = entidad.toEntity();
+        entidadJPA.setEscenario(null);
         if ( entidad.getIdEscenario() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
             if (entidadPadreJPA == null) {
                 throw new DataNotFoundException("Datos no encontrados " + entidad.getIdEscenario());
             } else {
-                managerDAO.create(entidadHijaJPA);
-                entidadHijaJPA.setEscenario(entidadPadreJPA);
-                managerDAO.edit(entidadHijaJPA);
-                entidadPadreJPA.addIndicador(entidadHijaJPA);
+                managerDAO.create(entidadJPA);
+                entidadJPA.setEscenario(entidadPadreJPA);
+                managerDAO.edit(entidadJPA);
+                entidadPadreJPA.addIndicador(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
         } else {
-            managerDAO.create(entidadHijaJPA);
+            managerDAO.create(entidadJPA);
         }
-        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        logAuditoriaDAO.create(logAud);
+        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }  
     
     /**
@@ -150,18 +161,20 @@ public class IndicadorREST{
             }
         }
         //Hallar La entidad actual para actualizarla
-        Indicador entidadHijaJPA = managerDAO.find(entidad.getId());
-        if (entidadHijaJPA != null) {
-            entidadHijaJPA.setNombreFormula(entidad.getNombreFormula()!= null ? entidad.getNombreFormula(): entidadHijaJPA.getNombreFormula());
-            entidadHijaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion(): entidadHijaJPA.getDescripcion());
-            entidadHijaJPA.setTextoFormula(entidad.getTextoFormula() != null ? entidad.getTextoFormula(): entidadHijaJPA.getTextoFormula());
-            entidadHijaJPA.setEscenario(entidad.getIdEscenario() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadHijaJPA.getEscenario());
-            managerDAO.edit(entidadHijaJPA);
+        Indicador entidadJPA = managerDAO.find(entidad.getId());
+        if (entidadJPA != null) {
+            entidadJPA.setNombreFormula(entidad.getNombreFormula()!= null ? entidad.getNombreFormula(): entidadJPA.getNombreFormula());
+            entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion(): entidadJPA.getDescripcion());
+            entidadJPA.setTextoFormula(entidad.getTextoFormula() != null ? entidad.getTextoFormula(): entidadJPA.getTextoFormula());
+            entidadJPA.setEscenario(entidad.getIdEscenario() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadJPA.getEscenario());
+            managerDAO.edit(entidadJPA);
             if ((entidadPadreJPA != null)){
-                entidadPadreJPA.addIndicador(entidadHijaJPA);
+                entidadPadreJPA.addIndicador(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
-            return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            logAuditoriaDAO.create(logAud);
+            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
       
@@ -183,6 +196,9 @@ public class IndicadorREST{
             entidadPadreJPA.removeIndicador(hijo);
         }
         managerDAO.remove(hijo);
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, "id=" + id);
+        logAuditoriaDAO.create(logAud);
+        
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);
         }

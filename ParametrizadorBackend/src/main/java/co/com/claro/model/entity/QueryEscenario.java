@@ -182,9 +182,8 @@ public class QueryEscenario implements Serializable {
 
     @Override
     public String toString() {
-        return "com.claro.parametrizador.QueryEscenario[ id =" + id + " ]";
+        return "QueryEscenario{" + "id=" + id + ", nombreQuery=" + nombreQuery + '}';
     }
-
     
     public QueryEscenarioDTO toDTO(){
         QueryEscenarioDTO entidadDTO = new QueryEscenarioDTO();

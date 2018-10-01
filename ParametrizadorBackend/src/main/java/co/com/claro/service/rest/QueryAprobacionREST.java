@@ -6,10 +6,12 @@
 package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
+import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.QueryAprobacionDAO;
 import co.com.claro.model.dto.QueryAprobacionDTO;
-import co.com.claro.model.dto.parent.PadreDTO;
+import co.com.claro.model.dto.QueryEscenarioDTO;
 import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.QueryAprobacion;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
@@ -45,7 +47,11 @@ import javax.ws.rs.core.Response;
 public class QueryAprobacionREST {
     @Transient
     private static final Logger logger = Logger.getLogger(QueryAprobacionREST.class.getSimpleName());
-
+    private String usuario = "admin";
+    private String modulo = "queryaprobacion";
+    
+    @EJB
+    protected LogAuditoriaDAO logAuditoriaDAO;
     @EJB
     protected QueryAprobacionDAO managerDAO;
 
@@ -104,23 +110,25 @@ public class QueryAprobacionREST {
     public Response add(QueryAprobacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
         Conciliacion entidadPadreJPA;
-        QueryAprobacion entidadHijaJPA = entidad.toEntity();
-        entidadHijaJPA.setConciliacion(null);
+        QueryAprobacion entidadJPA = entidad.toEntity();
+        entidadJPA.setConciliacion(null);
         if ( entidad.getIdConciliacion() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
             if (entidadPadreJPA == null) {
                 throw new DataNotFoundException("Datos no encontrados " + entidad.getIdConciliacion());
             } else {
-                managerDAO.create(entidadHijaJPA);
-                entidadHijaJPA.setConciliacion(entidadPadreJPA);
-                managerDAO.edit(entidadHijaJPA);
-                entidadPadreJPA.addQueryAprobacion(entidadHijaJPA);
+                managerDAO.create(entidadJPA);
+                entidadJPA.setConciliacion(entidadPadreJPA);
+                managerDAO.edit(entidadJPA);
+                entidadPadreJPA.addQueryAprobacion(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
         } else {
-            managerDAO.create(entidadHijaJPA);
+            managerDAO.create(entidadJPA);
         }
-        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        logAuditoriaDAO.create(logAud);
+        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
     
     @PUT
@@ -136,31 +144,20 @@ public class QueryAprobacionREST {
             }
         }
         //Hallar La entidad actual para actualizarla
-        QueryAprobacion queryAprobacionJPA = managerDAO.find(entidad.getId());
-        if (queryAprobacionJPA != null) {
-            queryAprobacionJPA.setFechaActualizacion(Date.from(Instant.now()));
-            queryAprobacionJPA.setEstadoAprobacion(entidad.getEstadoAprobacion() != null ? entidad.getEstadoAprobacion() : queryAprobacionJPA.getEstadoAprobacion());
-            queryAprobacionJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : queryAprobacionJPA.getUsuario());
-            queryAprobacionJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null) : queryAprobacionJPA.getConciliacion());
-            managerDAO.edit(queryAprobacionJPA);
-            return Response.status(Response.Status.OK).entity(queryAprobacionJPA.toDTO()).build();
+        QueryAprobacion entidadJPA = managerDAO.find(entidad.getId());
+        if (entidadJPA != null) {
+            entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
+            entidadJPA.setEstadoAprobacion(entidad.getEstadoAprobacion() != null ? entidad.getEstadoAprobacion() : entidadJPA.getEstadoAprobacion());
+            entidadJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadJPA.getUsuario());
+            entidadJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getConciliacion());
+            managerDAO.edit(entidadJPA);
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            logAuditoriaDAO.create(logAud);
+            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
       }
     
-     /**
-     * Borra una politica por su Id
-     * @param id Identificador de la entidad
-     * @return El resultado de la operacion en codigo HTTP
-     */
-    @DELETE
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Response remove(@PathParam("id") Integer id) {
-        managerDAO.remove(managerDAO.find(id));
-        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
-        return Response.status(Response.Status.OK).entity(mensaje).build();
-    }
        
     @GET
     @Path("/count")

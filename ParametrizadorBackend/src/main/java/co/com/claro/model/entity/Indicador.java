@@ -129,8 +129,10 @@ public class Indicador implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.Indicador[ codIndicador=" + id + " ]";
+        return "Indicador{" + "id=" + id + ", nombreFormula=" + nombreFormula + '}';
     }
+
+    
     
     public IndicadorDTO toDTO(){
         IndicadorDTO entidadDTO = new IndicadorDTO();

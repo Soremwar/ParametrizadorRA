@@ -5,9 +5,12 @@
  */
 package co.com.claro.service.rest;
 
+import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ParametroDTO;
+import co.com.claro.model.dto.PoliticaDTO;
+import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Parametro;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
@@ -42,6 +45,11 @@ public class ParametrosREST{
     @Transient
     private static final Logger logger = Logger.getLogger(ParametrosREST.class.getSimpleName());
     
+    private String usuario = "admin";
+    private String modulo = "parametros";
+    
+    @EJB
+    protected LogAuditoriaDAO logAuditoriaDAO;
     @EJB
     protected ParametroDAO managerDAO;
     
@@ -127,9 +135,11 @@ public class ParametrosREST{
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(ParametroDTO entidad)  {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Parametro entidadAux = entidad.toEntity();
-        managerDAO.create(entidadAux);
-        return Response.status(Response.Status.CREATED).entity(entidadAux.toDTO()).build();
+        Parametro entidadJPA = entidad.toEntity();
+        managerDAO.create(entidadJPA);
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        logAuditoriaDAO.create(logAud);
+        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }  
     
     /**
@@ -142,17 +152,19 @@ public class ParametrosREST{
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ParametroDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-        Parametro entidadHijaJPA = managerDAO.find(entidad.getId());
-        if (entidadHijaJPA != null) {
-            entidadHijaJPA.setFechaActualizacion(Date.from(Instant.now()));
-            entidadHijaJPA.setParametro(entidad.getParametro() != null ? entidad.getParametro() : entidadHijaJPA.getParametro());
-            entidadHijaJPA.setValor(entidad.getValor() != null ? entidad.getValor() : entidadHijaJPA.getValor());
-            entidadHijaJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadHijaJPA.getDescripcion());
-            entidadHijaJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadHijaJPA.getUsuario());
-            entidadHijaJPA.setTipo(entidad.getTipo() != null ? entidad.getTipo() : entidadHijaJPA.getTipo());
-            entidadHijaJPA.setCodPadre(entidad.getCodPadre() != null ? entidad.getCodPadre() : entidadHijaJPA.getCodPadre());
-            managerDAO.edit(entidadHijaJPA);
-            return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
+        Parametro entidadJPA = managerDAO.find(entidad.getId());
+        if (entidadJPA != null) {
+            entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
+            entidadJPA.setParametro(entidad.getParametro() != null ? entidad.getParametro() : entidadJPA.getParametro());
+            entidadJPA.setValor(entidad.getValor() != null ? entidad.getValor() : entidadJPA.getValor());
+            entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadJPA.getDescripcion());
+            entidadJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadJPA.getUsuario());
+            entidadJPA.setTipo(entidad.getTipo() != null ? entidad.getTipo() : entidadJPA.getTipo());
+            entidadJPA.setCodPadre(entidad.getCodPadre() != null ? entidad.getCodPadre() : entidadJPA.getCodPadre());
+            managerDAO.edit(entidadJPA);
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            logAuditoriaDAO.create(logAud);
+            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
       
@@ -167,8 +179,11 @@ public class ParametrosREST{
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
-        Parametro hijo = managerDAO.find(id);
-        managerDAO.remove(hijo);
+        Parametro entidadJPA = managerDAO.find(id);
+        ParametroDTO dto = entidadJPA.toDTO();
+        managerDAO.remove(entidadJPA);
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
+        logAuditoriaDAO.create(logAud);
         WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }

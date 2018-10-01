@@ -167,8 +167,9 @@ public class QueryAprobacion implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.QueryAprobacion[ id=" + id + " ]";
+        return "QueryAprobacion{" + "id=" + id + ", estadoAprobacion=" + estadoAprobacion + ", conciliacion=" + conciliacion + '}';
     }
+
     
     public QueryAprobacionDTO toDTO(){
         QueryAprobacionDTO entidadDTO = new QueryAprobacionDTO();

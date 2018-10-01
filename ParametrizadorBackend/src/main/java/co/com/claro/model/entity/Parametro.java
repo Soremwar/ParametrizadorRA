@@ -193,8 +193,10 @@ public class Parametro implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.claro.ejb.dao.Parametro[ codParametro=" + id + " ]";
+        return "Parametro{" + "id=" + id + ", parametro=" + parametro + ", valor=" + valor + '}';
     }
+
+
     
     public ParametroDTO toDTO(){
         ParametroDTO entidadDTO = new ParametroDTO();

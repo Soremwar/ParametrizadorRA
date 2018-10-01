@@ -26,7 +26,7 @@ import javax.ws.rs.core.MediaType;
  * @author andresbedoya
  */
 @Stateless
-@Path("co.com.claro.ejb.dao.usuario")
+@Path("usuarios")
 public class UsuarioFacadeREST extends AbstractFacade<Usuario> {
 
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")

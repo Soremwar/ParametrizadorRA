@@ -205,7 +205,7 @@ public class Politica implements Serializable {
 
     @Override
     public String toString() {
-        return "Politica{" + "id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", objetivo=" + objetivo + ", fechaCreacion=" + fechaCreacion + ", fechaActualizacion=" + fechaActualizacion + ", conciliaciones=" + conciliaciones + '}';
+        return "Politica{" + "id=" + id + ", nombre=" + nombre + '}';
     }
     
 
