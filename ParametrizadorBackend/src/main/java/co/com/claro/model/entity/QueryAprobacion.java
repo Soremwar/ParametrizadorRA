@@ -35,12 +35,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "TBL_GAI_APROBACION_QUERIES")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "QueryAprobacion.findAll", query = "SELECT a FROM QueryAprobacion a")
+    @NamedQuery(name = "QueryAprobacion.findAll", query = "SELECT a FROM QueryAprobacion a ORDER BY a.fechaCreacion")
     , @NamedQuery(name = "QueryAprobacion.findById", query = "SELECT a FROM QueryAprobacion a WHERE a.id = :id")
     , @NamedQuery(name = "QueryAprobacion.findByEstadoAprobacion", query = "SELECT a FROM QueryAprobacion a WHERE a.estadoAprobacion = :estadoAprobacion")
     , @NamedQuery(name = "QueryAprobacion.findByFechaCreacion", query = "SELECT a FROM QueryAprobacion a WHERE a.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "QueryAprobacion.findByFechaActualizacion", query = "SELECT a FROM QueryAprobacion a WHERE a.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "QueryAprobacion.findByUsuario", query = "SELECT a FROM QueryAprobacion a WHERE a.usuario = :usuario")
+    , @NamedQuery(name = "QueryAprobacion.findByUsuario", query = "SELECT a FROM QueryAprobacion a WHERE a.usuario = :usuario ORDER BY a.fechaCreacion")
     , @NamedQuery(name = "QueryAprobacion.findByAnyColumn", query = "SELECT DISTINCT(q) FROM QueryAprobacion q WHERE lower(q.estadoAprobacion) LIKE lower(:estadoAprobacion) OR lower(q.conciliacion.nombre) LIKE lower(:nombreConciliacion)")})
 
 public class QueryAprobacion implements Serializable {
