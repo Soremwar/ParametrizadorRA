@@ -5,20 +5,24 @@
  */
 package co.com.claro.model.entity;
 
+import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,7 +51,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Politica.findByFechaCreacion", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Politica.findByFechaActualizacion", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "Politica.findByColumn", query = "SELECT DISTINCT(p) FROM Politica p WHERE lower(p.nombre) LIKE lower(:nombrePolitica) and lower(p.descripcion) LIKE lower(:descripcion) and lower(p.objetivo) LIKE lower(:objetivo)")
-    , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN FETCH p.conciliaciones c WHERE lower(p.nombre) LIKE lower(:nombrePolitica) or lower(p.descripcion) LIKE lower(:descripcion) or lower(p.objetivo) LIKE lower(:objetivo) or lower(c.nombre) LIKE lower(:nombreConciliacion)")})
+    , @NamedQuery(name = "Politica.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN FETCH p.conciliaciones c WHERE lower(p.id) LIKE lower(:id) or lower(p.nombre) LIKE lower(:nombrePolitica) or lower(p.descripcion) LIKE lower(:descripcion) or lower(p.objetivo) LIKE lower(:objetivo) or lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.id) LIKE lower(:idConciliacion) or lower(c.usuarioAsignado) LIKE lower(:usuarioAsignado)")})
 
 public class Politica implements Serializable {
 
@@ -83,12 +87,11 @@ public class Politica implements Serializable {
     @XmlTransient
     private Date fechaActualizacion;
        
-    //@JsonIgnore
-    //@OneToMany(fetch=FetchType.EAGER, mappedBy = "politica", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
-    //private Collection<Conciliacion> conciliaciones;
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "politica")
+    private Collection<Conciliacion> conciliaciones;
     
-    @OneToOne(mappedBy = "politica", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
-    private Conciliacion conciliaciones;
+    //@OneToOne(mappedBy = "politica", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, orphanRemoval = true)
+    //private Conciliacion conciliaciones;
 
     public Politica() {
     }
@@ -145,22 +148,14 @@ public class Politica implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    //@XmlTransient
-    public Conciliacion getConciliaciones() {
-        return conciliaciones;
-    }
-
-    
-    public void addConciliacion(Conciliacion conciliacion) {
-        this.conciliaciones =  conciliacion;
+    public void addConciliaciones(Conciliacion conciliacion) {
+        this.conciliaciones.add(conciliacion);
         conciliacion.setPolitica(this);
     }
-
-    public void removeConciliacion(Conciliacion conciliacion) {
-        if (conciliacion != null) {
-            conciliacion.setPolitica(null);
-        }
-        this.conciliaciones = null;
+    
+    public void removeConciliaciones(Conciliacion conciliacion) {
+        this.conciliaciones.remove(conciliacion);
+        conciliacion.setPolitica(this);
     }
 
     @Override
@@ -195,9 +190,8 @@ public class Politica implements Serializable {
         entidadDTO.setObjetivo(objetivo);
         entidadDTO.setDescripcion(descripcion);
         if (conciliaciones != null) {            
-            //Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((conciliacionDTO) -> conciliacionDTO.toDTO()).collect(Collectors.toSet());
-            //entidadDTO.setConciliaciones(lstConciliaciones);
-            entidadDTO.setConciliaciones(conciliaciones.toDTO());
+            Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((conciliacionDTO) -> conciliacionDTO.toDTO()).collect(Collectors.toSet());
+            entidadDTO.setConciliaciones(lstConciliaciones);
         }
 
         return entidadDTO;

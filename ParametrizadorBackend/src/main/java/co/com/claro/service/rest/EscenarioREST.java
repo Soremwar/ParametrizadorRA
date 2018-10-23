@@ -118,22 +118,15 @@ public class EscenarioREST {
         logger.log(Level.INFO, "entidad:{0}", dto);
         Conciliacion entidadPadreJPA;
         Escenario entidadJPA = dto.toEntity();
-        entidadJPA.setConciliacion(null);        
-
-        if ( dto.getIdConciliacion() != null) {
-            entidadPadreJPA = padreDAO.find(dto.getIdConciliacion());
-            if (entidadPadreJPA == null) {
-                throw new DataNotFoundException("Datos no encontrados " + dto.getIdConciliacion());
-            } else {
+        entidadPadreJPA = padreDAO.find(dto.getIdConciliacion());
+        if ( entidadPadreJPA != null) {
                 managerDAO.create(entidadJPA);
                 entidadJPA.setConciliacion(entidadPadreJPA);
                 managerDAO.edit(entidadJPA);
                 entidadPadreJPA.addEscenario(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
-            }
-        } else {
-            managerDAO.create(entidadJPA);
         }
+
         LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
 

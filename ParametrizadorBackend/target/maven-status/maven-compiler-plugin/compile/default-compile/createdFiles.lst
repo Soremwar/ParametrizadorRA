@@ -67,6 +67,7 @@ co/com/claro/webservice/odi/OdiCredentialType.class
 co/com/claro/model/entity/WsTransformacion.class
 co/com/claro/model/entity/QueryAprobacion.class
 co/com/claro/model/entity/LogAuditoria.class
+co/com/claro/scheduler/MyJob.class
 co/com/claro/model/dto/IndicadorDTO.class
 co/com/claro/service/rest/IndicadorREST.class
 co/com/claro/model/entity/Escenario_.class

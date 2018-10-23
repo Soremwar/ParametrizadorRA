@@ -39,7 +39,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Parametro.findByDescripcion", query = "SELECT p FROM Parametro p WHERE p.descripcion = :descripcion")
     , @NamedQuery(name = "Parametro.findByFechaCreacion", query = "SELECT p FROM Parametro p WHERE p.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "Parametro.findByFechaActualizacion", query = "SELECT p FROM Parametro p WHERE p.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "Parametro.findByUsuario", query = "SELECT p FROM Parametro p WHERE p.usuario = :usuario")
     , @NamedQuery(name = "Parametro.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) LIKE lower(:parametro) or lower(p.descripcion) LIKE lower(:descripcion) or lower(p.tipo) LIKE lower(:tipo)")
     , @NamedQuery(name = "Parametro.findByColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) = lower(:parametro) or lower(p.descripcion) = lower(:descripcion)")
     , @NamedQuery(name = "Parametro.findByCodPadre", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.tipo) LIKE lower(:tipo) and p.codPadre = :codPadre")})
@@ -79,9 +78,6 @@ public class Parametro implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
     
-    @Size(max = 200)
-    @Column(name = "USUARIO")
-    private String usuario;
     
     @Column(name = "COD_PADRE")
     private Integer codPadre;
@@ -146,14 +142,6 @@ public class Parametro implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     public String getTipo() {
         return tipo;
     }
@@ -204,7 +192,6 @@ public class Parametro implements Serializable {
         entidadDTO.setParametro(parametro);
         entidadDTO.setDescripcion(descripcion);
         entidadDTO.setValor(valor);
-        entidadDTO.setUsuario(usuario);
         entidadDTO.setFechaActualizacion(fechaActualizacion);
         entidadDTO.setFechaCreacion(fechaCreacion);
         entidadDTO.setCodPadre(codPadre);

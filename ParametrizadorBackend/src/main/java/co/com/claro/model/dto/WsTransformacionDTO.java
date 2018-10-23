@@ -21,10 +21,8 @@ public class WsTransformacionDTO implements Serializable{
     private Integer id;
     private String nombreWs;
     private String paqueteWs;
-    private String periodicidadWs;
     private Date fechaCreacion;
     private Date fechaActualizacion;
-    private String usuario;
     private Integer idConciliacion;
 
     public Integer getIdConciliacion() {
@@ -60,14 +58,6 @@ public class WsTransformacionDTO implements Serializable{
         this.paqueteWs = paqueteWs;
     }
 
-    public String getPeriodicidadWs() {
-        return periodicidadWs;
-    }
-
-    public void setPeriodicidadWs(String periodicidadWs) {
-        this.periodicidadWs = periodicidadWs;
-    }
-
     public Date getFechaCreacion() {
         return fechaCreacion;
     }
@@ -84,13 +74,6 @@ public class WsTransformacionDTO implements Serializable{
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
 
     public String getNombreConciliacion() {
         return nombreConciliacion;
@@ -102,17 +85,18 @@ public class WsTransformacionDTO implements Serializable{
     
     public WsTransformacion toEntity(){
         WsTransformacion entity = new WsTransformacion();
-        //todo: llenar campos
         entity.setId(id);
         entity.setFechaActualizacion(fechaActualizacion);
         entity.setFechaCreacion(fechaCreacion);
         entity.setNombreWs(nombreWs);
         entity.setPaqueteWs(paqueteWs);
-        //entity.setPeriodicidadWs(periodicidadWs);
-        entity.setUsuario(usuario);
-        
         entity.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
         return entity;
+    }
+
+    @Override
+    public String toString() {
+        return "WsTransformacionDTO{" + "id=" + id + ", nombreWs=" + nombreWs + ", paqueteWs=" + paqueteWs + ", fechaCreacion=" + fechaCreacion + '}';
     }
 
 }

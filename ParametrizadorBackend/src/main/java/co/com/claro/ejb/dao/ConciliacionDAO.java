@@ -46,9 +46,11 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
     public List<Conciliacion> findByAnyColumn(String busqueda){
         logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});     
         TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByAnyColumn", Conciliacion.class);
+        query.setParameter("id", "%" + busqueda + "%");
         query.setParameter("nombreConciliacion", "%" + busqueda + "%");
         query.setParameter("descripcion", "%" + busqueda + "%");
         query.setParameter("nombrePolitica", "%" + busqueda + "%");
+        query.setParameter("usuarioAsignado", "%" + busqueda + "%");
         List<Conciliacion> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
@@ -61,7 +63,7 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
      * Busca la jerarquia por un id
      * @param id identificador unico a buscar
      * @return Retorna un item con su jerarquia
-     */
+     
     public Conciliacion findByAllTreeById(int id){
         TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findAllTreeById", Conciliacion.class);
         query.setParameter("idConciliacion", id);
@@ -77,26 +79,6 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
             throw new DataNotFoundException("No se encontraron datos");
         }        
         return foundEntity; 
-    }
-        
-        /**
-     * Buscar el texto en todas columnas con paginado
-     * @param busqueda cadena de texto por el cual va a buscar
-     * @param offset desde que registro va a buscar
-     * @param limit limite de registros
-     * @return Lista de Conciliacions que cumplan con el criterio
-     */
-    /*public List<Conciliacion> findRange(int offset, int limit){
-        logger.log(Level.INFO, "busqueda:{0}offset:{0}offset:{0}", new Object[]{offset, limit});  
-        TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByAnyColumn", Conciliacion.class);
-        //query.setParameter("nombreConciliacion", "%" + busqueda + "%");
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        List<Conciliacion> results = query.getResultList();
-        if (results == null || results.isEmpty()) {
-            throw new DataNotFoundException("No se encontraron datos de Busqueda");
-        }
-        return results;
     }*/
     
     /**

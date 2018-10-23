@@ -145,7 +145,6 @@ public class QueryAprobacionREST {
         if (entidadJPA != null) {
             entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
             entidadJPA.setEstadoAprobacion(entidad.getEstadoAprobacion() != null ? entidad.getEstadoAprobacion() : entidadJPA.getEstadoAprobacion());
-            entidadJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadJPA.getUsuario());
             entidadJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getConciliacion());
             managerDAO.edit(entidadJPA);
             LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());

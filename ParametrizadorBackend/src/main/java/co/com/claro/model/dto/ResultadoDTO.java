@@ -61,5 +61,12 @@ public class ResultadoDTO implements Serializable{
        
         return p;
     }
+
+    @Override
+    public String toString() {
+        return "ResultadoDTO{" + "idResultado=" + idResultado + ", idEjecucion=" + idEjecucion + ", idEscenario=" + idEscenario + ", variables=" + variables + '}';
+    }
+    
+    
     
 }

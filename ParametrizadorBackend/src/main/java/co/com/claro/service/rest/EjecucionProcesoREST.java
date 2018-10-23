@@ -131,24 +131,17 @@ public class EjecucionProcesoREST {
     public Response add(EjecucionProcesoDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
         Conciliacion entidadPadreJPA;
-        EjecucionProceso entidadHijaJPA = entidad.toEntity();
-        entidadHijaJPA.setConciliacion(null);        
-
-        if ( entidad.getIdConciliacion() != null) {
-            entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
-            if (entidadPadreJPA == null) {
-                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdConciliacion());
-            } else {
-                managerDAO.create(entidadHijaJPA);
-                entidadHijaJPA.setConciliacion(entidadPadreJPA);
-                managerDAO.edit(entidadHijaJPA);
-                entidadPadreJPA.addEjecucionProceso(entidadHijaJPA);
+        EjecucionProceso entidadJPA = entidad.toEntity();
+        entidadPadreJPA = padreDAO.find(entidad.getIdConciliacion());
+        if ( entidadPadreJPA != null) {
+                entidadJPA.setConciliacion(null);
+                managerDAO.create(entidadJPA);
+                entidadJPA.setConciliacion(entidadPadreJPA);
+                managerDAO.edit(entidadJPA);
+                entidadPadreJPA.addEjecucionProceso(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
-            }
-        } else {
-            managerDAO.create(entidadHijaJPA);
         }
-        return Response.status(Response.Status.CREATED).entity(entidadHijaJPA.toDTO()).build();
+        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
     
     /**

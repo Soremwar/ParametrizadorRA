@@ -42,7 +42,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "QueryEscenario.findByOrden", query = "SELECT q FROM QueryEscenario q WHERE q.orden = :orden")
     , @NamedQuery(name = "QueryEscenario.findByFechaCreacion", query = "SELECT q FROM QueryEscenario q WHERE q.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "QueryEscenario.findByFechaActualizacion", query = "SELECT q FROM QueryEscenario q WHERE q.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "QueryEscenario.findByUsuario", query = "SELECT q FROM QueryEscenario q WHERE q.usuario = :usuario")
     , @NamedQuery(name = "QueryEscenario.findByCodEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.escenario.id = :codEscenario")
     , @NamedQuery(name = "QueryEscenario.findByCodConciliacion", query = "SELECT q FROM QueryEscenario q WHERE q.escenario.conciliacion.id = :codConciliacion")    
     , @NamedQuery(name = "QueryEscenario.findByAnyColumn", query = "SELECT DISTINCT(q) FROM QueryEscenario q WHERE lower(q.nombreQuery) LIKE lower(:nombreQuery) or lower(q.query) LIKE lower(:query) or lower(q.escenario.nombre) LIKE lower(:queryEscenarioNombre)")})
@@ -77,10 +76,6 @@ public class QueryEscenario implements Serializable {
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
-    
-    @Size(max = 200)
-    @Column(name = "USUARIO")
-    private String usuario;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_ESCENARIO")
@@ -89,11 +84,10 @@ public class QueryEscenario implements Serializable {
     public QueryEscenario() {
     }
 
-    public QueryEscenario(Integer id, String nombreQuery, Date fechaCreacion, String usuario) {
+    public QueryEscenario(Integer id, String nombreQuery, Date fechaCreacion) {
         this.id = id;
         this.nombreQuery = nombreQuery;
         this.fechaCreacion = fechaCreacion;
-        this.usuario = usuario;
     }
 
     public Integer getId() {
@@ -144,14 +138,6 @@ public class QueryEscenario implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     public Escenario getEscenario() {
         return escenario;
     }
@@ -193,7 +179,6 @@ public class QueryEscenario implements Serializable {
         entidadDTO.setFechaActualizacion(fechaActualizacion);
         entidadDTO.setNombreQuery(nombreQuery);
         entidadDTO.setQuery(query);
-        entidadDTO.setUsuario(usuario);
         entidadDTO.setOrden(orden);
         entidadDTO.setIdEscenario(escenario != null ? escenario.getId() : null);
         entidadDTO.setNombreEscenario(escenario != null ? escenario.getNombre() : null);

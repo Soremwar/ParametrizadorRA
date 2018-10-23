@@ -138,4 +138,11 @@ public class EjecucionProcesoDTO implements Serializable{
         return p;
         
     }
+
+    @Override
+    public String toString() {
+        return "EjecucionProcesoDTO{" + "id=" + id + ", nombre=" + nombre + ", idConciliacion=" + idConciliacion + ", idEscenario=" + idEscenario + ", fechaEjecucion=" + fechaEjecucion + ", fechaEjecucionExitosa=" + fechaEjecucionExitosa + '}';
+    }
+    
+    
 }

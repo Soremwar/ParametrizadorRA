@@ -12,19 +12,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * DTO para Parametros
+ *
  * @author andres
  */
 @XmlRootElement
-public class ParametroDTO  implements Serializable{
+public class ParametroDTO implements Serializable {
 
     private Integer id;
-   private Integer codPadre;
+    private Integer codPadre;
     private String parametro;
     private String valor;
     private String descripcion;
     private Date fechaCreacion;
     private Date fechaActualizacion;
-    private String usuario;
     private String tipo;
 
     public Integer getId() {
@@ -51,14 +51,6 @@ public class ParametroDTO  implements Serializable{
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     public String getDescripcion() {
         return descripcion;
     }
@@ -74,7 +66,7 @@ public class ParametroDTO  implements Serializable{
     public void setParametro(String parametro) {
         this.parametro = parametro;
     }
-    
+
     public String getValor() {
         return valor;
     }
@@ -98,21 +90,26 @@ public class ParametroDTO  implements Serializable{
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
-    
-    
-    public Parametro toEntity(){
+
+    public Parametro toEntity() {
         Parametro p = new Parametro();
 
         p.setId(this.getId());
         p.setParametro(parametro);
         p.setValor(valor);
-        p.setUsuario(this.getUsuario());
         p.setFechaCreacion(this.getFechaCreacion());
         p.setFechaActualizacion(this.getFechaActualizacion());
         p.setDescripcion(this.descripcion);
         p.setCodPadre(codPadre);
         p.setTipo(tipo);
         return p;
-        
+
     }
+
+    @Override
+    public String toString() {
+        return "ParametroDTO{" + "id=" + id + ", parametro=" + parametro + ", valor=" + valor + ", tipo=" + tipo + '}';
+    }
+    
+    
 }

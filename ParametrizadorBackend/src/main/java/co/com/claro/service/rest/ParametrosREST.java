@@ -9,7 +9,6 @@ import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ParametroDTO;
-import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Parametro;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
@@ -158,7 +157,6 @@ public class ParametrosREST{
             entidadJPA.setParametro(entidad.getParametro() != null ? entidad.getParametro() : entidadJPA.getParametro());
             entidadJPA.setValor(entidad.getValor() != null ? entidad.getValor() : entidadJPA.getValor());
             entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadJPA.getDescripcion());
-            entidadJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadJPA.getUsuario());
             entidadJPA.setTipo(entidad.getTipo() != null ? entidad.getTipo() : entidadJPA.getTipo());
             entidadJPA.setCodPadre(entidad.getCodPadre() != null ? entidad.getCodPadre() : entidadJPA.getCodPadre());
             managerDAO.edit(entidadJPA);

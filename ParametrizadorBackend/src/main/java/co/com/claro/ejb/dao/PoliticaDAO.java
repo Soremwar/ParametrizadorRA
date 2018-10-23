@@ -50,10 +50,13 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
     public List<Politica> findByAnyColumn(String busqueda){
         logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});    
         TypedQuery<Politica> query = em.createNamedQuery("Politica.findByAnyColumn", Politica.class);
+        query.setParameter("id", "%" + busqueda + "%");
         query.setParameter("nombrePolitica", "%" + busqueda + "%");
         query.setParameter("descripcion", "%" + busqueda + "%");
         query.setParameter("objetivo", "%" + busqueda + "%");
         query.setParameter("nombreConciliacion", "%" + busqueda + "%");
+        query.setParameter("idConciliacion", "%" + busqueda + "%");
+        query.setParameter("usuarioAsignado", "%" + busqueda + "%");
         List<Politica> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

@@ -85,4 +85,10 @@ public class IndicadorDTO implements Serializable{
         return p;
         
     }
+
+    @Override
+    public String toString() {
+        return "IndicadorDTO{" + "idEscenario=" + idEscenario + ", id=" + id + ", nombreFormula=" + nombreFormula + '}';
+    }
+    
 }

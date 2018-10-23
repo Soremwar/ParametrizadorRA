@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "WsTransformacion.findByPaqueteWs", query = "SELECT w FROM WsTransformacion w WHERE w.paqueteWs = :paqueteWs")
     , @NamedQuery(name = "WsTransformacion.findByFechaCreacion", query = "SELECT w FROM WsTransformacion w WHERE w.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "WsTransformacion.findByFechaActualizacion", query = "SELECT w FROM WsTransformacion w WHERE w.fechaActualizacion = :fechaActualizacion")
-    , @NamedQuery(name = "WsTransformacion.findByUsuario", query = "SELECT w FROM WsTransformacion w WHERE w.usuario = :usuario")
     , @NamedQuery(name = "WsTransformacion.findByAnyColumn", query = "SELECT DISTINCT(w) FROM WsTransformacion w WHERE lower(w.nombreWs) LIKE lower(:nombreWs) or lower(w.paqueteWs) LIKE lower(:paqueteWs)")})
 
 public class WsTransformacion implements Serializable {
@@ -77,10 +76,6 @@ public class WsTransformacion implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
     
-    @Basic(optional = false)
-    @Size(min = 1, max = 200)
-    @Column(name = "USUARIO")
-    private String usuario;
     
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION", referencedColumnName = "COD_CONCILIACION")
@@ -93,12 +88,11 @@ public class WsTransformacion implements Serializable {
         this.id = codWs;
     }
 
-    public WsTransformacion(Integer codWs, String nombreWs, String paqueteWs, Date fechaCreacion, String usuario) {
+    public WsTransformacion(Integer codWs, String nombreWs, String paqueteWs, Date fechaCreacion) {
         this.id = codWs;
         this.nombreWs = nombreWs;
         this.paqueteWs = paqueteWs;
         this.fechaCreacion = fechaCreacion;
-        this.usuario = usuario;
     }
 
     public Integer getId() {
@@ -149,14 +143,6 @@ public class WsTransformacion implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     public Conciliacion getConciliacion() {
         return conciliacion;
     }
@@ -192,8 +178,6 @@ public class WsTransformacion implements Serializable {
         entidadDTO.setFechaCreacion(this.fechaCreacion);
         entidadDTO.setNombreWs(nombreWs);
         entidadDTO.setPaqueteWs(paqueteWs);
-        entidadDTO.setUsuario(usuario);
-        //entidadDTO.setPeriodicidadWs(periodicidadWs);
         
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);

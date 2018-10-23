@@ -17,7 +17,6 @@ public abstract class PadreDTO implements Serializable {
     private Integer id;
 
     private String nombre;
-    private String usuario;
     
     private Date fechaCreacion;
     private Date fechaActualizacion;
@@ -39,14 +38,6 @@ public abstract class PadreDTO implements Serializable {
         this.nombre = nombre;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     public Date getFechaCreacion() {
         return fechaCreacion;
     }
@@ -62,6 +53,10 @@ public abstract class PadreDTO implements Serializable {
     public void setFechaActualizacion(Date fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
     }
-    
 
+    @Override
+    public String toString() {
+        return "PadreDTO{" + "id=" + id + ", nombre=" + nombre + ", fechaCreacion=" + fechaCreacion + ", fechaActualizacion=" + fechaActualizacion + '}';
+    }
+    
 }

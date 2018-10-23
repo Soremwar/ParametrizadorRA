@@ -9,7 +9,6 @@ import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.QueryEscenarioDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
-import co.com.claro.model.dto.ParametroDTO;
 import co.com.claro.model.dto.QueryEscenarioDTO;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.LogAuditoria;
@@ -45,24 +44,27 @@ import javax.ws.rs.core.Response;
 @Stateless
 @Path("queryescenario")
 public class QueryEscenarioREST {
+
     @Transient
     private static final Logger logger = Logger.getLogger(QueryEscenarioREST.class.getSimpleName());
     private String usuario = "admin";
     private String modulo = "queryescenario";
-    
+
     @EJB
-    protected LogAuditoriaDAO logAuditoriaDAO;    
+    protected LogAuditoriaDAO logAuditoriaDAO;
     @EJB
     protected QueryEscenarioDAO managerDAO;
-    
+
     @EJB
     protected EscenarioDAO padreDAO;
 
     /**
      * Obtiene las QueryEscenarioes Paginadas
+     *
      * @param offset Desde cual item se retorna
      * @param limit Limite de items a retornar
-     * @param orderby Indica por cual campo descriptivo va a guardar (id, nombre, fechaCreacion)
+     * @param orderby Indica por cual campo descriptivo va a guardar (id,
+     * nombre, fechaCreacion)
      * @param texto
      * @return Toda la lista de conciliaciones que corresponden con el criterio
      */
@@ -83,48 +85,47 @@ public class QueryEscenarioREST {
         }
         lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId)).collect(toList());
         UtilListas.ordenarQueryEjecucion(lstDTO, orderby);
-        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>)(List<?>) lstDTO;
+        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>) (List<?>) lstDTO;
         return lstFinal;
     }
 
     /**
      * Obtiene una QueryEscenario por id
+     *
      * @param id Identificador de conciliacion
      * @return Una QueryEscenario que coincide con el criterio
      */
-    
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public QueryEscenarioDTO getById(@PathParam("id") int id){
-        logger.log(Level.INFO, "id:{0}" , id);
+    public QueryEscenarioDTO getById(@PathParam("id") int id) {
+        logger.log(Level.INFO, "id:{0}", id);
         QueryEscenario entidad = managerDAO.find(id);
         return entidad.toDTO();
     }
-    
-    
-        /**
+
+    /**
      * Obtiene una QueryEscenario por id
+     *
      * @param id Identificador de conciliacion
      * @return Una QueryEscenario que coincide con el criterio
      */
-    
     @GET
     @Path("/conciliacion/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<QueryEscenarioDTO> getByIdConciliacion(@PathParam("id") int id){
-        logger.log(Level.INFO, "id:{0}" , id);
+    public List<QueryEscenarioDTO> getByIdConciliacion(@PathParam("id") int id) {
+        logger.log(Level.INFO, "id:{0}", id);
         List<QueryEscenarioDTO> lstDTO;
         List<QueryEscenario> lst;
         lst = managerDAO.findByConciliacion(id);
         lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId)).collect(toList());
-        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>)(List<?>) lstDTO;
+        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>) (List<?>) lstDTO;
         return lstFinal;
     }
-    
 
-     /**
+    /**
      * Crea una nueva politica
+     *
      * @param entidad Entidad que se va a agregar
      * @return el la entidad recien creada
      */
@@ -136,7 +137,7 @@ public class QueryEscenarioREST {
         Escenario entidadPadreJPA;
         QueryEscenario entidadJPA = entidad.toEntity();
         entidadJPA.setEscenario(null);
-        if ( entidad.getIdEscenario() != null) {
+        if (entidad.getIdEscenario() != null) {
             entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
             if (entidadPadreJPA == null) {
                 throw new DataNotFoundException("Datos no encontrados " + entidad.getIdEscenario());
@@ -153,15 +154,15 @@ public class QueryEscenarioREST {
         managerDAO.edit(entidadJPA);
         LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
-  
+
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
-    
+
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(QueryEscenarioDTO entidad) {
-        logger.log(Level.INFO, "entidad:{0}", entidad);  
+        logger.log(Level.INFO, "entidad:{0}", entidad);
         //Hallar La entidad actual para actualizarla
         QueryEscenario entidadJPA = managerDAO.find(entidad.getId());
         if (entidadJPA != null) {
@@ -169,17 +170,17 @@ public class QueryEscenarioREST {
             entidadJPA.setNombreQuery(entidad.getNombreQuery() != null ? entidad.getNombreQuery() : entidadJPA.getNombreQuery());
             entidadJPA.setOrden(entidad.getOrden() != null ? entidad.getOrden() : entidadJPA.getOrden());
             entidadJPA.setQuery(entidad.getQuery() != null ? entidad.getQuery() : entidadJPA.getQuery());
-            entidadJPA.setUsuario(entidad.getUsuario() != null ? entidad.getUsuario() : entidadJPA.getUsuario());
             managerDAO.edit(entidadJPA);
             LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
             logAuditoriaDAO.create(logAud);
-           return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
+            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
-      }
-    
-     /**
+    }
+
+    /**
      * Borra una politica por su Id
+     *
      * @param id Identificador de la entidad
      * @return El resultado de la operacion en codigo HTTP
      */
@@ -204,11 +205,11 @@ public class QueryEscenarioREST {
         WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
-       
+
     @GET
     @Path("/count")
     @Produces({MediaType.APPLICATION_JSON})
-    public int count(){
+    public int count() {
         return managerDAO.count();
     }
 }

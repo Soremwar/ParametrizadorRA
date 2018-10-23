@@ -30,7 +30,6 @@ public class QueryEscenarioDTO implements Serializable{
     private Date fechaCreacion;
     private Date fechaActualizacion;
     private Integer orden;
-    private String usuario;
 
     public Integer getId() {
         return id;
@@ -80,14 +79,6 @@ public class QueryEscenarioDTO implements Serializable{
         this.orden = orden;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     public Integer getIdEscenario() {
         return idEscenario;
     }
@@ -129,9 +120,15 @@ public class QueryEscenarioDTO implements Serializable{
         entity.setOrden(orden);
         entity.setFechaCreacion(fechaCreacion);
         entity.setFechaActualizacion(fechaActualizacion);
-        entity.setUsuario(usuario);
-    
+
         return entity;
         
     }
+
+    @Override
+    public String toString() {
+        return "QueryEscenarioDTO{" + "id=" + id + ", idEscenario=" + idEscenario + ", idConciliacion=" + idConciliacion + ", nombreQuery=" + nombreQuery + ", query=" + query + ", fechaCreacion=" + fechaCreacion + ", fechaActualizacion=" + fechaActualizacion + ", orden=" + orden + '}';
+    }
+    
+    
 }

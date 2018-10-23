@@ -134,4 +134,10 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
         return entity;
         
     }
+
+    @Override
+    public String toString() {
+        return "ConciliacionDTO{" + "idPolitica=" + idPolitica + ", nombrePolitica=" + nombrePolitica + ", usuarioAsignado=" + usuarioAsignado + '}';
+    }
+    
 }

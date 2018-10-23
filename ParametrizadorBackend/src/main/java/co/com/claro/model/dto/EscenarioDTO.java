@@ -74,4 +74,6 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
         return entity;
         
     }
+    
+    
 }

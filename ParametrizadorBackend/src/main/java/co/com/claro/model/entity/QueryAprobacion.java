@@ -64,13 +64,12 @@ public class QueryAprobacion implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
     
-    @Size(min = 1, max = 200)
-    @Column(name = "USUARIO")
-    private String usuario;
-    
-
     @Column(name = "MENSAJE")
     private String mensaje;
+    
+    @Size(max = 30)
+    @Column(name = "USUARIO")
+    private String usuario;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION")
@@ -86,7 +85,6 @@ public class QueryAprobacion implements Serializable {
     public QueryAprobacion(Integer codAprobacionQueries, Date fechaCreacion, String usuario) {
         this.id = codAprobacionQueries;
         this.fechaCreacion = fechaCreacion;
-        this.usuario = usuario;
     }
 
     public Integer getId() {
@@ -121,14 +119,6 @@ public class QueryAprobacion implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     public Conciliacion getConciliacion() {
         return conciliacion;
     }
@@ -143,6 +133,14 @@ public class QueryAprobacion implements Serializable {
 
     public void setConciliacion(Conciliacion conciliacion) {
         this.conciliacion = conciliacion;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     @Override
@@ -176,9 +174,7 @@ public class QueryAprobacion implements Serializable {
         entidadDTO.setId(id);
         entidadDTO.setFechaActualizacion(fechaActualizacion);
         entidadDTO.setFechaCreacion(fechaCreacion);
-        entidadDTO.setNombreConciliacion(usuario);
         entidadDTO.setEstadoAprobacion(estadoAprobacion);
-        entidadDTO.setUsuario(usuario);
         entidadDTO.setMensaje(mensaje);
         
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);

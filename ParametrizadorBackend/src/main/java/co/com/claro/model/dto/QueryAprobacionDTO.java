@@ -24,8 +24,8 @@ public class QueryAprobacionDTO implements Serializable{
     //Campos padre
     private Integer idConciliacion;
     private String nombreConciliacion;
-    private String usuario;
     private String mensaje;
+    private String usuario;
     
 
 
@@ -77,13 +77,6 @@ public class QueryAprobacionDTO implements Serializable{
         this.nombreConciliacion = nombreConciliacion;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
 
     public String getMensaje() {
         return mensaje;
@@ -91,6 +84,14 @@ public class QueryAprobacionDTO implements Serializable{
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
     
     public QueryAprobacion toEntity(){
@@ -100,10 +101,17 @@ public class QueryAprobacionDTO implements Serializable{
         entity.setEstadoAprobacion(estadoAprobacion);
         entity.setFechaCreacion(fechaCreacion);
         entity.setFechaActualizacion(fechaActualizacion);
-        entity.setUsuario(usuario);
         entity.setMensaje(mensaje);
+        entity.setUsuario(usuario);
         
         return entity;
         
     }
+
+    @Override
+    public String toString() {
+        return "QueryAprobacionDTO{" + "id=" + id + ", estadoAprobacion=" + estadoAprobacion + ", fechaCreacion=" + fechaCreacion + ", fechaActualizacion=" + fechaActualizacion + '}';
+    }
+    
+    
 }
