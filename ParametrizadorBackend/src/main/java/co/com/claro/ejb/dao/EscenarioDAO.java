@@ -46,6 +46,7 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
     public List<Escenario> findByAnyColumn(String busqueda){
         logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});    
         TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findByAnyColumn", Escenario.class);
+        query.setParameter("id", "%" + busqueda + "%");
         query.setParameter("nombreEscenario", "%" + busqueda + "%");
         query.setParameter("impacto", "%" + busqueda + "%");
         query.setParameter("nombreConciliacion", "%" + busqueda + "%");

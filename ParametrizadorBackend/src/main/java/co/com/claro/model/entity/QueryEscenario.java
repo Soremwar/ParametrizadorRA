@@ -67,7 +67,6 @@ public class QueryEscenario implements Serializable {
     
     @Column(name = "ORDEN")
     private Integer orden;
-    
 
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
