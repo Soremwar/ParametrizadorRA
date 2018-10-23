@@ -26,6 +26,7 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
     private String impacto;
     
    private Set<QueryEscenarioDTO> queryescenarios;
+   private Set<IndicadorDTO> indicadores;
 
     public String getNombreConciliacion() {
         return nombreConciliacion;
@@ -59,6 +60,13 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
         this.queryescenarios = queryescenarios;
     }
 
+    public Set<IndicadorDTO> getIndicadores() {
+        return indicadores;
+    }
+
+    public void setIndicadores(Set<IndicadorDTO> indicadores) {
+        this.indicadores = indicadores;
+    }
     
     public Escenario toEntity(){
         Escenario entity = new Escenario();

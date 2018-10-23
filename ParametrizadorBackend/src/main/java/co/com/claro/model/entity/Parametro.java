@@ -78,7 +78,6 @@ public class Parametro implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
     
-    
     @Column(name = "COD_PADRE")
     private Integer codPadre;
 

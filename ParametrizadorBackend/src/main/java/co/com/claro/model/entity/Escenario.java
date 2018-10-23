@@ -6,6 +6,7 @@
 package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.EscenarioDTO;
+import co.com.claro.model.dto.IndicadorDTO;
 import co.com.claro.model.dto.QueryEscenarioDTO;
 import java.io.Serializable;
 import java.time.Instant;
@@ -206,6 +207,11 @@ public class Escenario implements Serializable {
         if (queryEscenarios != null) {
             Set<QueryEscenarioDTO> lstqueryEscenarios = queryEscenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());
             entidadDTO.setQueryescenarios(lstqueryEscenarios);
+        }
+        
+        if (indicadores != null) {
+            Set<IndicadorDTO> lstIndicadores = indicadores.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());
+            entidadDTO.setIndicadores(lstIndicadores);
         }
         
         return entidadDTO;
