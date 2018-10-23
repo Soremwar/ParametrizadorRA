@@ -111,12 +111,13 @@ public class ParametrosREST{
         /**
      * Busca los Parametros por algun padre. Recuerden que la relacion es logica no fisica
      * @param tipo
+     * @param codPadre
      * @return Lista de Escenarios que cumplen con el criterio
      */
     @GET
     @Path("/padre")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<ParametroDTO>  findByPadre(@QueryParam("tipo") String tipo, @QueryParam("codpadre") int codPadre){
+    public List<ParametroDTO>  findByPadre(@QueryParam("tipo") String tipo, @QueryParam("codpadre") Integer codPadre){
         logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{tipo, codPadre});      
         List<Parametro> lst = managerDAO.findByCodPadre(tipo, codPadre);
         List<ParametroDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ParametroDTO::getId)).collect(toList());

@@ -25,16 +25,6 @@ public abstract class AbstractJpaDAO<T> {
         
     }
     
-    
-    public void create2(T entity) throws Exception {
-        try {
-            getEntityManager().persist(entity);
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-        //getEntityManager().flush();
-
-    }
     public T edit(T entity) {
         getEntityManager().merge(entity);
         //getEntityManager().flush();

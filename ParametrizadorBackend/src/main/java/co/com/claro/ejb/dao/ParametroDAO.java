@@ -80,7 +80,7 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro>{
         logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{tipo,codPadre});     
         TypedQuery<Parametro> query = em.createNamedQuery("Parametro.findByCodPadre", Parametro.class);
         query.setParameter("tipo", "%" + tipo + "%");
-        query.setParameter("codPadre", codPadre);
+        query.setParameter("codigoPadre", 5);
         List<Parametro> results = query.getResultList();
         if (results == null) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

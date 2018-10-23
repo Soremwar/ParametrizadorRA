@@ -107,12 +107,15 @@ public class Conciliacion implements Serializable {
     private Politica politica;
     
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
+    @OrderBy("id DESC")
     private Collection<Escenario> escenarios;
 
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
+    @OrderBy("id DESC")
     private Collection<WsTransformacion> transformaciones;
 
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
+    @OrderBy("id DESC")
     private Collection<EjecucionProceso> ejecucionesProceso;
     
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
