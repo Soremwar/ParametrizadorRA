@@ -23,6 +23,7 @@ public class WsTransformacionDTO implements Serializable{
     private String paqueteWs;
     private Date fechaCreacion;
     private Date fechaActualizacion;
+    private Date fechaAgendamiento;
     private Integer idConciliacion;
 
     public Integer getIdConciliacion() {
@@ -74,6 +75,13 @@ public class WsTransformacionDTO implements Serializable{
         this.fechaActualizacion = fechaActualizacion;
     }
 
+    public Date getFechaAgendamiento() {
+        return fechaAgendamiento;
+    }
+
+    public void setFechaAgendamiento(Date fechaAgendamiento) {
+        this.fechaAgendamiento = fechaAgendamiento;
+    }
 
     public String getNombreConciliacion() {
         return nombreConciliacion;

@@ -57,10 +57,6 @@ public class WsTransformacion implements Serializable {
     @Column(name = "NOMBRE_WS")
     private String nombreWs;
     
-    @Basic(optional = false)
-    @Size(min = 1, max = 200)
-    @Column(name = "PERIODICIDAD_WS")
-    private String periodicidadWs;
     
     @Basic(optional = false)
     @Size(min = 1, max = 200)
@@ -71,6 +67,11 @@ public class WsTransformacion implements Serializable {
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
+    
+    @Basic(optional = false)
+    @Column(name = "FECHA_AGENDAMIENTO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaAgendamiento;
     
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
@@ -119,12 +120,12 @@ public class WsTransformacion implements Serializable {
         this.paqueteWs = paqueteWs;
     }
 
-    public String getPeriodicidadWs() {
-        return periodicidadWs;
+    public Date getFechaAgendamiento() {
+        return fechaAgendamiento;
     }
 
-    public void setPeriodicidadWs(String periodicidadWs) {
-        this.periodicidadWs = periodicidadWs;
+    public void setFechaAgendamiento(Date fechaAgendamiento) {
+        this.fechaAgendamiento = fechaAgendamiento;
     }
 
     public Date getFechaCreacion() {
@@ -176,6 +177,7 @@ public class WsTransformacion implements Serializable {
         entidadDTO.setId(this.id);
         entidadDTO.setFechaActualizacion(this.fechaActualizacion);
         entidadDTO.setFechaCreacion(this.fechaCreacion);
+        entidadDTO.setFechaAgendamiento(fechaAgendamiento);
         entidadDTO.setNombreWs(nombreWs);
         entidadDTO.setPaqueteWs(paqueteWs);
         
