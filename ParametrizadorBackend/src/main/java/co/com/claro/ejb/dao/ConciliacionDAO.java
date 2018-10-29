@@ -51,6 +51,7 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         query.setParameter("descripcion", "%" + busqueda + "%");
         query.setParameter("nombrePolitica", "%" + busqueda + "%");
         query.setParameter("usuarioAsignado", "%" + busqueda + "%");
+        query.setParameter("nombreEscenario", "%" + busqueda + "%");
         List<Conciliacion> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

@@ -50,7 +50,8 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         query.setParameter("nombreEscenario", "%" + busqueda + "%");
         query.setParameter("impacto", "%" + busqueda + "%");
         query.setParameter("nombreConciliacion", "%" + busqueda + "%");
-       
+        query.setParameter("nombreEscenario", "%" + busqueda + "%");     
+        
         List<Escenario> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

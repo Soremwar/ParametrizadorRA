@@ -13,10 +13,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * DTO para escenario
+ *
  * @author andres
  */
 @XmlRootElement
-public class EscenarioDTO extends PadreDTO implements Serializable{
+public class EscenarioDTO extends PadreDTO implements Serializable {
 
     //Campos padre
     private Integer idConciliacion;
@@ -24,9 +25,10 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
 
     //Campos propios
     private String impacto;
-    
-   private Set<QueryEscenarioDTO> queryescenarios;
-   private Set<IndicadorDTO> indicadores;
+    private String codigo;
+
+    private Set<QueryEscenarioDTO> queryescenarios;
+    private Set<IndicadorDTO> indicadores;
 
     public String getNombreConciliacion() {
         return nombreConciliacion;
@@ -34,6 +36,14 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
 
     public void setNombreConciliacion(String nombreConciliacion) {
         this.nombreConciliacion = nombreConciliacion;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getImpacto() {
@@ -67,21 +77,22 @@ public class EscenarioDTO extends PadreDTO implements Serializable{
     public void setIndicadores(Set<IndicadorDTO> indicadores) {
         this.indicadores = indicadores;
     }
-    
-    public Escenario toEntity(){
+
+    public Escenario toEntity() {
         Escenario entity = new Escenario();
         //Campos comunes
         entity.setId(this.getId());
         entity.setNombre(this.getNombre());
+
         entity.setFechaCreacion(this.getFechaCreacion());
         entity.setFechaActualizacion(this.getFechaActualizacion());
 
         //Campos de la entidad
+        entity.setCodigo(codigo);
         entity.setImpacto(this.impacto);
         //p.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
         return entity;
-        
+
     }
-    
-    
+
 }

@@ -78,7 +78,7 @@ public class WsTransformacion implements Serializable {
     private Date fechaActualizacion;
     
     
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION", referencedColumnName = "COD_CONCILIACION")
     private Conciliacion conciliacion;
 

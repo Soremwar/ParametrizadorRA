@@ -61,7 +61,6 @@ public class QueryEscenario implements Serializable {
     @Column(name = "NOMBRE_QUERY")
     private String nombreQuery;
     
-    @Size(max = 200)
     @Column(name = "QUERY")
     private String query;
     
