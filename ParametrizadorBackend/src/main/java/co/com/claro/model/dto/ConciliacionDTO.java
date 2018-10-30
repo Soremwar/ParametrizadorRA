@@ -26,6 +26,7 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private String camposTablaDestino;
     private String descripcion;
     private String usuarioAsignado;
+    private String paquete;
     
     private Set<EscenarioDTO> escenarios;
     private Set<WsTransformacionDTO> transformaciones;
@@ -41,6 +42,14 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
         this.idPolitica = idPolitica;
     }
 
+    public String getPaquete() {
+        return paquete;
+    }
+
+    public void setPaquete(String paquete) {
+        this.paquete = paquete;
+    }
+    
     public String getNombrePolitica() {
         return nombrePolitica;
     }

@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Conciliacion.findByTablaDestino", query = "SELECT c FROM Conciliacion c WHERE c.tablaDestino = :tablaDestino")
     , @NamedQuery(name = "Conciliacion.findByPoliticaNull", query = "SELECT c FROM Conciliacion c WHERE c.politica IS null")
     , @NamedQuery(name = "Conciliacion.findByPolitica", query = "SELECT c FROM Conciliacion c WHERE c.politica.id = :codPolitica")
-    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(c) FROM Conciliacion c JOIN FETCH c.escenarios e WHERE lower(c.id) LIKE lower(:id) or lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.descripcion) LIKE lower(:descripcion) or LOWER(c.politica.nombre) LIKE lower(:nombrePolitica) or LOWER(c.usuarioAsignado) LIKE lower(:usuarioAsignado) or LOWER(e.nombre) LIKE lower(:nombreEscenario)")})
+    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e WHERE lower(c.id) LIKE lower(:id) or lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.descripcion) LIKE lower(:descripcion) or LOWER(c.politica.nombre) LIKE lower(:nombrePolitica) or LOWER(c.usuarioAsignado) LIKE lower(:usuarioAsignado) or LOWER(e.nombre) LIKE lower(:nombreEscenario)")})
     
 public class Conciliacion implements Serializable {
 
@@ -209,6 +209,10 @@ public class Conciliacion implements Serializable {
     public void removeEscenario(Escenario escenario) {
         this.escenarios.remove(escenario);
         escenario.setConciliacion(null);
+    }
+
+    public Collection<WsTransformacion> getTransformaciones() {
+        return transformaciones;
     }
     
     public void addTransformacion(WsTransformacion transformacion) {

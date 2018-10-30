@@ -4,12 +4,14 @@ import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
+import co.com.claro.ejb.dao.WsTransformacionDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
+import co.com.claro.model.entity.WsTransformacion;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
@@ -57,6 +59,9 @@ public class ConciliacionREST{
 
     @EJB
     protected EscenarioDAO escenarioDAO;
+    
+    @EJB
+    protected WsTransformacionDAO transformacionDAO;
 
     /**
      * Obtiene las Conciliaciones Paginadas
@@ -126,7 +131,6 @@ public class ConciliacionREST{
         logger.log(Level.INFO, "entidad:{0}", dto);
         Politica entidadPadreJPA;
         Conciliacion entidadJPA = dto.toEntity();
-
         entidadPadreJPA = padreDAO.find(dto.getIdPolitica());
         if ( entidadPadreJPA != null) {
                 entidadJPA.setPolitica(null);
@@ -135,6 +139,18 @@ public class ConciliacionREST{
                 managerDAO.edit(entidadJPA);
                 entidadPadreJPA.addConciliaciones(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
+                
+                if (dto.getPaquete() != null) {
+                    WsTransformacion transformacion = new WsTransformacion();
+                    transformacion.setFechaCreacion(Date.from(Instant.now()));            
+                    transformacion.setNombreWs(dto.getPaquete());
+                    transformacion.setPaqueteWs(dto.getPaquete());
+                    transformacionDAO.create(transformacion);
+                    transformacion.setConciliacion(entidadJPA);
+                    transformacionDAO.edit(transformacion);
+                    entidadJPA.addTransformacion(transformacion);
+                    managerDAO.edit(entidadJPA);
+                }
         }
         LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
         logAuditoriaDAO.create(logAud);

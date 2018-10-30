@@ -49,6 +49,7 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         query.setParameter("id", "%" + busqueda + "%");
         query.setParameter("nombreEscenario", "%" + busqueda + "%");
         query.setParameter("impacto", "%" + busqueda + "%");
+        query.setParameter("codigo", "%" + busqueda + "%");
         query.setParameter("nombreConciliacion", "%" + busqueda + "%");
         query.setParameter("nombreEscenario", "%" + busqueda + "%");     
         
