@@ -16,11 +16,14 @@ import static java.util.stream.Collectors.toList;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Transient;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -32,6 +35,7 @@ public class ResConciliacionREST {
     @Transient
     private static final Logger logger = Logger.getLogger(ResConciliacionREST.class.getSimpleName());
 
+    
     @EJB
     protected ResConciliacionDAO managerDAO;
 
@@ -54,6 +58,26 @@ public class ResConciliacionREST {
         List<ResConciliacionDTO> lstFinal = (List<ResConciliacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
+     
     
+    /**
+     * Actualiza la entidad por su Id
+     * @param entidad conciliacion con la cual se va a trabajar
+     * @return el resultado de la operacion
+     */
+    @PUT
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response update(ResConciliacionDTO entidad) {
+        logger.log(Level.INFO, "entidad:{0}", entidad);  
+        ResConciliacion entidadJPA = managerDAO.find(entidad.getId());
+        if (entidadJPA != null) {
+            entidadJPA.setIdEjecucion(entidad.getNombre() != null ? entidad.getIdEjecucion() : entidadJPA.getIdEjecucion());
+            entidadJPA.setEstado(entidad.getEstado() != null ? entidad.getEstado() : entidadJPA.getEstado());
+            managerDAO.edit(entidadJPA);
+            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
+       }
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
 
 }

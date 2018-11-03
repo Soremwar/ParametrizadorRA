@@ -10,9 +10,13 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -79,6 +83,10 @@ public class ResConciliacion implements Serializable {
     @Column(name = "COD_ESCENARIO")
     private String codEscenario;
 
+    //@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    //@JoinColumn(name = "COD_CONCILIACION")
+    //private Conciliacion conciliacion;
+    
     public ResConciliacion() {
     }
 

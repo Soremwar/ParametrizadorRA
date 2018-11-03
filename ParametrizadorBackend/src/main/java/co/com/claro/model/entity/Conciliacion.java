@@ -57,8 +57,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Conciliacion.findByTablaDestino", query = "SELECT c FROM Conciliacion c WHERE c.tablaDestino = :tablaDestino")
     , @NamedQuery(name = "Conciliacion.findByPoliticaNull", query = "SELECT c FROM Conciliacion c WHERE c.politica IS null")
     , @NamedQuery(name = "Conciliacion.findByPolitica", query = "SELECT c FROM Conciliacion c WHERE c.politica.id = :codPolitica")
-    , @NamedQuery(name = "Conciliacion.findByAprobacion", query = "SELECT c FROM Conciliacion c WHERE c.requiereAprobacion = :requiereAprobacion and c.estadoAprobacion = :estadoAprobacion")
-    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e WHERE lower(c.id) LIKE lower(:id) or lower(c.requiereAprobacion) LIKE lower(:requiereAprobacion) or lower(c.estadoAprobacion) LIKE lower(:estadoAprobacion) or lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.descripcion) LIKE lower(:descripcion) or LOWER(c.politica.nombre) LIKE lower(:nombrePolitica) or LOWER(c.usuarioAsignado) LIKE lower(:usuarioAsignado) or LOWER(e.nombre) LIKE lower(:nombreEscenario)")})
+    , @NamedQuery(name = "Conciliacion.findByAprobacion", query = "SELECT c FROM Conciliacion c WHERE c.requiereAprobacion = :requiereAprobacion")
+    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e WHERE lower(c.id) LIKE lower(:id) or lower(c.requiereAprobacion) LIKE lower(:requiereAprobacion) or lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.descripcion) LIKE lower(:descripcion) or LOWER(c.politica.nombre) LIKE lower(:nombrePolitica) or LOWER(c.usuarioAsignado) LIKE lower(:usuarioAsignado) or LOWER(e.nombre) LIKE lower(:nombreEscenario)")})
     
 public class Conciliacion implements Serializable {
 
@@ -78,9 +78,9 @@ public class Conciliacion implements Serializable {
     @Column(name = "DESCRIPCION")
     private String descripcion;
     
-    @Size(max = 50)
-    @Column(name = "ESTADO_APROBACION")
-    private String estadoAprobacion;
+    //@Size(max = 50)
+    //@Column(name = "ESTADO_APROBACION")
+    //private String estadoAprobacion;
     
     @Size(max = 50)
     @Column(name = "REQUIERE_APROBACION")
@@ -208,14 +208,15 @@ public class Conciliacion implements Serializable {
         this.politica = politica;
     }
 
-    public String getEstadoAprobacion() {
+    /*public String getEstadoAprobacion() {
         return estadoAprobacion;
     }
 
     public void setEstadoAprobacion(String estadoAprobacion) {
         this.estadoAprobacion = estadoAprobacion;
     }
-
+    */
+    
     public String getRequiereAprobacion() {
         return requiereAprobacion;
     }
@@ -308,7 +309,7 @@ public class Conciliacion implements Serializable {
         entidadDTO.setCamposTablaDestino(camposTablaDestino);
         entidadDTO.setTablaDestino(tablaDestino);
         entidadDTO.setUsuarioAsignado(usuarioAsignado);
-        entidadDTO.setEstadoAprobacion(estadoAprobacion);
+        //entidadDTO.setEstadoAprobacion(estadoAprobacion);
         entidadDTO.setRequiereAprobacion(requiereAprobacion);
         if (escenarios != null) {
             Set<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());

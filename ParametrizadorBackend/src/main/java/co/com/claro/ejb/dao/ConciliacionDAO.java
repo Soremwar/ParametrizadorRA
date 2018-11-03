@@ -53,7 +53,6 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         query.setParameter("usuarioAsignado", "%" + busqueda + "%");
         query.setParameter("nombreEscenario", "%" + busqueda + "%");
         query.setParameter("requiereAprobacion", "%" + busqueda + "%");
-        query.setParameter("estadoAprobacion", "%" + busqueda + "%");
         List<Conciliacion> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
@@ -66,7 +65,6 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         logger.log(Level.INFO, "requiereAprobacion:{0}estadoAprobacion:{1}", new Object[]{requiereAprobacion, estadoAprobacion});     
         TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByAprobacion", Conciliacion.class);
         query.setParameter("requiereAprobacion", "%" + requiereAprobacion + "%");
-        query.setParameter("estadoAprobacion", "%" + estadoAprobacion + "%");
         List<Conciliacion> results = query.getResultList();
         if (results == null) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
