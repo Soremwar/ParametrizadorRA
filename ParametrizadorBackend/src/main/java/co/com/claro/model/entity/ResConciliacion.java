@@ -204,7 +204,7 @@ public class ResConciliacion implements Serializable {
     
     public ResConciliacionDTO toDTO(){
         ResConciliacionDTO entidadDTO = new ResConciliacionDTO();
-        entidadDTO.setIdEjecucion(idEjecucion);
+        entidadDTO.setId(idEjecucion);
         entidadDTO.setEstado(estado);
         entidadDTO.setFecFin(fecFin);
         entidadDTO.setFecInicio(fecInicio);

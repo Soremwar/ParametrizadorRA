@@ -49,7 +49,7 @@ public class ResConciliacionREST {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
         List<ResConciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<ResConciliacionDTO> lstDTO;
-        if (estado != null) {
+        if (estado != null && !estado.isEmpty()) {
             lstDTO = lst.stream().map(item -> item.toDTO()).filter(dto -> dto.getEstado().contains(estado)).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
         } else {
             lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
@@ -72,7 +72,7 @@ public class ResConciliacionREST {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
         ResConciliacion entidadJPA = managerDAO.find(entidad.getId());
         if (entidadJPA != null) {
-            entidadJPA.setIdEjecucion(entidad.getNombre() != null ? entidad.getIdEjecucion() : entidadJPA.getIdEjecucion());
+            entidadJPA.setIdEjecucion(entidad.getId() != null ? entidad.getId() : entidadJPA.getIdEjecucion());
             entidadJPA.setEstado(entidad.getEstado() != null ? entidad.getEstado() : entidadJPA.getEstado());
             managerDAO.edit(entidadJPA);
             return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();

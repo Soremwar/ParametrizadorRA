@@ -69,16 +69,4 @@ public class ResConciliacionDAO extends AbstractJpaDAO<ResConciliacion> {
         return query.getResultList();
     }
 
-    /*public List<ResConciliacion> findByColumn(String estado, String descripcion, String objetivo){
-        logger.log(Level.INFO, "nombre:{0}descripcion:{0}objetivo:{0}", new Object[]{nombre, descripcion, objetivo});
-        TypedQuery<Politica> query = em.createNamedQuery("Politica.findByColumn", Politica.class);
-        query.setParameter("nombrePolitica", "%" + nombre + "%");
-        query.setParameter("descripcion", "%" + descripcion + "%");
-        query.setParameter("objetivo", "%" + objetivo + "%");
-        List<Politica> results = query.getResultList();
-        if (results == null || results.isEmpty()) {
-            throw new DataNotFoundException("No se encontraron datos de Busqueda");
-        }
-        return results;
-    }*/
 }

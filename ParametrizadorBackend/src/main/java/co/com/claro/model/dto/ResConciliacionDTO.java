@@ -5,9 +5,6 @@
  */
 package co.com.claro.model.dto;
 
-import co.com.claro.model.dto.parent.PadreDTO;
-import co.com.claro.model.entity.Conciliacion;
-import static co.com.claro.model.entity.Conciliacion_.usuarioAsignado;
 import co.com.claro.model.entity.ResConciliacion;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -15,13 +12,15 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * DTO para Conciliacion
+ * DTO para ResConciliacion
+ *
  * @author andres
  */
 @XmlRootElement
-public class ResConciliacionDTO extends PadreDTO implements Serializable{
+public class ResConciliacionDTO implements Serializable {
+
     //campos padre
-    private Long idEjecucion;
+    private Long id;
     private Date fecInicio;
     private Date fecFin;
     private String estado;
@@ -33,12 +32,12 @@ public class ResConciliacionDTO extends PadreDTO implements Serializable{
     private String codConciliacion;
     private String codEscenario;
 
-    public Long getIdEjecucion() {
-        return idEjecucion;
+    public Long getId() {
+        return id;
     }
 
-    public void setIdEjecucion(Long idEjecucion) {
-        this.idEjecucion = idEjecucion;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Date getFecInicio() {
@@ -120,12 +119,10 @@ public class ResConciliacionDTO extends PadreDTO implements Serializable{
     public void setCodEscenario(String codEscenario) {
         this.codEscenario = codEscenario;
     }
-    
- 
-    
-    public ResConciliacion toEntity(){
+
+    public ResConciliacion toEntity() {
         ResConciliacion entity = new ResConciliacion();
-        entity.setIdEjecucion(idEjecucion);
+        entity.setIdEjecucion(id);
         entity.setEstado(estado);
         entity.setFecFin(fecFin);
         entity.setFecInicio(fecInicio);
@@ -137,8 +134,7 @@ public class ResConciliacionDTO extends PadreDTO implements Serializable{
         entity.setCodConciliacion(codConciliacion);
         entity.setCodEscenario(codEscenario);
         return entity;
-        
+
     }
 
-    
 }
