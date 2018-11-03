@@ -27,7 +27,7 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private String descripcion;
     private String usuarioAsignado;
     private String paquete;
-    private String estadoAprobacion;
+    //private String estadoAprobacion;
     private String requiereAprobacion;
     
     
@@ -93,13 +93,13 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
         this.camposTablaDestino = camposTablaDestino;
     }
 
-    public String getEstadoAprobacion() {
+    /*public String getEstadoAprobacion() {
         return estadoAprobacion;
     }
 
     public void setEstadoAprobacion(String estadoAprobacion) {
         this.estadoAprobacion = estadoAprobacion;
-    }
+    }*/
 
     public String getRequiereAprobacion() {
         return requiereAprobacion;
