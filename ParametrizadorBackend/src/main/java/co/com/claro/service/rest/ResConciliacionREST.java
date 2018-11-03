@@ -50,7 +50,7 @@ public class ResConciliacionREST {
         List<ResConciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<ResConciliacionDTO> lstDTO;
         if (estado != null && !estado.isEmpty()) {
-            lstDTO = lst.stream().map(item -> item.toDTO()).filter(dto -> dto.getEstado().contains(estado)).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
+            lstDTO = lst.stream().map(item -> item.toDTO()).filter(dto -> dto.getEstado()!= null).filter(dto -> estado.contains(dto.getEstado())).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
         } else {
             lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
         }
