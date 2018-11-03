@@ -61,10 +61,10 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
     }
    
 
-    public List<Conciliacion> findByAprobacion(String requiereAprobacion, String estadoAprobacion){
-        logger.log(Level.INFO, "requiereAprobacion:{0}estadoAprobacion:{1}", new Object[]{requiereAprobacion, estadoAprobacion});     
+    public List<Conciliacion> findByAprobacion(String requiereAprobacion){
+        logger.log(Level.INFO, "requiereAprobacion:{0}", new Object[]{requiereAprobacion});     
         TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByAprobacion", Conciliacion.class);
-        query.setParameter("requiereAprobacion", "%" + requiereAprobacion + "%");
+        //query.setParameter("requiereAprobacion", "%" + requiereAprobacion + "%");
         List<Conciliacion> results = query.getResultList();
         if (results == null) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");

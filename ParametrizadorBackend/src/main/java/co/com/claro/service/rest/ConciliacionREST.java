@@ -124,11 +124,12 @@ public class ConciliacionREST {
     }
 
     @GET
-    @Path("/aprobacion")
+    @Path("/resultadosPorAprobar")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<ConciliacionDTO> findByAprobacion(@QueryParam("requiereaprobacion") String requiereaprobacion, @QueryParam("estadoaprobacion") String estadoaprobacion) {
-        logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{requiereaprobacion, estadoaprobacion});
-        List<Conciliacion> lst = managerDAO.findByAprobacion(requiereaprobacion, estadoaprobacion);
+    public List<ConciliacionDTO> findByResultadosPorAprobar() {
+        //logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{requiereaprobacion});
+        //String requiereaprobacion = "PORAPROBAR";
+        List<Conciliacion> lst = managerDAO.findByAprobacion(null);
         List<ConciliacionDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ConciliacionDTO::getId)).collect(toList());
         List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>) (List<?>) lstDTO;
         return lstFinal;
