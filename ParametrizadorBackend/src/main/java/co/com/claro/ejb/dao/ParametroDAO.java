@@ -11,6 +11,7 @@ import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -80,8 +81,9 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro>{
         logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{tipo,codPadre});     
         TypedQuery<Parametro> query = em.createNamedQuery("Parametro.findByCodPadre", Parametro.class);
         query.setParameter("tipo", "%" + tipo + "%");
-        query.setParameter("codigoPadre", 5);
-        List<Parametro> results = query.getResultList();
+        //query.setParameter("codigoPadre", "%" + codPadre + "%");
+        List<Parametro> aux = query.getResultList();
+        List<Parametro> results = aux.stream().filter(parametro -> codPadre.equals(parametro.getCodPadre())).collect(Collectors.toList());
         if (results == null) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }

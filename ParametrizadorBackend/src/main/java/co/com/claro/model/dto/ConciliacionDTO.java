@@ -27,6 +27,9 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private String descripcion;
     private String usuarioAsignado;
     private String paquete;
+    private String estadoAprobacion;
+    private String requiereAprobacion;
+    
     
     private Set<EscenarioDTO> escenarios;
     private Set<WsTransformacionDTO> transformaciones;
@@ -89,6 +92,22 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     public void setCamposTablaDestino(String camposTablaDestino) {
         this.camposTablaDestino = camposTablaDestino;
     }
+
+    public String getEstadoAprobacion() {
+        return estadoAprobacion;
+    }
+
+    public void setEstadoAprobacion(String estadoAprobacion) {
+        this.estadoAprobacion = estadoAprobacion;
+    }
+
+    public String getRequiereAprobacion() {
+        return requiereAprobacion;
+    }
+
+    public void setRequiereAprobacion(String requiereAprobacion) {
+        this.requiereAprobacion = requiereAprobacion;
+    }
     
     
     public Set<EscenarioDTO> getEscenarios() {
@@ -139,6 +158,8 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
         entity.setDescripcion(this.descripcion);
         entity.setTablaDestino(this.tablaDestino);
         entity.setCamposTablaDestino(this.camposTablaDestino);
+        entity.setEstadoAprobacion(this.estadoAprobacion);
+        entity.setRequiereAprobacion(this.requiereAprobacion);
         entity.setPolitica(this.idPolitica != null ? new Politica(this.idPolitica) : null);
         return entity;
         

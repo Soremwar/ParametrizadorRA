@@ -52,6 +52,8 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         query.setParameter("nombrePolitica", "%" + busqueda + "%");
         query.setParameter("usuarioAsignado", "%" + busqueda + "%");
         query.setParameter("nombreEscenario", "%" + busqueda + "%");
+        query.setParameter("requiereAprobacion", "%" + busqueda + "%");
+        query.setParameter("estadoAprobacion", "%" + busqueda + "%");
         List<Conciliacion> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
@@ -59,28 +61,19 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         return results;
     }
    
-    
-    /**
-     * Busca la jerarquia por un id
-     * @param id identificador unico a buscar
-     * @return Retorna un item con su jerarquia
-     
-    public Conciliacion findByAllTreeById(int id){
-        TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findAllTreeById", Conciliacion.class);
-        query.setParameter("idConciliacion", id);
-        //Conciliacion result = query.getSingleResult();
-        //em.getEntityManagerFactory().getCache().evictAll();
+
+    public List<Conciliacion> findByAprobacion(String requiereAprobacion, String estadoAprobacion){
+        logger.log(Level.INFO, "requiereAprobacion:{0}estadoAprobacion:{1}", new Object[]{requiereAprobacion, estadoAprobacion});     
+        TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByAprobacion", Conciliacion.class);
+        query.setParameter("requiereAprobacion", "%" + requiereAprobacion + "%");
+        query.setParameter("estadoAprobacion", "%" + estadoAprobacion + "%");
         List<Conciliacion> results = query.getResultList();
-        Conciliacion foundEntity = null;
-        if(!results.isEmpty()){
-            // ignores multiple results
-            foundEntity = results.get(0);
+        if (results == null) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
-        if (foundEntity == null) {
-            throw new DataNotFoundException("No se encontraron datos");
-        }        
-        return foundEntity; 
-    }*/
+        return results;
+    }
+   
     
     /**
      * Buscar el texto en todas columnas con paginado

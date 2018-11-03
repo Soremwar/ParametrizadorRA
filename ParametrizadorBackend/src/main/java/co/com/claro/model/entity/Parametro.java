@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Parametro.findByFechaActualizacion", query = "SELECT p FROM Parametro p WHERE p.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "Parametro.findByAnyColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) LIKE lower(:parametro) or lower(p.descripcion) LIKE lower(:descripcion) or lower(p.tipo) LIKE lower(:tipo)")
     , @NamedQuery(name = "Parametro.findByColumn", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.parametro) = lower(:parametro) or lower(p.descripcion) = lower(:descripcion)")
-    , @NamedQuery(name = "Parametro.findByCodPadre", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.tipo) LIKE lower(:tipo) or p.codPadre = :codigoPadre")})
+    , @NamedQuery(name = "Parametro.findByCodPadre", query = "SELECT DISTINCT(p) FROM Parametro p WHERE lower(p.tipo) LIKE lower(:tipo)")})
 
 public class Parametro implements Serializable {
 

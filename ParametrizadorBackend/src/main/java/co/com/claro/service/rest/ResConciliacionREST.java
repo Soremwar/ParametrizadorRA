@@ -1,0 +1,59 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package co.com.claro.service.rest;
+
+import co.com.claro.ejb.dao.ResConciliacionDAO;
+import co.com.claro.model.dto.ResConciliacionDTO;
+import co.com.claro.model.entity.ResConciliacion;
+import static java.util.Comparator.comparing;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.persistence.Transient;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
+/**
+ *
+ * @author andresbedoya
+ */
+@Stateless
+@Path("resconciliacion")
+public class ResConciliacionREST {
+    @Transient
+    private static final Logger logger = Logger.getLogger(ResConciliacionREST.class.getSimpleName());
+
+    @EJB
+    protected ResConciliacionDAO managerDAO;
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ResConciliacionDTO> find(
+            @QueryParam("offset") int offset,
+            @QueryParam("limit") int limit,
+            @QueryParam("estado") String estado,
+            @QueryParam("orderby") String orderby) {
+        logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
+        List<ResConciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
+        List<ResConciliacionDTO> lstDTO;
+        if (estado != null) {
+            lstDTO = lst.stream().map(item -> item.toDTO()).filter(dto -> dto.getEstado().contains(estado)).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
+        } else {
+            lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
+        }
+        //UtilListas.ordenarLista(lstDTO, orderby);
+        List<ResConciliacionDTO> lstFinal = (List<ResConciliacionDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }
+    
+
+}

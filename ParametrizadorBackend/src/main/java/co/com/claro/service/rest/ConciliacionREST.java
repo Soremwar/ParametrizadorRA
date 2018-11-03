@@ -38,36 +38,40 @@ import javax.ws.rs.core.Response;
 
 /**
  * Clase que maneja el API Rest de la entidad
+ *
  * @author Andres Bedoya
  */
 @Path("conciliaciones")
-public class ConciliacionREST{
+public class ConciliacionREST {
+
     @Transient
     private static final Logger logger = Logger.getLogger(ConciliacionREST.class.getSimpleName());
 
     private String usuario = "admin";
     private String modulo = "conciliaciones";
-    
+
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;
-    
+
     @EJB
     protected PoliticaDAO padreDAO;
-    
+
     @EJB
     protected ConciliacionDAO managerDAO;
 
     @EJB
     protected EscenarioDAO escenarioDAO;
-    
+
     @EJB
     protected WsTransformacionDAO transformacionDAO;
 
     /**
      * Obtiene las Conciliaciones Paginadas
+     *
      * @param offset Desde cual item se retorna
      * @param limit Limite de items a retornar
-     * @param orderby Indica por cual campo descriptivo va a guardar (id, nombre, fechaCreacion)
+     * @param orderby Indica por cual campo descriptivo va a guardar (id,
+     * nombre, fechaCreacion)
      * @return Toda la lista de conciliaciones que corresponden con el criterio
      */
     @GET
@@ -80,47 +84,59 @@ public class ConciliacionREST{
         List<Conciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ConciliacionDTO::getId)).collect(toList());
         UtilListas.ordenarLista(lstDTO, orderby);
-        List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>)(List<?>) lstDTO;
+        List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>) (List<?>) lstDTO;
         return lstFinal;
     }
 
-
     /**
      * Obtiene una Conciliacion por id
+     *
      * @param id Identificador de conciliacion
      * @return Una Conciliacion que coincide con el criterio
      */
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public ConciliacionDTO getById(@PathParam("id") int id){
-        logger.log(Level.INFO, "id:{0}" , id);
+    public ConciliacionDTO getById(@PathParam("id") int id) {
+        logger.log(Level.INFO, "id:{0}", id);
         Conciliacion entidad = managerDAO.find(id);
         return entidad.toDTO();
     }
 
-    
     /**
      * Busca las conciliaciones por cualquier columna
+     *
      * @param texto Texto a buscar en cualquier texto
      * @return Lista de Conciliacions que cumplen con el criterio
      */
     @GET
     @Path("/findByAny")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<ConciliacionDTO> findByAnyColumn(@QueryParam("texto") String texto){
+    public List<ConciliacionDTO> findByAnyColumn(@QueryParam("texto") String texto) {
         logger.log(Level.INFO, "texto:{0}", texto);
         List<Conciliacion> lst = managerDAO.findByAnyColumn(texto);
         List<PadreDTO> lstDTO = new ArrayList<>();
         lst.forEach((entidad) -> {
             lstDTO.add(entidad.toDTO());
         });
-        List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>)(List<?>) lstDTO;
+        List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>) (List<?>) lstDTO;
         return lstFinal;
     }
 
-     /**
+    @GET
+    @Path("/aprobacion")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ConciliacionDTO> findByAprobacion(@QueryParam("requiereaprobacion") String requiereaprobacion, @QueryParam("estadoaprobacion") String estadoaprobacion) {
+        logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{requiereaprobacion, estadoaprobacion});
+        List<Conciliacion> lst = managerDAO.findByAprobacion(requiereaprobacion, estadoaprobacion);
+        List<ConciliacionDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ConciliacionDTO::getId)).collect(toList());
+        List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>) (List<?>) lstDTO;
+        return lstFinal;
+    }
+
+    /**
      * Crea una nueva politica
+     *
      * @param dto Entidad que se va a agregar
      * @return el la dto recien creada
      */
@@ -132,33 +148,34 @@ public class ConciliacionREST{
         Politica entidadPadreJPA;
         Conciliacion entidadJPA = dto.toEntity();
         entidadPadreJPA = padreDAO.find(dto.getIdPolitica());
-        if ( entidadPadreJPA != null) {
-                entidadJPA.setPolitica(null);
-                managerDAO.create(entidadJPA);
-                entidadJPA.setPolitica(entidadPadreJPA);
+        if (entidadPadreJPA != null) {
+            entidadJPA.setPolitica(null);
+            managerDAO.create(entidadJPA);
+            entidadJPA.setPolitica(entidadPadreJPA);
+            managerDAO.edit(entidadJPA);
+            entidadPadreJPA.addConciliaciones(entidadJPA);
+            padreDAO.edit(entidadPadreJPA);
+
+            if (dto.getPaquete() != null) {
+                WsTransformacion transformacion = new WsTransformacion();
+                transformacion.setFechaCreacion(Date.from(Instant.now()));
+                transformacion.setNombreWs(dto.getPaquete());
+                transformacion.setPaqueteWs(dto.getPaquete());
+                transformacionDAO.create(transformacion);
+                transformacion.setConciliacion(entidadJPA);
+                transformacionDAO.edit(transformacion);
+                entidadJPA.addTransformacion(transformacion);
                 managerDAO.edit(entidadJPA);
-                entidadPadreJPA.addConciliaciones(entidadJPA);
-                padreDAO.edit(entidadPadreJPA);
-                
-                if (dto.getPaquete() != null) {
-                    WsTransformacion transformacion = new WsTransformacion();
-                    transformacion.setFechaCreacion(Date.from(Instant.now()));            
-                    transformacion.setNombreWs(dto.getPaquete());
-                    transformacion.setPaqueteWs(dto.getPaquete());
-                    transformacionDAO.create(transformacion);
-                    transformacion.setConciliacion(entidadJPA);
-                    transformacionDAO.edit(transformacion);
-                    entidadJPA.addTransformacion(transformacion);
-                    managerDAO.edit(entidadJPA);
-                }
+            }
         }
         LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
-    
+
     /**
      * Actualiza la entidad por su Id
+     *
      * @param entidad conciliacion con la cual se va a trabajar
      * @return el resultado de la operacion
      */
@@ -183,9 +200,9 @@ public class ConciliacionREST{
             entidadJPA.setCamposTablaDestino(entidad.getCamposTablaDestino() != null ? entidad.getCamposTablaDestino() : entidadJPA.getCamposTablaDestino());
             entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadJPA.getDescripcion());
             entidadJPA.setUsuarioAsignado(entidad.getUsuarioAsignado() != null ? entidad.getUsuarioAsignado() : entidadJPA.getUsuarioAsignado());
-            entidadJPA.setPolitica(entidad.getIdPolitica() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadJPA.getPolitica());
+            entidadJPA.setPolitica(entidad.getIdPolitica() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getPolitica());
             managerDAO.edit(entidadJPA);
-            if ((entidadPadreJPA != null)){
+            if ((entidadPadreJPA != null)) {
                 entidadPadreJPA.addConciliaciones(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
@@ -194,11 +211,12 @@ public class ConciliacionREST{
             return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
-      
+
     }
-    
+
     /**
      * Borra una conciliacion por su Id
+     *
      * @param id Identificador de la identidad
      * @return el resultado de la operacion
      */
@@ -226,7 +244,7 @@ public class ConciliacionREST{
     @GET
     @Path("/count")
     @Produces({MediaType.APPLICATION_JSON})
-    public int count(){
+    public int count() {
         return managerDAO.count();
     }
 }
