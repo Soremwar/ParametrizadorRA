@@ -6,6 +6,7 @@
 package co.com.claro.service.soap.odi.producer;
 
 import co.com.claro.ejb.dao.utils.Propiedades;
+import co.com.claro.model.dto.request.LoadPlanRequestDTO;
 import co.com.claro.service.soap.odi.consumer.GetWebServiceVersionRequest;
 import co.com.claro.service.soap.odi.consumer.GetWebServiceVersionResponse;
 import co.com.claro.service.soap.odi.consumer.LoadPlanStatusRequestType;
@@ -35,7 +36,7 @@ import javax.jws.WebService;
  *
  * @author andresbedoya
  */
-@Stateless
+@Stateless(name = "SessionEJBName", mappedName = "stars21_web-Model-SessionEJB")
 @WebService(name = "WebServiceODIPortType", serviceName = "WebServiceODIdService")
 public class WebServiceOdi {
     
@@ -53,7 +54,7 @@ public class WebServiceOdi {
         System.out.println("startLoadPlan()..." + c.startLoadPlan("odiUser", "odiPassword", "workRepository", "loadPlanName", "contexto"));
         
         //loadPlans
-        List<LoadPlanStatusRequestType> loadPlans = new ArrayList<>();
+        List<LoadPlanRequestDTO> loadPlans = new ArrayList<>();
         System.out.println("loadStatus()..." + c.loadPlanStatus("odiUser", "odiPassword", "workRepository", loadPlans));
 
         //stopPlans
@@ -124,7 +125,7 @@ public class WebServiceOdi {
     
     @WebMethod(operationName = "loadPlanStatus")
     //@WebResult(name = "OdiGetLoadPlanStatus")
-    public List<LoadPlanStatusType> loadPlanStatus(@WebParam(name = "OdiUser") String odiUser, @WebParam(name = "odiPassword") String odiPassword, @WebParam(name = "workRepository") String workRepository,  List<LoadPlanStatusRequestType> loadPlans) {
+    public List<LoadPlanStatusType> loadPlanStatus(@WebParam(name = "OdiUser") String odiUser, @WebParam(name = "odiPassword") String odiPassword, @WebParam(name = "workRepository") String workRepository,  List<LoadPlanRequestDTO> loadPlans) {
         OdiInvoke odi = new OdiInvoke();
 
         //Creando objeto Request Credentials
@@ -135,8 +136,11 @@ public class WebServiceOdi {
         request.setCredentials(odiCredentialType);
         
         //Creando objeto Request LoadPlans
-        LoadPlanStatusRequestType loadPlanStatusRequest = new LoadPlanStatusRequestType();
-        for (LoadPlanStatusRequestType item : loadPlans) {
+        
+        for (LoadPlanRequestDTO item : loadPlans) {
+            LoadPlanStatusRequestType loadPlanStatusRequest = new LoadPlanStatusRequestType();
+            loadPlanStatusRequest.setLoadPlanInstanceId(item.getLoadPlanInstanceId());
+            loadPlanStatusRequest.setLoadPlanRunNumber(item.getLoadPlanRunNumber());
             request.getLoadPlans().add(loadPlanStatusRequest);
         }
         
