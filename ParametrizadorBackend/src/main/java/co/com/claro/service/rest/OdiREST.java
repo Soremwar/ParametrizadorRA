@@ -36,7 +36,7 @@ public class OdiREST{
 
     @POST
     @Path("/startLoadPlan")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON})
     //public OdiStartLoadPlanType startLoadPlan(StartLoadPlanRequestDTO request) {
     public OdiStartLoadPlanType startLoadPlan(StartLoadPlanRequestDTO request) {
         OdiStartLoadPlanType startLoadPlan = webServiceOdi.startLoadPlan(request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanName(), request.getContexto());
@@ -45,14 +45,14 @@ public class OdiREST{
 
     @POST
     @Path("/stopLoadPlan")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON})
     public OdiStopLoadPlanType stopLoadPlan(StopLoadPlanRequestDTO request) {
         return webServiceOdi.stopLoadPlan(request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanInstance(), request.getLoadPlanInstanceRunCount(), request.getStopLevel());
     }   
     
     @POST
     @Path("/loadPlanStatus")
-    @Produces({MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<LoadPlanStatusType> loadPlanStatus(LoadPlanStatusRequestDTO request) {
         return webServiceOdi.loadPlanStatus(request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlans());
     }  
