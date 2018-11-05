@@ -167,6 +167,7 @@ public class ConciliacionREST {
                 transformacionDAO.edit(transformacion);
                 entidadJPA.addTransformacion(transformacion);
                 managerDAO.edit(entidadJPA);
+                padreDAO.edit(entidadPadreJPA);
             }
         }
         LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
