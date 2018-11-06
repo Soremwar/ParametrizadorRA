@@ -128,5 +128,10 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         }*/
         return results;
     }
+    
+    public void create(Conciliacion entity) {
+        getEntityManager().persist(entity);
+        
+    }
 }
 

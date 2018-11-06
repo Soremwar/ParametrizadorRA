@@ -8,6 +8,7 @@ package co.com.claro.ejb.dao;
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
 import co.com.claro.model.entity.Resultado;
 import co.com.claro.model.entity.WsTransformacion;
+import co.com.claro.service.rest.excepciones.DataAlreadyExistException;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
@@ -93,13 +94,24 @@ public class WsTransformacionDAO extends AbstractJpaDAO<WsTransformacion>{
      */
     public List<Resultado> findByAnyColumn(String busqueda, int offset, int limit){
         logger.log(Level.INFO, "busqueda:{0}offset:{0}limit:{0}", new Object[]{busqueda, offset, limit});
-        TypedQuery<Resultado> query = em.createNamedQuery("Resultado.findByAnyColumn", Resultado.class);
+        TypedQuery<Resultado> query = em.createNamedQuery("WsTransformacion.findByAnyColumn", Resultado.class);
         query.setParameter("nombreResultado", "%" + busqueda + "%");
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         List<Resultado> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }
+        return results;
+    }
+    
+    public List<Resultado> verificarSiExistePaqueteWs(String paqueteWs){
+        logger.log(Level.INFO, "paqueteWs:{0}", new Object[]{paqueteWs});
+        TypedQuery<Resultado> query = em.createNamedQuery("WsTransformacion.findByPaqueteWs", Resultado.class);
+        query.setParameter("paqueteWs", paqueteWs);
+        List<Resultado> results = query.getResultList();
+        if (results != null && !results.isEmpty()) {
+            throw new DataAlreadyExistException("El paquete ya existe");
         }
         return results;
     }

@@ -12,7 +12,9 @@ import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.model.entity.WsTransformacion;
+import co.com.claro.service.rest.excepciones.DataAlreadyExistException;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import co.com.claro.service.rest.response.ResponseCode;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -149,6 +151,12 @@ public class ConciliacionREST {
         Politica entidadPadreJPA;
         Conciliacion entidadJPA = dto.toEntity();
         entidadPadreJPA = padreDAO.find(dto.getIdPolitica());
+        transformacionDAO.verificarSiExistePaqueteWs(dto.getPaquete());
+        /*if (transformacionDAO.findByPaqueteWs(dto.getPaquete()) != null) {
+            //throw new DataAlreadyExistException(Response.Status.NOT_ACCEPTABLE.getReasonPhrase() +  dto.getPaquete());
+            WrapperResponseEntity response = new WrapperResponseEntity(ResponseCode.CONFLICT,  "Informacion ya existe", "El paquete " + dto.getPaquete() + " ya existe");
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(response).build();
+        }*/ 
         if (entidadPadreJPA != null) {
             entidadJPA.setPolitica(null);
             managerDAO.create(entidadJPA);

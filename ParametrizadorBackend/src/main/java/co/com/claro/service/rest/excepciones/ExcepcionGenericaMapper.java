@@ -41,6 +41,8 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
 
         if (e instanceof NotFoundException || e.getCause() instanceof DataNotFoundException) {
             response = new WrapperResponseEntity(ResponseCode.NOT_FOUND, mensaje, descripcion);
+	} else if (e instanceof DataAlreadyExistException) {
+            response = new WrapperResponseEntity(ResponseCode.CONFLICT, mensaje, descripcion);
 	} else if (e instanceof NotAllowedException) {
             response = new WrapperResponseEntity(ResponseCode.FORBIDDEN, mensaje, descripcion);
 	} else if (e instanceof JsonProcessingException) {
