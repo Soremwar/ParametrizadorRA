@@ -79,7 +79,6 @@ public class FacadeODI {
         //Creando objeto Request OdiStopLoadPlanRequest
         StopLoadPlanRequestType stopLoadPlanRequestType = new StopLoadPlanRequestType();
         stopLoadPlanRequestType.setLoadPlanInstanceId(loadPlanInstance);
-        stopLoadPlanRequestType.setLoadPlanInstanceRunCount(loadPlanInstance);
         stopLoadPlanRequestType.setStopLevel(stopLevel);
         request.setOdiStopLoadPlanRequest(stopLoadPlanRequestType);
 
