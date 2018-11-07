@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Parametro.findAll", query = "SELECT p FROM Parametro p")
     , @NamedQuery(name = "Parametro.findByCodParametro", query = "SELECT p FROM Parametro p WHERE p.id = :codParametro")
-    , @NamedQuery(name = "Parametro.findByParametro", query = "SELECT p FROM Parametro p WHERE p.parametro = :parametro")
+    , @NamedQuery(name = "Parametro.findByParametro", query = "SELECT p FROM Parametro p WHERE p.tipo = :tipo AND p.parametro = :parametro")
     , @NamedQuery(name = "Parametro.findByValor", query = "SELECT p FROM Parametro p WHERE p.valor = :valor")
     , @NamedQuery(name = "Parametro.findByDescripcion", query = "SELECT p FROM Parametro p WHERE p.descripcion = :descripcion")
     , @NamedQuery(name = "Parametro.findByFechaCreacion", query = "SELECT p FROM Parametro p WHERE p.fechaCreacion = :fechaCreacion")

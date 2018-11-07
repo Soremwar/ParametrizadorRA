@@ -5,7 +5,6 @@
  */
 package co.com.claro.service.soap.odi.producer;
 
-import co.com.claro.ejb.dao.utils.Propiedades;
 import co.com.claro.model.dto.request.LoadPlanRequestDTO;
 import co.com.claro.service.soap.odi.consumer.GetWebServiceVersionRequest;
 import co.com.claro.service.soap.odi.consumer.GetWebServiceVersionResponse;
@@ -23,59 +22,27 @@ import co.com.claro.service.soap.odi.consumer.OdiStopLoadPlanResponse;
 import co.com.claro.service.soap.odi.consumer.OdiStopLoadPlanType;
 import co.com.claro.service.soap.odi.consumer.StartLoadPlanRequestType;
 import co.com.claro.service.soap.odi.consumer.StopLoadPlanRequestType;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
 
 /**
  *
  * @author andresbedoya
  */
-@Stateless(name = "SessionEJBName", mappedName = "stars21_web-Model-SessionEJB")
-@WebService(name = "WebServiceODIPortType", serviceName = "WebServiceODIdService")
 public class WebServiceOdi {
-    
-    public static void main(String[] args) {
-        
-        WebServiceOdi c = new WebServiceOdi();
-        OdiInvoke odi = new OdiInvoke();
 
-        //getVersion()
-        GetWebServiceVersionRequest requestVersion = new GetWebServiceVersionRequest();
-        GetWebServiceVersionResponse responseVersion = odi.getOdiInvokeRequestSOAP11Port0().getVersion(requestVersion);
-        System.out.println("getVersion()..." + c.getVersion());
-        
-        //startLoadPlans
-        System.out.println("startLoadPlan()..." + c.startLoadPlan("odiUser", "odiPassword", "workRepository", "loadPlanName", "contexto"));
-        
-        //loadPlans
-        List<LoadPlanRequestDTO> loadPlans = new ArrayList<>();
-        System.out.println("loadStatus()..." + c.loadPlanStatus("odiUser", "odiPassword", "workRepository", loadPlans));
-
-        //stopPlans
-        System.out.println("loadStatus()..." + c.stopLoadPlan("odiUser", "odiPassword", "workRepository", 0, 0, "stopLevel"));
-        
-        Propiedades.loadProperties();
-    }
     
-    @WebMethod(operationName = "getVersion")
-    public String getVersion() {
+    public String getVersion(String wsdl) {
         // TODO code application logic here
-        OdiInvoke odi = new OdiInvoke();
+        OdiInvoke odi = new OdiInvoke(wsdl);
         GetWebServiceVersionRequest requestVersion = new GetWebServiceVersionRequest();
         GetWebServiceVersionResponse responseVersion = odi.getOdiInvokeRequestSOAP11Port0().getVersion(requestVersion);
         return responseVersion.getVersion();
     }
     
-    @WebMethod(operationName = "startLoadPlan")
-    @WebResult(name = "executionInfo")
-    public OdiStartLoadPlanType startLoadPlan(@WebParam(name = "OdiUser") String odiUser, @WebParam(name = "odiPassword") String odiPassword, @WebParam(name = "workRepository") String workRepository, 
-            @WebParam(name = "loadPlanName") String loadPlanName, @WebParam(name = "contexto") String contexto) {
+
+    public OdiStartLoadPlanType startLoadPlan(String wsdl, String odiUser, String odiPassword, String workRepository, 
+            String loadPlanName, String contexto) {
+
         //Creando objeto Request
         OdiInvoke odi = new OdiInvoke();
         OdiStartLoadPlanRequest request = new OdiStartLoadPlanRequest();
@@ -97,10 +64,8 @@ public class WebServiceOdi {
         return response.getExecutionInfo();
     }
     
-    @WebMethod(operationName = "stopLoadPlan")
-    @WebResult(name = "OdiStopLoadPlanResponse")
-    public OdiStopLoadPlanType stopLoadPlan(@WebParam(name = "OdiUser") String odiUser, @WebParam(name = "odiPassword") String odiPassword, @WebParam(name = "workRepository") String workRepository, 
-                @WebParam(name = "loadPlanInstance") long loadPlanInstance, @WebParam(name = "loadPlanInstanceRunCount") long loadPlanInstanceRunCount, @WebParam(name = "stopLevel") String stopLevel) {
+    public OdiStopLoadPlanType stopLoadPlan(String wsdl, String odiUser, String odiPassword, String workRepository, 
+                long loadPlanInstance, long loadPlanInstanceRunCount,  String stopLevel) {
         
         OdiInvoke odi = new OdiInvoke();        
         OdiStopLoadPlanRequest request = new OdiStopLoadPlanRequest();
@@ -123,9 +88,8 @@ public class WebServiceOdi {
         return response.getExecutionInfo();
     }
     
-    @WebMethod(operationName = "loadPlanStatus")
-    //@WebResult(name = "OdiGetLoadPlanStatus")
-    public List<LoadPlanStatusType> loadPlanStatus(@WebParam(name = "OdiUser") String odiUser, @WebParam(name = "odiPassword") String odiPassword, @WebParam(name = "workRepository") String workRepository,  List<LoadPlanRequestDTO> loadPlans) {
+
+    public List<LoadPlanStatusType> loadPlanStatus(String wsdl, String odiUser, String odiPassword, String workRepository,  List<LoadPlanRequestDTO> loadPlans) {
         OdiInvoke odi = new OdiInvoke();
 
         //Creando objeto Request Credentials
@@ -149,16 +113,6 @@ public class WebServiceOdi {
         
         return response.getLoadPlanStatusResponse();
     }
-    
-    @WebMethod(operationName = "helloWorld")
-    public String sayHelloWorld(String message) {
-        try {
-            System.out.println("sayHelloWorld:" + message);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        
-        return "Here is the message: '" + message + "'";
-    }
+
     
 }

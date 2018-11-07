@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "OdiInvokeCallback", targetNamespace = "xmlns.oracle.com/odi/OdiInvoke/", wsdlLocation = "http://localhost:8088/mockInvokeRequestSOAP11Binding?WSDL")
+@WebServiceClient(name = "OdiInvokeCallback", targetNamespace = "xmlns.oracle.com/odi/OdiInvoke/", wsdlLocation = "http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl")
 public class OdiInvokeCallback
     extends Service
 {
@@ -30,7 +30,7 @@ public class OdiInvokeCallback
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8088/mockInvokeRequestSOAP11Binding?WSDL");
+            url = new URL("http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

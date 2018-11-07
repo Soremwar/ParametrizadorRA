@@ -89,6 +89,15 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro>{
         }
         return results;
     }
+    
+    public String findByParametro(String tipo, String parametro){
+        logger.log(Level.INFO, "tipo:{0}nombre:{1}", new Object[]{tipo,parametro});     
+        TypedQuery<Parametro> query = em.createNamedQuery("Parametro.findByParametro", Parametro.class);
+        query.setParameter("tipo", tipo);
+        query.setParameter("parametro", parametro);
+        List<Parametro> result = query.getResultList();
+        return result.get(0).getValor();
+    }
    
 }
 
