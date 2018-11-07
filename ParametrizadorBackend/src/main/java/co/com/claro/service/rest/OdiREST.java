@@ -5,10 +5,10 @@ import co.com.claro.model.dto.RequestURLDTO;
 import co.com.claro.model.dto.request.LoadPlanStatusRequestDTO;
 import co.com.claro.model.dto.request.StartLoadPlanRequestDTO;
 import co.com.claro.model.dto.request.StopLoadPlanRequestDTO;
-import co.com.claro.service.soap.odi.consumer.LoadPlanStatusType;
-import co.com.claro.service.soap.odi.consumer.OdiStartLoadPlanType;
-import co.com.claro.service.soap.odi.consumer.OdiStopLoadPlanType;
-import co.com.claro.service.soap.odi.producer.WebServiceOdi;
+import com.oracle.xmlns.odi.odiinvoke.FacadeODI;
+import com.oracle.xmlns.odi.odiinvoke.LoadPlanStatusType;
+import com.oracle.xmlns.odi.odiinvoke.OdiStartLoadPlanType;
+import com.oracle.xmlns.odi.odiinvoke.OdiStopLoadPlanType;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -32,88 +32,36 @@ public class OdiREST{
     protected ParametroDAO parametrosDAO;
     
     //@EJB(mappedName="stars21_web-Model-SessionEJB")
-    protected WebServiceOdi webServiceOdi = new WebServiceOdi();
+    protected FacadeODI facadeODI = new FacadeODI();
     
-    protected String url = "http://192.168.0.5:8088/mockInvokeRequestSOAP11Binding?wsdl";
-    
-    @POST
-    @Path("/setURL")
-    public String setURL(RequestURLDTO request) {
-        url = request.getUrl();
-        //"http://localhost:8088/mockInvokeRequestSOAP11Binding?WSDL";
-        return url;
-    }
-
-    @GET
-    @Path("/getUrlOdiActual")
-    public String getUrlODI() {
-        return url;
-    }  
-    
-    /*
-        @GET
-    @Path("/getUrlODI")
-    public String getUrlODI() {
-        try {
-            url = parametrosDAO.findByParametro("SISTEMA", "odiUrl");
-        } catch (Exception e) {
-            url = getUrlODIDefault();
-        }
-        return url;
-    }  
-    */
+    protected String wsdlLocation = getWsdlLocationODIFromDB(); // = "http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl";
+    //"http://Server-ODI:8088/mockInvokeRequestSOAP11Binding?wsdl";
     
     @GET
-    @Path("/getUrlODIFromDB")
-    public String getUrlODIFromDB() {
+    @Path("/getWsdlLocationODIFromDB")
+    public String getWsdlLocationODIFromDB() {
+        String wsdlLocation;
         try {
-            url = parametrosDAO.findByParametro("SISTEMA", "odiUrl");
+            wsdlLocation = parametrosDAO.findByParametro("SISTEMA", "odiUrl");
         } catch (Exception e) {
-            url = getUrlODIDefault();
+            wsdlLocation = "http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl";
         }
-        return url;
+        return wsdlLocation;
     }  
     
-    @POST
+    @GET
     @Path("/getVersion")
-    public String getVersion(RequestURLDTO request) {
-        return webServiceOdi.getVersion(request.getUrl());
+    public String getVersion() {
+        return facadeODI.getVersion(wsdlLocation);
         
-    }
-    
-    /*@GET
-    @Path("/getVersion")
-    public String getVersion(String host, String puerto, ) {
-        url = getUrlODI();
-        //"http://localhost:8088/mockInvokeRequestSOAP11Binding?WSDL";//getUrlODI();
-        return webServiceOdi.getVersion("http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl");
-    }*/
-    
-    @GET
-    @Path("/getVersionMock")
-    public String getVersionMockup() {
-        url = getUrlODI();
-        //"http://localhost:8088/mockInvokeRequestSOAP11Binding?WSDL";//getUrlODI();
-        return webServiceOdi.getVersion("http://192.168.0.5:9090/odiMockup?WSDL");
-    }
-    
-    
-    @GET
-    @Path("/getUrlODIDefault")
-    public String getUrlODIDefault() {
-        return "http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl";
-    }
-    
-    
-
+    }  
     
     @POST
     @Path("/startLoadPlan")
     @Produces({MediaType.APPLICATION_JSON})
     //public OdiStartLoadPlanType startLoadPlan(StartLoadPlanRequestDTO request) {
     public OdiStartLoadPlanType startLoadPlan(StartLoadPlanRequestDTO request) {
-        url = getUrlODI();
-        OdiStartLoadPlanType startLoadPlan = webServiceOdi.startLoadPlan(url, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanName(), request.getContexto());
+        OdiStartLoadPlanType startLoadPlan = facadeODI.startLoadPlan(wsdlLocation, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanName(), request.getContexto());
         return startLoadPlan;
     }   
 
@@ -121,16 +69,14 @@ public class OdiREST{
     @Path("/stopLoadPlan")
     @Produces({MediaType.APPLICATION_JSON})
     public OdiStopLoadPlanType stopLoadPlan(StopLoadPlanRequestDTO request) {
-        url = getUrlODI();
-        return webServiceOdi.stopLoadPlan(url, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanInstance(), request.getLoadPlanInstanceRunCount(), request.getStopLevel());
+        return facadeODI.stopLoadPlan(wsdlLocation, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanInstance(), request.getLoadPlanInstanceRunCount(), request.getStopLevel());
     }   
     
     @POST
     @Path("/loadPlanStatus")
     @Produces({MediaType.APPLICATION_JSON})
     public List<LoadPlanStatusType> loadPlanStatus(LoadPlanStatusRequestDTO request) {
-        url = getUrlODI();
-        return webServiceOdi.loadPlanStatus(url, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlans());
+        return facadeODI.loadPlanStatus(wsdlLocation, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlans());
     }  
 
 
