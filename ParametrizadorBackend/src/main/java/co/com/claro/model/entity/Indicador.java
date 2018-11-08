@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "TBL_GAI_INDICADORES")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Indicador.findAll", query = "SELECT i FROM Indicador i")
+    @NamedQuery(name = "Indicador.findAll", query = "SELECT i FROM Indicador i ORDER BY i.id DESC")
     , @NamedQuery(name = "Indicador.findByCodIndicador", query = "SELECT i FROM Indicador i WHERE i.id = :codIndicador")
     , @NamedQuery(name = "Indicador.findByNombreFormula", query = "SELECT i FROM Indicador i WHERE i.nombreFormula = :nombreFormula")
     , @NamedQuery(name = "Indicador.findByDescripcion", query = "SELECT i FROM Indicador i WHERE i.descripcion = :descripcion")
@@ -52,7 +52,6 @@ public class Indicador implements Serializable {
     @Column(name = "DESCRIPCION")
     private String descripcion;
     
-    @Size(max = 500)
     @Column(name = "TEXTO_FORMULA")
     private String textoFormula;
     

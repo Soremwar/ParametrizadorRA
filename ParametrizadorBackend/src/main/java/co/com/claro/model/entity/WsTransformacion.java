@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "TBL_GAI_WS_TRANSFORMACIONES")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "WsTransformacion.findAll", query = "SELECT w FROM WsTransformacion w")
+    @NamedQuery(name = "WsTransformacion.findAll", query = "SELECT w FROM WsTransformacion w ORDER BY w.id")
     , @NamedQuery(name = "WsTransformacion.findByCodWs", query = "SELECT w FROM WsTransformacion w WHERE w.id = :codWs")
     , @NamedQuery(name = "WsTransformacion.findByNombreWs", query = "SELECT w FROM WsTransformacion w WHERE w.nombreWs = :nombreWs")
     , @NamedQuery(name = "WsTransformacion.findByPaqueteWs", query = "SELECT w FROM WsTransformacion w WHERE w.paqueteWs = :paqueteWs")

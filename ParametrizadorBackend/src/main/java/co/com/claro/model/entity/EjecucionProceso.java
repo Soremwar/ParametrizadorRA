@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "TBL_GAI_LOG_EJECUCION_PROCESOS")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "EjecucionProceso.findAll", query = "SELECT l FROM EjecucionProceso l")
+    @NamedQuery(name = "EjecucionProceso.findAll", query = "SELECT l FROM EjecucionProceso l ")
     , @NamedQuery(name = "EjecucionProceso.findByCodEjecucion", query = "SELECT l FROM EjecucionProceso l WHERE l.id = :codEjecucion")
     , @NamedQuery(name = "EjecucionProceso.findByNombre", query = "SELECT l FROM EjecucionProceso l WHERE l.nombre = :nombre")
     , @NamedQuery(name = "EjecucionProceso.findByCodEscenario", query = "SELECT l FROM EjecucionProceso l WHERE l.codEscenario = :codEscenario")

@@ -52,6 +52,7 @@ public abstract class AbstractJpaDAO<T> {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
         List<T> lst = getEntityManager().createQuery(cq).getResultList();
+        
         if (lst == null || lst.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos");
         }

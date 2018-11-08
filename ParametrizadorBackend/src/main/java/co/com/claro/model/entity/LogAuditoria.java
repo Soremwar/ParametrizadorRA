@@ -5,7 +5,6 @@
  */
 package co.com.claro.model.entity;
 
-import co.com.claro.service.rest.Constantes;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;

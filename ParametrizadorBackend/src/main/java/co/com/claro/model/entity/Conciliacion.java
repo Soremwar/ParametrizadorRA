@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.util.Collection;
 import static java.util.Comparator.comparing;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Basic;
@@ -45,7 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "TBL_GAI_CONCILIACION")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Conciliacion.findAll", query = "SELECT DISTINCT(c) FROM Conciliacion c")
+    @NamedQuery(name = "Conciliacion.findAll", query = "SELECT DISTINCT(c) FROM Conciliacion c ")
     //, @NamedQuery(name = "Conciliacion.findAllTree", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e ORDER BY c.id ASC") 
     //, @NamedQuery(name = "Conciliacion.findAllTreeById", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e WHERE c.id = :idConciliacion")  
     , @NamedQuery(name = "Conciliacion.findByCodConciliacion", query = "SELECT c FROM Conciliacion c WHERE c.id = :codConciliacion")
@@ -114,19 +115,15 @@ public class Conciliacion implements Serializable {
     private Politica politica;
     
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
-    @OrderBy("id DESC")
     private Collection<Escenario> escenarios;
 
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
-    @OrderBy("id DESC")
     private Collection<WsTransformacion> transformaciones;
 
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
-    @OrderBy("id DESC")
     private Collection<EjecucionProceso> ejecucionesProceso;
     
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
-    @OrderBy("fechaCreacion DESC")
     private Collection<QueryAprobacion> queriesAprobacion;
     
     public Conciliacion() {
@@ -312,22 +309,22 @@ public class Conciliacion implements Serializable {
         //entidadDTO.setEstadoAprobacion(estadoAprobacion);
         entidadDTO.setRequiereAprobacion(requiereAprobacion);
         if (escenarios != null) {
-            Set<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());
+            Set<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).sorted(comparing(EscenarioDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setEscenarios(lstEscenarios);
         }
         
         if (transformaciones != null) {
-            Set<WsTransformacionDTO> lstTransformaciones = transformaciones.stream().map((transformacionDTO) -> transformacionDTO.toDTO()).collect(Collectors.toSet());
+            Set<WsTransformacionDTO> lstTransformaciones = transformaciones.stream().map((transformacionDTO) -> transformacionDTO.toDTO()).sorted(comparing(WsTransformacionDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setTransformaciones(lstTransformaciones);
         }
 
         if (ejecucionesProceso != null) {
-            Set<EjecucionProcesoDTO> lstEjecuciones = ejecucionesProceso.stream().map((ejecucionProcesoDTO) -> ejecucionProcesoDTO.toDTO()).sorted(comparing(EjecucionProcesoDTO::getFechaEjecucion)).collect(Collectors.toSet());
+            Set<EjecucionProcesoDTO> lstEjecuciones = ejecucionesProceso.stream().map((ejecucionProcesoDTO) -> ejecucionProcesoDTO.toDTO()).sorted(comparing(EjecucionProcesoDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setEjecucionesProceso(lstEjecuciones);
         }
 
         if (queriesAprobacion != null) {
-            Set<QueryAprobacionDTO> lstAprobaciones = queriesAprobacion.stream().map((queriesAprobacionDTO) -> queriesAprobacionDTO.toDTO()).sorted(comparing(QueryAprobacionDTO::getFechaCreacion)).collect(Collectors.toSet());
+            Set<QueryAprobacionDTO> lstAprobaciones = queriesAprobacion.stream().map((queriesAprobacionDTO) -> queriesAprobacionDTO.toDTO()).sorted(comparing(QueryAprobacionDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setQueryAprobaciones(lstAprobaciones);
         }
         

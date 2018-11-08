@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "TBL_GAI_ESCENARIO")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Escenario.findAll", query = "SELECT DISTINCT(e) FROM Escenario e")
+    @NamedQuery(name = "Escenario.findAll", query = "SELECT DISTINCT(e) FROM Escenario e ")
     , @NamedQuery(name = "Escenario.findAllTree", query = "SELECT DISTINCT(e) FROM Escenario e LEFT JOIN FETCH e.conciliacion c")
     , @NamedQuery(name = "Escenario.findByCodEscenario", query = "SELECT e FROM Escenario e WHERE e.id = :codEscenario")
     , @NamedQuery(name = "Escenario.findByNombreEscenario", query = "SELECT e FROM Escenario e WHERE e.nombre = :nombreEscenario")
