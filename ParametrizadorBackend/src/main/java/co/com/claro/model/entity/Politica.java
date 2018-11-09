@@ -10,7 +10,9 @@ import co.com.claro.model.dto.PoliticaDTO;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Basic;
@@ -190,7 +192,7 @@ public class Politica implements Serializable {
         entidadDTO.setObjetivo(objetivo);
         entidadDTO.setDescripcion(descripcion);
         if (conciliaciones != null) {            
-            Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((conciliacionDTO) -> conciliacionDTO.toDTO()).collect(Collectors.toSet());
+            Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(ConciliacionDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setConciliaciones(lstConciliaciones);
         }
 

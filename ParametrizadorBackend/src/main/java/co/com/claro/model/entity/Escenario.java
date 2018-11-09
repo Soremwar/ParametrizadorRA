@@ -10,7 +10,9 @@ import co.com.claro.model.dto.IndicadorDTO;
 import co.com.claro.model.dto.QueryEscenarioDTO;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -217,12 +219,12 @@ public class Escenario implements Serializable {
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
         if (queryEscenarios != null) {
-            Set<QueryEscenarioDTO> lstqueryEscenarios = queryEscenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());
+            Set<QueryEscenarioDTO> lstqueryEscenarios = queryEscenarios.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(QueryEscenarioDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setQueryescenarios(lstqueryEscenarios);
         }
         
         if (indicadores != null) {
-            Set<IndicadorDTO> lstIndicadores = indicadores.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).collect(Collectors.toSet());
+            Set<IndicadorDTO> lstIndicadores = indicadores.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(IndicadorDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setIndicadores(lstIndicadores);
         }
         

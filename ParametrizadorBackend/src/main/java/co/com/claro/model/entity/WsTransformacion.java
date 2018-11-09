@@ -51,33 +51,31 @@ public class WsTransformacion implements Serializable {
     @Column(name = "COD_WS")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
     @Basic(optional = false)
     @Size(min = 1, max = 200)
     @Column(name = "NOMBRE_WS")
     private String nombreWs;
-    
-    
+
     @Basic(optional = false)
     @Size(min = 1, max = 200)
     @Column(name = "PAQUETE_WS")
     private String paqueteWs;
-    
+
     @Basic(optional = false)
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCreacion;
-    
+
     @Basic(optional = false)
     @Column(name = "FECHA_AGENDAMIENTO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaAgendamiento;
-    
+
     @Column(name = "FECHA_ACTUALIZACION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
-    
-    
+
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION", referencedColumnName = "COD_CONCILIACION")
     private Conciliacion conciliacion;
@@ -180,17 +178,16 @@ public class WsTransformacion implements Serializable {
         entidadDTO.setFechaAgendamiento(fechaAgendamiento);
         entidadDTO.setNombreWs(nombreWs);
         entidadDTO.setPaqueteWs(paqueteWs);
-        
+
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
         return entidadDTO;
-        
+
     }
-    
-    
+
     @Override
     public String toString() {
         return "co.com.claro.model.entity.WsTransformaciones[ codWs=" + id + " ]";
     }
-    
+
 }
