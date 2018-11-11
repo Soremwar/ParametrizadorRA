@@ -51,6 +51,8 @@ public class ResConciliacionDAO extends AbstractJpaDAO<ResConciliacion> {
         TypedQuery<ResConciliacion> query = em.createNamedQuery("ResConciliacion.findByAnyColumn", ResConciliacion.class);
         query.setParameter("id", "%" + busqueda + "%");
         query.setParameter("estado", "%" + busqueda + "%");
+        query.setParameter("codConciliacion", "%" + busqueda + "%");
+        query.setParameter("codEscenario", "%" + busqueda + "%");
         List<ResConciliacion> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
