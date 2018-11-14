@@ -7,6 +7,7 @@ import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.WsTransformacionDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ConciliacionDTO;
+import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.LogAuditoria;
@@ -255,4 +256,17 @@ public class ConciliacionREST {
     public int count() {
         return managerDAO.count();
     }
+    
+    @POST
+    @Path("/progEjecucion")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response setProgramacionEjecucion(WsTransformacionDTO dto){
+         WsTransformacion entidadJPA = transformacionDAO.find(dto.getId());
+         entidadJPA.setFechaAgendamiento(dto.getFechaAgendamiento());
+         logger.log(Level.INFO, "fecha agendamiento:{0}", entidadJPA);
+         transformacionDAO.edit(entidadJPA);
+         return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
+    }
+    
 }
