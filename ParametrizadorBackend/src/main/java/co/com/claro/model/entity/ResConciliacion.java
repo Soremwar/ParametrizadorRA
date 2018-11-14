@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "ResConciliacion.findByValPqr", query = "SELECT r FROM ResConciliacion r WHERE r.valPqr = :valPqr")
     , @NamedQuery(name = "ResConciliacion.findByCodConciliacion", query = "SELECT r FROM ResConciliacion r WHERE r.codConciliacion = :codConciliacion")
     , @NamedQuery(name = "ResConciliacion.findByCodEscenario", query = "SELECT r FROM ResConciliacion r WHERE r.codEscenario = :codEscenario")
-    , @NamedQuery(name = "ResConciliacion.findByAnyColumn", query = "SELECT DISTINCT(r) FROM ResConciliacion r WHERE lower(r.idEjecucion) LIKE lower(:idEjecucion) or lower(r.estado) LIKE lower(:estado)")})
+    , @NamedQuery(name = "ResConciliacion.findByAnyColumn", query = "SELECT DISTINCT(r) FROM ResConciliacion r WHERE lower(r.idEjecucion) LIKE lower(:idEjecucion) or lower(r.estado) LIKE lower(:estado) or lower(r.codConciliacion) LIKE lower(:codConciliacion) or lower(r.codEscenario) LIKE lower(:codEscenario)")})
 
 public class ResConciliacion implements Serializable {
 

@@ -7,7 +7,10 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ResConciliacionDAO;
 import co.com.claro.model.dto.ResConciliacionDTO;
+import co.com.claro.model.dto.ResultadoDTO;
 import co.com.claro.model.entity.ResConciliacion;
+import co.com.claro.model.entity.Resultado;
+import java.util.ArrayList;
 import static java.util.Comparator.comparing;
 import java.util.List;
 import java.util.logging.Level;
@@ -50,7 +53,7 @@ public class ResConciliacionREST {
         List<ResConciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<ResConciliacionDTO> lstDTO;
         if (estado != null && !estado.isEmpty()) {
-            lstDTO = lst.stream().map(item -> item.toDTO()).filter(dto -> dto.getEstado()!= null).filter(dto -> estado.contains(dto.getEstado())).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
+            lstDTO = lst.stream().map(item -> item.toDTO()).filter(dto -> dto.getEstado()!= null).filter(dto -> estado.contains(dto.getEstado().toUpperCase())).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
         } else {
             lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
         }
@@ -59,6 +62,19 @@ public class ResConciliacionREST {
         return lstFinal;
     }
      
+    @GET
+    @Path("/findByAny")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ResultadoDTO> findByAnyColumn(@QueryParam("texto") String texto){
+        logger.log(Level.INFO, "texto:{0}", texto);        
+        List<ResConciliacion> lst = managerDAO.findByAnyColumn(texto);
+        List<ResConciliacionDTO> lstDTO = new ArrayList<>();        
+        for(ResConciliacion entidad : lst) {
+            lstDTO.add(entidad.toDTO());
+        }
+        List<ResultadoDTO> lstFinal = (List<ResultadoDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }
     
     /**
      * Actualiza la entidad por su Id
@@ -80,4 +96,14 @@ public class ResConciliacionREST {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    /**
+     * Retorna el numero de registros 
+     * @return numero de registros total
+     */
+    @GET
+    @Path("/count")
+    @Produces({MediaType.APPLICATION_JSON})
+    public int count(){
+        return managerDAO.count();
+    }
 }
