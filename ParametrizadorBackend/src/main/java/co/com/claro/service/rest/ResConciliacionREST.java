@@ -86,14 +86,15 @@ public class ResConciliacionREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ResConciliacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);  
-        ResConciliacion entidadJPA = managerDAO.find(entidad.getId());
+        return Response.status(Response.Status.OK).entity(entidad).build();
+        /*ResConciliacion entidadJPA = managerDAO.find(entidad.getId());
         if (entidadJPA != null) {
             entidadJPA.setIdEjecucion(entidad.getId() != null ? entidad.getId() : entidadJPA.getIdEjecucion());
             entidadJPA.setEstado(entidad.getEstado() != null ? entidad.getEstado() : entidadJPA.getEstado());
             managerDAO.edit(entidadJPA);
             return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
        }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.status(Response.Status.NOT_FOUND).build();*/
     }
 
     /**

@@ -61,7 +61,7 @@ public class OdiREST{
     @Produces({MediaType.APPLICATION_JSON})
     //public OdiStartLoadPlanType startLoadPlan(StartLoadPlanRequestDTO request) {
     public OdiStartLoadPlanType startLoadPlan(StartLoadPlanRequestDTO request) {
-        OdiStartLoadPlanType startLoadPlan = facadeODI.startLoadPlan(wsdlLocation, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanName(), request.getContexto());
+        OdiStartLoadPlanType startLoadPlan = facadeODI.startLoadPlan(wsdlLocation, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanName(), request.getContexto(), request.getParams());
         return startLoadPlan;
     }   
 

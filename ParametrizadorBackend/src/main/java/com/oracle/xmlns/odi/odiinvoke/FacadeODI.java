@@ -6,8 +6,10 @@
 package com.oracle.xmlns.odi.odiinvoke;
 
 import co.com.claro.model.dto.request.LoadPlanRequestDTO;
+import co.com.claro.model.dto.request.LoadPlanStartupParameterRequestDTO;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.ws.WebServiceException;
 
@@ -39,7 +41,7 @@ public class FacadeODI {
     }
 
     public OdiStartLoadPlanType startLoadPlan(String wsdlLocation, String odiUser, String odiPassword, String workRepository,
-            String loadPlanName, String contexto) {
+            String loadPlanName, String contexto, List<LoadPlanStartupParameterRequestDTO> params) {
 
         //Creando objeto Request
         OdiInvoke odi = new OdiInvoke(getURL(wsdlLocation));
@@ -57,6 +59,16 @@ public class FacadeODI {
         startLoadPlanRequestType.setContext(contexto);
         startLoadPlanRequestType.setLoadPlanName(loadPlanName);
         request.setStartLoadPlanRequest(startLoadPlanRequestType);
+        
+        //List<VariableType> loadPlanStartupParameters = new ArrayList<>();
+        for (LoadPlanStartupParameterRequestDTO param : params) {
+            VariableType aux = new VariableType();
+            aux.name = param.getNombre();
+            aux.value = param.getValor();
+            //loadPlanStartupParameters.add(aux);
+            startLoadPlanRequestType.getLoadPlanStartupParameters().add(aux);
+        }
+        
 
         //Llamando Servicio
         OdiStartLoadPlanResponse response = odi.getOdiInvokeRequestSOAP11Port0().invokeStartLoadPlan(request);

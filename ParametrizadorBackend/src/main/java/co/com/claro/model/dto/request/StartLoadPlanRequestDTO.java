@@ -6,6 +6,7 @@
 package co.com.claro.model.dto.request;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -17,6 +18,7 @@ public class StartLoadPlanRequestDTO implements Serializable{
     String workRepository;
     String loadPlanName;
     String contexto;
+    List<LoadPlanStartupParameterRequestDTO> params;
 
     public String getOdiUser() {
         return odiUser;
@@ -58,6 +60,12 @@ public class StartLoadPlanRequestDTO implements Serializable{
         this.contexto = contexto;
     }
     
-    
+    public List<LoadPlanStartupParameterRequestDTO> getParams() {
+        return params;
+    }
+
+    public void setParams(List<LoadPlanStartupParameterRequestDTO> params) {
+        this.params = params;
+    }
     
 }
