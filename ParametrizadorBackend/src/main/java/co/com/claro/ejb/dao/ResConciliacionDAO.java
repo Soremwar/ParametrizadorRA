@@ -39,6 +39,14 @@ public class ResConciliacionDAO extends AbstractJpaDAO<ResConciliacion> {
         return em;
     }
 
+    @Override
+    public List<ResConciliacion> findRange(int[] range) {
+        //em.getEntityManagerFactory().getCache().evict(ResConciliacion.class, ResConciliacion.);
+        em.getEntityManagerFactory().getCache().evictAll();
+        return super.findRange(range);
+        
+    }
+    
     /**
      * Buscar la misma cadena en todos los campos descriptivos
      *
@@ -49,7 +57,7 @@ public class ResConciliacionDAO extends AbstractJpaDAO<ResConciliacion> {
     public List<ResConciliacion> findByAnyColumn(String busqueda) {
         logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});
         TypedQuery<ResConciliacion> query = em.createNamedQuery("ResConciliacion.findByAnyColumn", ResConciliacion.class);
-        query.setParameter("id", "%" + busqueda + "%");
+        query.setParameter("idEjecucion", "%" + busqueda + "%");
         query.setParameter("estado", "%" + busqueda + "%");
         query.setParameter("codConciliacion", "%" + busqueda + "%");
         query.setParameter("codEscenario", "%" + busqueda + "%");

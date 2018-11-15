@@ -85,33 +85,25 @@ public class WsTransformacionDAO extends AbstractJpaDAO<WsTransformacion>{
         return result; 
     }
             
-    /**
-     * Buscar el texto en todas columnas con paginado
-     * @param busqueda cadena de texto por el cual va a buscar
-     * @param offset desde que registro va a buscar
-     * @param limit limite de registros
-     * @return Lista de WsTransformaciones que cumplan con el criterio
-     */
-    public List<Resultado> findByAnyColumn(String busqueda, int offset, int limit){
-        logger.log(Level.INFO, "busqueda:{0}offset:{0}limit:{0}", new Object[]{busqueda, offset, limit});
-        TypedQuery<Resultado> query = em.createNamedQuery("WsTransformacion.findByAnyColumn", Resultado.class);
-        query.setParameter("nombreResultado", "%" + busqueda + "%");
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        List<Resultado> results = query.getResultList();
-        if (results == null || results.isEmpty()) {
-            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+    
+    public List<WsTransformacion> verificarSiExistePaqueteWs(String paqueteWs){
+        logger.log(Level.INFO, "paqueteWs:{0}", new Object[]{paqueteWs});
+        TypedQuery<WsTransformacion> query = em.createNamedQuery("WsTransformacion.findByPaqueteWs", WsTransformacion.class);
+        query.setParameter("paqueteWs", paqueteWs);
+        List<WsTransformacion> results = query.getResultList();
+        if (results != null && !results.isEmpty()) {
+            throw new DataAlreadyExistException("El paquete ya esta siendo utilizado");
         }
         return results;
     }
     
-    public List<Resultado> verificarSiExistePaqueteWs(String paqueteWs){
+    public List<WsTransformacion> validPaqueteWs(String paqueteWs){
         logger.log(Level.INFO, "paqueteWs:{0}", new Object[]{paqueteWs});
-        TypedQuery<Resultado> query = em.createNamedQuery("WsTransformacion.findByPaqueteWs", Resultado.class);
+        TypedQuery<WsTransformacion> query = em.createNamedQuery("WsTransformacion.findByPaqueteWs", WsTransformacion.class);
         query.setParameter("paqueteWs", paqueteWs);
-        List<Resultado> results = query.getResultList();
-        if (results != null && !results.isEmpty()) {
-            throw new DataAlreadyExistException("El paquete ya existe");
+        List<WsTransformacion> results = query.getResultList();
+        if (results != null && !results.isEmpty() && !results.get(0).getPaqueteWs().equalsIgnoreCase(paqueteWs)) {
+            throw new DataAlreadyExistException("El paquete " + paqueteWs.toUpperCase() + " ya esta siendo utilizado");
         }
         return results;
     }

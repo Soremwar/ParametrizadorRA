@@ -20,9 +20,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ResConciliacionDTO implements Serializable {
 
     //campos padre
-    private Long id;
+    private Integer id;
+    private Long idEjecucion;
     private Date fecInicio;
     private Date fecFin;
+    private Date fecCarga;
+    private Date fecActualizacion;
     private String estado;
     private BigInteger valInconsistencias;
     private BigInteger valReincidencias;
@@ -32,11 +35,11 @@ public class ResConciliacionDTO implements Serializable {
     private String codConciliacion;
     private String codEscenario;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -120,9 +123,35 @@ public class ResConciliacionDTO implements Serializable {
         this.codEscenario = codEscenario;
     }
 
+    public Long getIdEjecucion() {
+        return idEjecucion;
+    }
+
+    public void setIdEjecucion(Long idEjecucion) {
+        this.idEjecucion = idEjecucion;
+    }
+
+    public Date getFecCarga() {
+        return fecCarga;
+    }
+
+    public void setFecCarga(Date fecCarga) {
+        this.fecCarga = fecCarga;
+    }
+
+    public Date getFecActualizacion() {
+        return fecActualizacion;
+    }
+
+    public void setFecActualizacion(Date fecActualizacion) {
+        this.fecActualizacion = fecActualizacion;
+    }
+
+    
     public ResConciliacion toEntity() {
         ResConciliacion entity = new ResConciliacion();
-        entity.setIdEjecucion(id);
+        entity.setId(id);
+        entity.setIdEjecucion(idEjecucion);
         entity.setEstado(estado);
         entity.setFecFin(fecFin);
         entity.setFecInicio(fecInicio);

@@ -155,6 +155,7 @@ public class EscenarioREST {
             entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
             entidadJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : entidadJPA.getNombre());
             entidadJPA.setImpacto(entidad.getImpacto() != null ? entidad.getImpacto() : entidadJPA.getImpacto());
+            entidadJPA.setCodigo(entidad.getCodigo() != null ? entidad.getCodigo() : entidadJPA.getCodigo());
             entidadJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadJPA.getConciliacion());
             managerDAO.edit(entidadJPA);
             if ((entidadPadreJPA != null)){

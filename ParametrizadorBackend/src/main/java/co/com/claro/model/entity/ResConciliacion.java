@@ -12,6 +12,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -47,17 +49,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ResConciliacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @Basic(optional = false)
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    private Integer id;
+
     @Column(name = "ID_EJECUCION")
     private Long idEjecucion;
+    
     @Column(name = "FEC_INICIO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecInicio;
+    
     @Column(name = "FEC_FIN")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecFin;
+    
+    @Column(name = "FEC_CARGA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fecCarga;
+    
+    @Column(name = "FEC_ACTUALIZACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fecActualizacion;
+    
     @Size(max = 30)
     @Column(name = "ESTADO")
     private String estado;
@@ -79,14 +96,35 @@ public class ResConciliacion implements Serializable {
     @Column(name = "COD_ESCENARIO")
     private String codEscenario;
 
-    //@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
-    //@JoinColumn(name = "COD_CONCILIACION")
-    //private Conciliacion conciliacion;
     public ResConciliacion() {
     }
 
     public ResConciliacion(Long idEjecucion) {
         this.idEjecucion = idEjecucion;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Date getFecCarga() {
+        return fecCarga;
+    }
+
+    public void setFecCarga(Date fecCarga) {
+        this.fecCarga = fecCarga;
+    }
+
+    public Date getFecActualizacion() {
+        return fecActualizacion;
+    }
+
+    public void setFecActualizacion(Date fecActualizacion) {
+        this.fecActualizacion = fecActualizacion;
     }
 
     public Long getIdEjecucion() {
@@ -191,7 +229,7 @@ public class ResConciliacion implements Serializable {
             return false;
         }
         ResConciliacion other = (ResConciliacion) object;
-        if ((this.idEjecucion == null && other.idEjecucion != null) || (this.idEjecucion != null && !this.idEjecucion.equals(other.idEjecucion))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -199,10 +237,13 @@ public class ResConciliacion implements Serializable {
 
     public ResConciliacionDTO toDTO() {
         ResConciliacionDTO entidadDTO = new ResConciliacionDTO();
-        entidadDTO.setId(idEjecucion);
+        entidadDTO.setId(id);
+        entidadDTO.setIdEjecucion(idEjecucion);
         entidadDTO.setEstado(estado);
         entidadDTO.setFecFin(fecFin);
         entidadDTO.setFecInicio(fecInicio);
+        entidadDTO.setFecCarga(fecCarga);
+        entidadDTO.setFecActualizacion(fecActualizacion);
         entidadDTO.setValBeneficio(valBeneficio);
         entidadDTO.setValInconsistencias(valInconsistencias);
         entidadDTO.setValInconsistenciasMesAnt(valInconsistenciasMesAnt);

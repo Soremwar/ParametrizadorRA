@@ -12,6 +12,7 @@ import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
+import co.com.claro.model.entity.Resultado;
 import co.com.claro.model.entity.WsTransformacion;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
@@ -165,7 +166,8 @@ public class ConciliacionREST {
             padreDAO.edit(entidadPadreJPA);
 
             if (dto.getPaquete() != null) {
-                WsTransformacion transformacion = new WsTransformacion();
+                crearPaquete(dto, entidadJPA);
+                /*WsTransformacion transformacion = new WsTransformacion();
                 transformacion.setFechaCreacion(Date.from(Instant.now()));
                 transformacion.setNombreWs(dto.getPaquete());
                 transformacion.setPaqueteWs(dto.getPaquete());
@@ -173,7 +175,7 @@ public class ConciliacionREST {
                 transformacion.setConciliacion(entidadJPA);
                 transformacionDAO.edit(transformacion);
                 entidadJPA.addTransformacion(transformacion);
-                managerDAO.edit(entidadJPA);
+                managerDAO.edit(entidadJPA);*/
                 //padreDAO.edit(entidadPadreJPA);
             }
         }
@@ -182,38 +184,60 @@ public class ConciliacionREST {
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
 
+    public void crearPaquete (ConciliacionDTO dto, Conciliacion entidadJPA) {
+        WsTransformacion transformacion = new WsTransformacion();
+        transformacion.setFechaCreacion(Date.from(Instant.now()));
+        transformacion.setNombreWs(dto.getPaquete().toUpperCase());
+        transformacion.setPaqueteWs(dto.getPaquete().toUpperCase());
+        transformacionDAO.create(transformacion);
+        transformacion.setConciliacion(entidadJPA);
+        transformacionDAO.edit(transformacion);
+        entidadJPA.addTransformacion(transformacion);
+        managerDAO.edit(entidadJPA);
+    }
+    
     /**
-     * Actualiza la entidad por su Id
+     * Actualiza la entidadDTO por su Id
      *
-     * @param entidad conciliacion con la cual se va a trabajar
+     * @param entidadDTO conciliacion con la cual se va a trabajar
      * @return el resultado de la operacion
      */
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response update(ConciliacionDTO entidad) {
-        logger.log(Level.INFO, "entidad:{0}", entidad);
+    public Response update(ConciliacionDTO entidadDTO) {
+        logger.log(Level.INFO, "entidad:{0}", entidadDTO);
         Politica entidadPadreJPA = null;
-        if (entidad.getIdPolitica() != null) {
-            entidadPadreJPA = padreDAO.find(entidad.getIdPolitica());
+        List<WsTransformacion> results = transformacionDAO.validPaqueteWs(entidadDTO.getPaquete());
+        String paquete = (results != null && !results.isEmpty()) ? results.get(0).getPaqueteWs() : "";
+        System.out.println("paquete abp" + paquete);
+        if (entidadDTO.getIdPolitica() != null) {
+            entidadPadreJPA = padreDAO.find(entidadDTO.getIdPolitica());
             if (entidadPadreJPA == null) {
-                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdPolitica());
+                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidadDTO.getIdPolitica());
             }
         }
-        //Hallar La entidad actual para actualizarla
-        Conciliacion entidadJPA = managerDAO.find(entidad.getId());
+        //Hallar La entidadDTO actual para actualizarla
+        Conciliacion entidadJPA = managerDAO.find(entidadDTO.getId());
         if (entidadJPA != null) {
             entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
-            entidadJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : entidadJPA.getNombre());
-            entidadJPA.setTablaDestino(entidad.getTablaDestino() != null ? entidad.getTablaDestino() : entidadJPA.getTablaDestino());
-            entidadJPA.setCamposTablaDestino(entidad.getCamposTablaDestino() != null ? entidad.getCamposTablaDestino() : entidadJPA.getCamposTablaDestino());
-            entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadJPA.getDescripcion());
-            entidadJPA.setUsuarioAsignado(entidad.getUsuarioAsignado() != null ? entidad.getUsuarioAsignado() : entidadJPA.getUsuarioAsignado());
-            entidadJPA.setPolitica(entidad.getIdPolitica() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getPolitica());
+            entidadJPA.setNombre(entidadDTO.getNombre() != null ? entidadDTO.getNombre() : entidadJPA.getNombre());
+            entidadJPA.setTablaDestino(entidadDTO.getTablaDestino() != null ? entidadDTO.getTablaDestino() : entidadJPA.getTablaDestino());
+            entidadJPA.setCamposTablaDestino(entidadDTO.getCamposTablaDestino() != null ? entidadDTO.getCamposTablaDestino() : entidadJPA.getCamposTablaDestino());
+            entidadJPA.setDescripcion(entidadDTO.getDescripcion() != null ? entidadDTO.getDescripcion() : entidadJPA.getDescripcion());
+            entidadJPA.setUsuarioAsignado(entidadDTO.getUsuarioAsignado() != null ? entidadDTO.getUsuarioAsignado() : entidadJPA.getUsuarioAsignado());
+            entidadJPA.setPolitica(entidadDTO.getIdPolitica() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getPolitica());
             managerDAO.edit(entidadJPA);
             if ((entidadPadreJPA != null)) {
                 entidadPadreJPA.addConciliaciones(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
+            }
+            if (entidadDTO.getPaquete() != null) {
+                //if (results.size() > 1 && results.get(0).getPaqueteWs().equalsIgnoreCase(entidadDTO.getPaquete())) {
+                if (!paquete.equalsIgnoreCase(entidadDTO.getPaquete())) {
+                    crearPaquete(entidadDTO, entidadJPA);
+                }
+                //}
             }
             LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
             logAuditoriaDAO.create(logAud);

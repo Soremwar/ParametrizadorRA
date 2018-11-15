@@ -7,9 +7,7 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ResConciliacionDAO;
 import co.com.claro.model.dto.ResConciliacionDTO;
-import co.com.claro.model.dto.ResultadoDTO;
 import co.com.claro.model.entity.ResConciliacion;
-import co.com.claro.model.entity.Resultado;
 import java.util.ArrayList;
 import static java.util.Comparator.comparing;
 import java.util.List;
@@ -23,6 +21,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -35,10 +34,10 @@ import javax.ws.rs.core.Response;
 @Stateless
 @Path("resconciliacion")
 public class ResConciliacionREST {
+
     @Transient
     private static final Logger logger = Logger.getLogger(ResConciliacionREST.class.getSimpleName());
 
-    
     @EJB
     protected ResConciliacionDAO managerDAO;
 
@@ -53,31 +52,42 @@ public class ResConciliacionREST {
         List<ResConciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<ResConciliacionDTO> lstDTO;
         if (estado != null && !estado.isEmpty()) {
-            lstDTO = lst.stream().map(item -> item.toDTO()).filter(dto -> dto.getEstado()!= null).filter(dto -> estado.contains(dto.getEstado().toUpperCase())).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
+            lstDTO = lst.stream().map(item -> item.toDTO()).filter(dto -> dto.getEstado() != null).filter(dto -> estado.contains(dto.getEstado().toUpperCase())).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
         } else {
             lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
         }
         //UtilListas.ordenarLista(lstDTO, orderby);
-        List<ResConciliacionDTO> lstFinal = (List<ResConciliacionDTO>)(List<?>) lstDTO;
+        List<ResConciliacionDTO> lstFinal = (List<ResConciliacionDTO>) (List<?>) lstDTO;
         return lstFinal;
     }
-     
+
+    @GET
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public ResConciliacionDTO findById(@PathParam("id") Integer id) {
+        logger.log(Level.INFO, "id:{0}", id);
+        ResConciliacion entidad = managerDAO.find(id);
+        return entidad.toDTO();
+
+    }
+
     @GET
     @Path("/findByAny")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<ResultadoDTO> findByAnyColumn(@QueryParam("texto") String texto){
-        logger.log(Level.INFO, "texto:{0}", texto);        
+    public List<ResConciliacionDTO> findByAnyColumn(@QueryParam("texto") String texto) {
+        logger.log(Level.INFO, "texto:{0}", texto);
         List<ResConciliacion> lst = managerDAO.findByAnyColumn(texto);
-        List<ResConciliacionDTO> lstDTO = new ArrayList<>();        
-        for(ResConciliacion entidad : lst) {
+        List<ResConciliacionDTO> lstDTO = new ArrayList<>();
+        for (ResConciliacion entidad : lst) {
             lstDTO.add(entidad.toDTO());
         }
-        List<ResultadoDTO> lstFinal = (List<ResultadoDTO>)(List<?>) lstDTO;
+        List<ResConciliacionDTO> lstFinal = (List<ResConciliacionDTO>) (List<?>) lstDTO;
         return lstFinal;
     }
-    
+
     /**
      * Actualiza la entidad por su Id
+     *
      * @param entidad conciliacion con la cual se va a trabajar
      * @return el resultado de la operacion
      */
@@ -85,7 +95,7 @@ public class ResConciliacionREST {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ResConciliacionDTO entidad) {
-        logger.log(Level.INFO, "entidad:{0}", entidad);  
+        logger.log(Level.INFO, "entidad:{0}", entidad);
         return Response.status(Response.Status.OK).entity(entidad).build();
         /*ResConciliacion entidadJPA = managerDAO.find(entidad.getId());
         if (entidadJPA != null) {
@@ -98,13 +108,14 @@ public class ResConciliacionREST {
     }
 
     /**
-     * Retorna el numero de registros 
+     * Retorna el numero de registros
+     *
      * @return numero de registros total
      */
     @GET
     @Path("/count")
     @Produces({MediaType.APPLICATION_JSON})
-    public int count(){
+    public int count() {
         return managerDAO.count();
     }
 }
