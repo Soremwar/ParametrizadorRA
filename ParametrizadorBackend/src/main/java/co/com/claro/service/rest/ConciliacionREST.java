@@ -226,6 +226,7 @@ public class ConciliacionREST {
             entidadJPA.setCamposTablaDestino(entidadDTO.getCamposTablaDestino() != null ? entidadDTO.getCamposTablaDestino() : entidadJPA.getCamposTablaDestino());
             entidadJPA.setDescripcion(entidadDTO.getDescripcion() != null ? entidadDTO.getDescripcion() : entidadJPA.getDescripcion());
             entidadJPA.setUsuarioAsignado(entidadDTO.getUsuarioAsignado() != null ? entidadDTO.getUsuarioAsignado() : entidadJPA.getUsuarioAsignado());
+            entidadJPA.setRequiereAprobacion(entidadDTO.getRequiereAprobacion() != null ? entidadDTO.getRequiereAprobacion() : entidadJPA.getRequiereAprobacion());
             entidadJPA.setPolitica(entidadDTO.getIdPolitica() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getPolitica());
             managerDAO.edit(entidadJPA);
             if ((entidadPadreJPA != null)) {
