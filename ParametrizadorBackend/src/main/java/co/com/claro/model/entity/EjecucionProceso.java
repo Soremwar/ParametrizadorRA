@@ -92,6 +92,10 @@ public class EjecucionProceso implements Serializable {
     @Column(name = "COMPONENTE_EJECUTADO")
     @Size(max = 200)
     private String componenteEjecutado;
+    
+    @Column(name = "RESPUESTA")
+    @Size(max = 200)
+    private String respuesta;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_CONCILIACION", referencedColumnName = "COD_CONCILIACION")
@@ -191,6 +195,14 @@ public class EjecucionProceso implements Serializable {
     public void setConciliacion(Conciliacion conciliacion) {
         this.conciliacion = conciliacion;
     }
+
+    public String getRespuesta() {
+        return respuesta;
+    }
+
+    public void setRespuesta(String respuesta) {
+        this.respuesta = respuesta;
+    }
     
     
     
@@ -226,6 +238,7 @@ public class EjecucionProceso implements Serializable {
         entidadDTO.setFechaEjecucion(fechaEjecucion);
         entidadDTO.setFechaEjecucionExitosa(fechaEjecucionExitosa);
         entidadDTO.setIdPlanInstance(idPlanInstance);
+        entidadDTO.setRespuesta(respuesta);
         
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);

@@ -30,6 +30,7 @@ public class EjecucionProcesoDTO implements Serializable{
     private Integer estadoEjecucion;
     private String componenteEjecutado;
     private String idPlanInstance;
+   private String respuesta;
     private Date fechaEjecucion;
     private Date fechaEjecucionExitosa;
     
@@ -121,6 +122,15 @@ public class EjecucionProcesoDTO implements Serializable{
         this.nombre = nombre;
     }
 
+    public String getRespuesta() {
+        return respuesta;
+    }
+
+    public void setRespuesta(String respuesta) {
+        this.respuesta = respuesta;
+    }
+
+    
     public EjecucionProceso toEntity(){
         EjecucionProceso p = new EjecucionProceso();
         //Campos Entidad
@@ -134,6 +144,7 @@ public class EjecucionProcesoDTO implements Serializable{
         p.setIdPlanInstance(idPlanInstance);
         p.setNombreConciliacion(nombreConciliacion);
         p.setNombreEscenario(nombreEscenario);
+        p.setRespuesta(respuesta);
         
         return p;
         

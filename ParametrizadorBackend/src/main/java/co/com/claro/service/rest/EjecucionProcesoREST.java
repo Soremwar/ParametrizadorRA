@@ -173,6 +173,8 @@ public class EjecucionProcesoREST {
             entidadHijaJPA.setFechaEjecucionExitosa(entidad.getFechaEjecucionExitosa() != null ? entidad.getFechaEjecucionExitosa() : entidadHijaJPA.getFechaEjecucionExitosa());
             entidadHijaJPA.setIdPlanInstance(entidad.getIdPlanInstance()!= null ? entidad.getIdPlanInstance(): entidadHijaJPA.getIdPlanInstance());
             entidadHijaJPA.setNombreConciliacion(entidad.getNombreConciliacion()!= null ? entidad.getNombreConciliacion(): entidadHijaJPA.getNombreConciliacion());
+            entidadHijaJPA.setRespuesta(entidad.getRespuesta() != null ? entidad.getRespuesta() : entidadHijaJPA.getRespuesta());
+            
             entidadHijaJPA.setNombreEscenario(entidad.getNombreEscenario() != null ? entidad.getNombreEscenario(): entidadHijaJPA.getNombreEscenario());
             managerDAO.edit(entidadHijaJPA);
             if ((entidadPadreJPA != null)){
