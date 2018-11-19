@@ -54,7 +54,7 @@ public class ResConciliacionREST {
         if (estado != null && !estado.isEmpty()) {
             lstDTO = lst.stream().map(item -> item.toDTO()).filter(dto -> dto.getEstado() != null).filter(dto -> estado.contains(dto.getEstado().toUpperCase())).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
         } else {
-            lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ResConciliacionDTO::getId)).collect(toList());
+            lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ResConciliacionDTO::getId).reversed()).collect(toList());
         }
         //UtilListas.ordenarLista(lstDTO, orderby);
         List<ResConciliacionDTO> lstFinal = (List<ResConciliacionDTO>) (List<?>) lstDTO;

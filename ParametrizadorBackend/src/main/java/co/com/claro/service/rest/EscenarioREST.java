@@ -68,7 +68,7 @@ public class EscenarioREST {
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
         List<Escenario> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(EscenarioDTO::getId)).collect(toList());
+        List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(EscenarioDTO::getId).reversed()).collect(toList());
 
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
         List<EscenarioDTO> lstFinal = (List<EscenarioDTO>)(List<?>) lstDTO;
@@ -155,7 +155,7 @@ public class EscenarioREST {
             entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
             entidadJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : entidadJPA.getNombre());
             entidadJPA.setImpacto(entidad.getImpacto() != null ? entidad.getImpacto() : entidadJPA.getImpacto());
-            entidadJPA.setCodigo(entidad.getCodigo() != null ? entidad.getCodigo() : entidadJPA.getCodigo());
+            entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadJPA.getDescripcion());
             entidadJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadJPA.getConciliacion());
             managerDAO.edit(entidadJPA);
             if ((entidadPadreJPA != null)){

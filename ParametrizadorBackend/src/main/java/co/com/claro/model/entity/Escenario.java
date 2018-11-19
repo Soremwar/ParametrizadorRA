@@ -51,7 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Escenario.findByFechaActualizacion", query = "SELECT e FROM Escenario e WHERE e.fechaActualizacion = :fechaActualizacion")
     , @NamedQuery(name = "Escenario.findByConciliacionNull", query = "SELECT e FROM Escenario e WHERE e.conciliacion IS null")
     , @NamedQuery(name = "Escenario.findByConciliacion", query = "SELECT e FROM Escenario e WHERE e.conciliacion = :codConciliacion")
-    , @NamedQuery(name = "Escenario.findByAnyColumn", query = "SELECT DISTINCT(e) FROM Escenario e WHERE lower(e.id) LIKE lower(:id) or lower(e.nombre) LIKE lower(:nombreEscenario) or lower(e.impacto) LIKE lower(:impacto) or lower(e.codigo) LIKE lower(:codigo) or lower(e.conciliacion.nombre) LIKE lower(:nombreConciliacion)")})
+    , @NamedQuery(name = "Escenario.findByAnyColumn", query = "SELECT DISTINCT(e) FROM Escenario e WHERE lower(e.id) LIKE lower(:id) or lower(e.nombre) LIKE lower(:nombreEscenario) or lower(e.impacto) LIKE lower(:impacto) or lower(e.descripcion) LIKE lower(:descripcion) or lower(e.conciliacion.nombre) LIKE lower(:nombreConciliacion)")})
         
 public class Escenario implements Serializable {
 
@@ -69,8 +69,8 @@ public class Escenario implements Serializable {
     @Column(name = "IMPACTO")
     private String impacto;
     
-    @Column(name = "CODIGO")
-    private String codigo;
+    @Column(name = "DESCRIPCION")
+    private String descripcion;
     
     @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.TIMESTAMP)
@@ -110,12 +110,12 @@ public class Escenario implements Serializable {
         this.id = id;
     }
 
-    public String getCodigo() {
-        return codigo;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getNombre() {
@@ -214,7 +214,7 @@ public class Escenario implements Serializable {
         entidadDTO.setNombre(this.getNombre());
         
         //Campos de la entidad
-        entidadDTO.setCodigo(codigo);
+        entidadDTO.setDescripcion(descripcion);
         entidadDTO.setImpacto(impacto);
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);

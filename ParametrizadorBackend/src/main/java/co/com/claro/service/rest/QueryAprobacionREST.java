@@ -70,7 +70,7 @@ public class QueryAprobacionREST {
         } else {
             lst = managerDAO.findRange(new int[]{offset, limit});
         }
-        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryAprobacionDTO::getId)).collect(toList());
+        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryAprobacionDTO::getId).reversed()).collect(toList());
         //UtilListas.ordenarQueryEjecucion(lstDTO, orderby);
         List<QueryAprobacionDTO> lstFinal = (List<QueryAprobacionDTO>)(List<?>) lstDTO;
         return lstFinal;

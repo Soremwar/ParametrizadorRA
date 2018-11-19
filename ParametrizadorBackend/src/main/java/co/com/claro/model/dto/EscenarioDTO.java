@@ -25,7 +25,7 @@ public class EscenarioDTO extends PadreDTO implements Serializable {
 
     //Campos propios
     private String impacto;
-    private String codigo;
+    private String descripcion;
 
     private Set<QueryEscenarioDTO> queryescenarios;
     private Set<IndicadorDTO> indicadores;
@@ -38,12 +38,12 @@ public class EscenarioDTO extends PadreDTO implements Serializable {
         this.nombreConciliacion = nombreConciliacion;
     }
 
-    public String getCodigo() {
-        return codigo;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getImpacto() {
@@ -88,7 +88,7 @@ public class EscenarioDTO extends PadreDTO implements Serializable {
         entity.setFechaActualizacion(this.getFechaActualizacion());
 
         //Campos de la entidad
-        entity.setCodigo(codigo);
+        entity.setDescripcion(descripcion);
         entity.setImpacto(this.impacto);
         //p.setConciliacion(this.idConciliacion != null ? new Conciliacion(this.idConciliacion) : null);
         return entity;
