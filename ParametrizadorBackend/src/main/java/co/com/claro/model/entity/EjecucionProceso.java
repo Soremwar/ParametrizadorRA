@@ -79,7 +79,7 @@ public class EjecucionProceso implements Serializable {
     private String nombreConciliacion;
     
     @Column(name = "ESTADO_EJECUCION")
-    private Integer estadoEjecucion;
+    private String estadoEjecucion;
     
     @Column(name = "FECHA_EJECUCION")
     @Temporal(TemporalType.TIMESTAMP)
@@ -148,11 +148,11 @@ public class EjecucionProceso implements Serializable {
         this.nombreConciliacion = nombreConciliacion;
     }
 
-    public Integer getEstadoEjecucion() {
+    public String getEstadoEjecucion() {
         return estadoEjecucion;
     }
 
-    public void setEstadoEjecucion(Integer estadoEjecucion) {
+    public void setEstadoEjecucion(String estadoEjecucion) {
         this.estadoEjecucion = estadoEjecucion;
     }
 

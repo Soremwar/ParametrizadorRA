@@ -84,7 +84,7 @@ public class ConciliacionREST {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
         List<Conciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ConciliacionDTO::getId).reversed()).collect(toList());
-        UtilListas.ordenarLista(lstDTO, orderby);
+        //UtilListas.ordenarLista(lstDTO, orderby);
         List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>) (List<?>) lstDTO;
         return lstFinal;
     }

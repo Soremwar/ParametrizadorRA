@@ -8,7 +8,6 @@ package co.com.claro.model.dto;
 import co.com.claro.model.entity.EjecucionProceso;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,7 +26,7 @@ public class EjecucionProcesoDTO implements Serializable{
     private Integer idEscenario;
     private String nombreEscenario;
     
-    private Integer estadoEjecucion;
+    private String estadoEjecucion;
     private String componenteEjecutado;
     private String idPlanInstance;
    private String respuesta;
@@ -66,11 +65,11 @@ public class EjecucionProcesoDTO implements Serializable{
         this.nombreEscenario = nombreEscenario;
     }
 
-    public Integer getEstadoEjecucion() {
+    public String getEstadoEjecucion() {
         return estadoEjecucion;
     }
 
-    public void setEstadoEjecucion(Integer estadoEjecucion) {
+    public void setEstadoEjecucion(String estadoEjecucion) {
         this.estadoEjecucion = estadoEjecucion;
     }
 

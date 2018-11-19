@@ -61,7 +61,7 @@ public class WsTransformacionREST{
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
         List<WsTransformacion> lst = managerDAO.findRange(new int[]{offset, limit});
         List<WsTransformacionDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().collect(toList());
-        UtilListas.ordenarListaTransormacion(lstDTO, orderby);
+        //UtilListas.ordenarListaTransormacion(lstDTO, orderby);
         List<WsTransformacionDTO> lstFinal = (List<WsTransformacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }   
