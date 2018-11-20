@@ -7,6 +7,7 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EjecucionDAO;
+import co.com.claro.ejb.dao.IEjecucionDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.EjecucionProcesoDTO;
 import co.com.claro.model.entity.Conciliacion;
@@ -46,7 +47,7 @@ public class EjecucionProcesoREST {
     private static final Logger logger = Logger.getLogger(EjecucionProcesoREST.class.getSimpleName());
 
     @EJB
-    protected EjecucionDAO managerDAO;
+    protected IEjecucionDAO managerDAO;
     
     @EJB
     protected ConciliacionDAO padreDAO;

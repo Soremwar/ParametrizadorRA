@@ -2,6 +2,7 @@ package co.com.claro.service.rest;
 
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
+import co.com.claro.ejb.dao.IWsTransformacionDAO;
 import co.com.claro.ejb.dao.WsTransformacionDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.WsTransformacionDTO;
@@ -40,7 +41,7 @@ public class WsTransformacionREST{
     private static final Logger logger = Logger.getLogger(WsTransformacionREST.class.getSimpleName());
    
     @EJB
-    protected WsTransformacionDAO managerDAO;
+    protected IWsTransformacionDAO managerDAO;
     
     @EJB
     protected ConciliacionDAO padreDAO;

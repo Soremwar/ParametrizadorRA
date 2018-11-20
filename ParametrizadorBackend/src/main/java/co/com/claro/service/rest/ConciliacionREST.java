@@ -2,6 +2,7 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
+import co.com.claro.ejb.dao.IWsTransformacionDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.ejb.dao.WsTransformacionDAO;
@@ -64,7 +65,7 @@ public class ConciliacionREST {
     protected EscenarioDAO escenarioDAO;
 
     @EJB
-    protected WsTransformacionDAO transformacionDAO;
+    protected IWsTransformacionDAO transformacionDAO;
 
     /**
      * Obtiene las Conciliaciones Paginadas
