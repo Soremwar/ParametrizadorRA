@@ -1,8 +1,12 @@
 package co.com.claro.ejb.dao.parent;
 
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Root;
 
 /**
  * Contiene toda la implementacion generica de todos los metodos estandar de DAO
@@ -60,16 +64,20 @@ public abstract class AbstractJpaDAO<T> {
     }
 
     public List<T> findRange(int[] range) {
-        javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
-        cq.select(cq.from(entityClass));
-        javax.persistence.Query q = getEntityManager().createQuery(cq);
-        q.setMaxResults(range[1]);// - range[0] + 1);
-        q.setFirstResult(range[0]);
-        List<T> lst = q.getResultList();
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        javax.persistence.criteria.CriteriaQuery cq = cb.createQuery();    
+        Root<T> c = cq.from(entityClass);
+        cq.select(c);
+        cq.orderBy(cb.desc(c.get("id")));
+        javax.persistence.Query query = getEntityManager().createQuery(cq);
+        query.setMaxResults(range[1]);// - range[0] + 1);
+        query.setFirstResult(range[0]);
+        
+        List<T> lst = query.getResultList();
         if (lst == null || lst.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos");
         }
-        return q.getResultList();
+        return query.getResultList();
     }
 
     public int count() {
