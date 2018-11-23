@@ -24,7 +24,7 @@ import javax.persistence.TypedQuery;
  */
 
 @Stateless
-public class EjecucionDAO extends AbstractJpaDAO<EjecucionProceso>{
+public class EjecucionDAO extends AbstractJpaDAO<EjecucionProceso> implements IEjecucionDAO{
     private static final Logger logger = Logger.getLogger(EjecucionDAO.class.getSimpleName());
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
