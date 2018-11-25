@@ -12,6 +12,9 @@ import co.com.claro.ejb.dao.IWsTransformacionDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.WsTransformacionDAO;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +23,7 @@ import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import org.quartz.CronScheduleBuilder;
 import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
 import org.quartz.DateBuilder;
 
@@ -84,14 +88,14 @@ public class QuartzScheduler {
                     .build();
 
             int _horaEjecucionJob = 0;
-            
+
             try {
                 String horaEjecucionJob = parametroDAO.findByParametro("SISTEMA", "horaEjecucionJob");
                 _horaEjecucionJob = Integer.parseInt(horaEjecucionJob);
             } catch (Exception e) {
                 _horaEjecucionJob = 0;
             }
-            
+
             int _minutoEjecucionJob;
             try {
                 String minutoEjecucionJob = parametroDAO.findByParametro("SISTEMA", "minutoEjecucionJob");
@@ -99,19 +103,65 @@ public class QuartzScheduler {
             } catch (Exception e) {
                 _minutoEjecucionJob = 0;
             }
-            
-            
-            System.out.println("A intentar corre a las "+ _horaEjecucionJob + ":" + _minutoEjecucionJob);
-            Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity("trgPrincipal", "group1")
-                   // .startNow()
-                    // .withSchedule(dailyAtHourAndMinute(19, 46))
 
-                     .startAt(DateBuilder.todayAt(_horaEjecucionJob, _minutoEjecucionJob, 00))  
-                    .withSchedule(
-                            SimpleScheduleBuilder.simpleSchedule()
-                                    .withIntervalInHours(24).repeatForever())
-                    .build();
+            System.out.println("A intentar corre a las " + _horaEjecucionJob + ":" + _minutoEjecucionJob);
+            Date fechaActual = new Date();
+            Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+            calendar.setTime(fechaActual);   // assigns calendar to given date 
+            int horaActual = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
+            int minutoActual = calendar.get(Calendar.MINUTE);
+            System.out.println("Hora actual: " + horaActual + "**" + "Minuto Actual:" + minutoActual);
+
+            Trigger trigger;
+            if (horaActual < _horaEjecucionJob) {
+                trigger = TriggerBuilder.newTrigger()
+                        .withIdentity("trgPrincipal", "group1")
+                        .startAt(DateBuilder.todayAt(_horaEjecucionJob, _minutoEjecucionJob, 00))
+                        .withSchedule(
+                                SimpleScheduleBuilder.simpleSchedule()
+                                        .withIntervalInHours(24).repeatForever())
+                        .build();
+            } else if (horaActual == _horaEjecucionJob) {
+                if (minutoActual < _minutoEjecucionJob) {
+                    trigger = TriggerBuilder.newTrigger()
+                            .withIdentity("trgPrincipal", "group1")
+                            .startAt(DateBuilder.todayAt(_horaEjecucionJob, _minutoEjecucionJob, 00))
+                            .withSchedule(
+                                    SimpleScheduleBuilder.simpleSchedule()
+                                            .withIntervalInHours(24).repeatForever())
+                            .build();
+                } else {
+                  /*  Trigger _trigger = TriggerBuilder.newTrigger()
+                            .withIdentity("trgPrincipal", "group1")
+                            .startNow()
+                            .build();
+                    scheduler.scheduleJob(jobDetail, _trigger);*/
+
+                    trigger = TriggerBuilder.newTrigger()
+                            .withIdentity("trgPrincipal", "group1")
+                            //.withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(horaActual, minutoActual))
+                          /*  .withSchedule(
+                                    CronScheduleBuilder.dailyAtHourAndMinute(18, 59))*/
+                            .startNow()
+                            .build();
+                }
+            } else {
+/*                Trigger _trigger = TriggerBuilder.newTrigger()
+                        .withIdentity("trgPrincipal", "group1")
+                        .star
+                        .startNow()
+                        .build();
+                scheduler.scheduleJob(jobDetail, _trigger);*/
+
+                trigger = TriggerBuilder.newTrigger()
+                        .withIdentity("trgPrincipal", "group1")
+                        //.withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(horaActual, minutoActual))
+                       /* .withSchedule(
+                                CronScheduleBuilder.dailyAtHourAndMinute(18, 59)
+                        )*/
+                        .startNow()
+                        .build();
+            }
 
             // Tell quartz to schedule the job using our trigger
             scheduler.scheduleJob(jobDetail, trigger);

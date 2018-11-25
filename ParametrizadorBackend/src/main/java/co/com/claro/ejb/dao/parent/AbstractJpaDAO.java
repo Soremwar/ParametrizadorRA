@@ -3,6 +3,8 @@ package co.com.claro.ejb.dao.parent;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 /**
  * Contiene toda la implementacion generica de todos los metodos estandar de DAO
@@ -21,24 +23,41 @@ public abstract class AbstractJpaDAO<T> {
     protected abstract EntityManager getEntityManager();
 
     public void create(T entity) {
-        getEntityManager().persist(entity);
-        
-    }
-    
-    public T edit(T entity) {
-        getEntityManager().merge(entity);
-        //getEntityManager().flush();
-        if (entity == null) {
-            throw new DataNotFoundException("No se encontro la entidad " + entity);
+
+        try {
+            getEntityManager().persist(entity);
+        } catch (ConstraintViolationException e) {
+            // Aqui tira los errores de constraint
+            for (ConstraintViolation actual : e.getConstraintViolations()) {
+                System.out.println(actual.toString());
+            }
         }
-        return entity;
+        //   getEntityManager().persist(entity);
+
+    }
+
+    public T edit(T entity) {
+        try {
+            getEntityManager().merge(entity);
+            //getEntityManager().flush();
+            if (entity == null) {
+                throw new DataNotFoundException("No se encontro la entidad " + entity);
+            }
+            return entity;
+        } catch (ConstraintViolationException e) {
+            // Aqui tira los errores de constraint
+            for (ConstraintViolation actual : e.getConstraintViolations()) {
+                System.out.println(actual.toString());
+            }
+        }
+
+        return null;
     }
 
     public void remove(T entity) {
         getEntityManager().remove(getEntityManager().merge(entity));
     }
 
-    
     public T find(Object id) {
         getEntityManager().flush();
         Object item = getEntityManager().find(entityClass, id);
@@ -52,7 +71,7 @@ public abstract class AbstractJpaDAO<T> {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         cq.select(cq.from(entityClass));
         List<T> lst = getEntityManager().createQuery(cq).getResultList();
-        
+
         if (lst == null || lst.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos");
         }

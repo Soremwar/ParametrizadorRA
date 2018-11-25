@@ -6,24 +6,20 @@
 package co.com.claro.scheduler;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
-import co.com.claro.ejb.dao.EjecucionDAO;
 import co.com.claro.ejb.dao.IEjecucionDAO;
-import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.model.dto.request.LoadPlanStartupParameterRequestDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.EjecucionProceso;
-import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.WsTransformacion;
-import co.com.claro.service.rest.Constantes;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.oracle.xmlns.odi.odiinvoke.FacadeODI;
 import com.oracle.xmlns.odi.odiinvoke.OdiStartLoadPlanType;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.validation.ConstraintViolationException;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -62,7 +58,8 @@ public class EjecucionProgramacion implements Job {
             logAud.setConciliacion(null);
             logAud.setEstadoEjecucion("INICIADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
             logAud.setFechaEjecucion(new Date());
-           // logAud.setIdPlanInstance(conciliacion.getId().toString());
+            logAud.setNombre("AGENDADA:" + conciliacion.getNombre());
+            // logAud.setIdPlanInstance(conciliacion.getId().toString());
             logAud.setNombreConciliacion(conciliacion.getNombre());
 
             System.out.println("OBJ" + logAud.toString());
@@ -103,8 +100,7 @@ public class EjecucionProgramacion implements Job {
             } catch (Exception e) {
                 odiContext = "CNTX_DESARROLLO";
             }
-            
-            
+
             List<LoadPlanStartupParameterRequestDTO> params = new ArrayList<LoadPlanStartupParameterRequestDTO>();
             LoadPlanStartupParameterRequestDTO param = new LoadPlanStartupParameterRequestDTO();
             param.setNombre("GLOBAL.V_CTL_PAQUETE");
@@ -115,12 +111,12 @@ public class EjecucionProgramacion implements Job {
             param1.setValor("0");
             params.add(param1);
 
-            System.out.println("wsdlLocation:"+wsdlLocation);
+            System.out.println("wsdlLocation:" + wsdlLocation);
             try {
                 FacadeODI fachadaOdi = new FacadeODI();
                 OdiStartLoadPlanType response = fachadaOdi.startLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, wsTransformacion.getPaqueteWs(), odiContext, params);
-                System.out.println("después de starloadplan:**"+response.toString());
-                
+                System.out.println("después de starloadplan:**" + response.toString());
+
                 // 3. poner log
                 // Si todo va en orden registrar grabación con éxito
                 Conciliacion _entidadPadre = conciliacionDAO.find(conciliacion.getId());
@@ -130,36 +126,42 @@ public class EjecucionProgramacion implements Job {
                 _logAud.setEstadoEjecucion("INTEGRADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
                 _logAud.setFechaEjecucionExitosa(new Date());
                 _logAud.setNombreConciliacion(conciliacion.getNombre());
+
+                XmlMapper xmlMapper = new XmlMapper();
+                String xml = xmlMapper.writeValueAsString(response.getStartedRunInformation());
+
+                _logAud.setRespuesta(xml);
+                _logAud.setNombre("AGENDADA:" + conciliacion.getNombre());
                 Long planInstanceId = response.getStartedRunInformation().getOdiLoadPlanInstanceId();
                 _logAud.setIdPlanInstance(planInstanceId.toString());
 
                 System.out.println("GRABANDO REGISTRO EXITOSO: " + _logAud.toString());
-                System.out.println("ID PLAN: "+response.getStartedRunInformation().getOdiLoadPlanInstanceId());
+                System.out.println("ID PLAN: " + response.getStartedRunInformation().getOdiLoadPlanInstanceId());
                 logEjecucionDAO.create(_logAud);
                 _logAud.setConciliacion(_entidadPadre);
                 logEjecucionDAO.edit(_logAud);
-                _entidadPadre.addEjecucionProceso(_logAud);
-                conciliacionDAO.edit(_entidadPadre);
+                 _entidadPadre.addEjecucionProceso(_logAud);
+                 conciliacionDAO.edit(_entidadPadre);
             } catch (Exception ex) {
                 Conciliacion _entidadPadre = conciliacionDAO.find(conciliacion.getId());
                 EjecucionProceso _logAud = new EjecucionProceso();
                 _logAud.setComponenteEjecutado("INTEGRACION_ODI"); // TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
                 _logAud.setConciliacion(null);
+                _logAud.setNombre("AGENDADA:" + conciliacion.getNombre());
                 _logAud.setEstadoEjecucion("FALLIDA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
                 _logAud.setFechaEjecucion(new Date());
                 _logAud.setNombreConciliacion(conciliacion.getNombre());
                 _logAud.setRespuesta(ex.toString());
-                
 
                 System.out.println("INTEGRACIÓN FALLIDA: " + ex.toString());
-             
+
                 logEjecucionDAO.create(_logAud);
                 _logAud.setConciliacion(_entidadPadre);
                 logEjecucionDAO.edit(_logAud);
                 _entidadPadre.addEjecucionProceso(_logAud);
                 conciliacionDAO.edit(_entidadPadre);
             }
-           
+
         } catch (Exception e) {
             System.out.println("Error: " + e);
         }
