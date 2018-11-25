@@ -165,11 +165,8 @@ public class QuartzScheduler {
             trigger = TriggerBuilder.newTrigger()
                     .withIdentity("trgPrincipal", "group1")
                     .startAt(DateBuilder.todayAt(_horaEjecucionJob, _minutoEjecucionJob, 00))
-                    //.withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(horaActual, minutoActual))
-                    .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(20, 40))
-                   /* .withSchedule(
-                            SimpleScheduleBuilder.simpleSchedule()
-                                    .withIntervalInHours(24).repeatForever())*/
+                    .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(horaActual, minutoActual))
+                    //.withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(20, 40))
                     .build();
 
             // Tell quartz to schedule the job using our trigger
