@@ -70,7 +70,7 @@ public class ParametrosREST{
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2} ", new Object[]{offset, limit, orderby});     
         List<Parametro> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<ParametroDTO> lstDTO = lst.stream().map(item -> item.toDTO()).filter(item -> !item.getTipo().equalsIgnoreCase("SISTEMA")).distinct().sorted(comparing(ParametroDTO::getId).reversed()).collect(toList());
+        List<ParametroDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ParametroDTO::getId).reversed()).collect(toList());
         //lstDTO = UtilListas.ordenarListaParametros(lstDTO, orderby);
         List<ParametroDTO> lstFinal = (List<ParametroDTO>)(List<?>) lstDTO;
         return lstFinal;
