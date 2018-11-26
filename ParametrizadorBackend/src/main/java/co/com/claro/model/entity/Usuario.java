@@ -100,13 +100,6 @@ public class Usuario implements Serializable {
         this.id = codUsuario;
     }
 
-    public Usuario(Integer codUsuario, String usuario, String email, Date fechaCreacion) {
-        this.id = codUsuario;
-        this.usuario = usuario;
-        this.email = email;
-        this.fechaCreacion = fechaCreacion;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -163,16 +156,6 @@ public class Usuario implements Serializable {
         this.roles = roles;
     }
 
-    /*
-    @XmlTransient
-    @JsonIgnore
-    public Collection<UsuarioRol> getUsuarioRolCollection() {
-        return usuarioRolCollection;
-    }
-
-    public void setUsuarioRolCollection(Collection<UsuarioRol> usuarioRolCollection) {
-        this.usuarioRolCollection = usuarioRolCollection;
-    }*/
     @Override
     public int hashCode() {
         int hash = 0;

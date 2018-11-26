@@ -6,7 +6,6 @@
 package co.com.claro.model.dto;
 
 import co.com.claro.model.entity.Rol;
-import co.com.claro.model.entity.Usuario;
 import java.io.Serializable;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -67,7 +66,7 @@ public class RolDTO implements Serializable {
     
     public Rol toEntity() {
         Rol entity = new Rol();
-        entity.setId(this.getId());
+        entity.setId(id);
         entity.setNombre(nombre);
         entity.setFechaCreacion(fechaCreacion);
         entity.setFechaActualizacion(fechaActualizacion);

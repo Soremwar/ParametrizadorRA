@@ -51,7 +51,6 @@ public class Rol implements Serializable {
     private Integer id;
 
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "NOMBRE")
     private String nombre;
@@ -121,15 +120,6 @@ public class Rol implements Serializable {
         this.menus = menus;
     }
 
-    /*@XmlTransient
-    @JsonIgnore
-    public Collection<UsuarioRol> getUsuarioRolCollection() {
-        return usuarioRolCollection;
-    }
-
-    public void setUsuarioRolCollection(Collection<UsuarioRol> usuarioRolCollection) {
-        this.usuarioRolCollection = usuarioRolCollection;
-    }*/
     @Override
     public int hashCode() {
         int hash = 0;
