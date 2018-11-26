@@ -5,17 +5,31 @@
  */
 package co.com.claro.model.entity;
 
+import co.com.claro.model.dto.RolDTO;
+import co.com.claro.model.dto.UsuarioDTO;
 import java.io.Serializable;
+import java.time.Instant;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -28,37 +42,56 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")
-    , @NamedQuery(name = "Usuario.findByCodUsuario", query = "SELECT u FROM Usuario u WHERE u.id = :codUsuario")
+    , @NamedQuery(name = "Usuario.findByCodUsuario", query = "SELECT u FROM Usuario u WHERE u.id = :id")
+    , @NamedQuery(name = "Usuario.findByUsuario", query = "SELECT u FROM Usuario u WHERE u.usuario = :usuario")
+    , @NamedQuery(name = "Usuario.findByEmail", query = "SELECT u FROM Usuario u WHERE u.email = :email")
     , @NamedQuery(name = "Usuario.findByNombreUsuario", query = "SELECT u FROM Usuario u WHERE u.nombreUsuario = :nombreUsuario")
-    , @NamedQuery(name = "Usuario.findByUsername", query = "SELECT u FROM Usuario u WHERE u.username = :username")
-    , @NamedQuery(name = "Usuario.findByPassword", query = "SELECT u FROM Usuario u WHERE u.password = :password")})
+    , @NamedQuery(name = "Usuario.findByFechaCreacion", query = "SELECT u FROM Usuario u WHERE u.fechaCreacion = :fechaCreacion")
+    , @NamedQuery(name = "Usuario.findByFechaActualizacion", query = "SELECT u FROM Usuario u WHERE u.fechaActualizacion = :fechaActualizacion")})
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
     @Id
     @Basic(optional = false)
     @Column(name = "COD_USUARIO")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
     @Basic(optional = false)
-    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "USUARIO")
+    private String usuario;
+
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Basic(optional = false)
+    @Size(min = 1, max = 200)
+    @Column(name = "EMAIL")
+    private String email;
+
+    @Size(max = 200)
     @Column(name = "NOMBRE_USUARIO")
-    private int nombreUsuario;
-    
+    private String nombreUsuario;
+
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 200)
-    @Column(name = "USERNAME")
-    private String username;
-    
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 200)
-    @Column(name = "PASSWORD")
-    private String password;
-    
+    @Column(name = "FECHA_CREACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
+
+    @Column(name = "FECHA_ACTUALIZACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaActualizacion;
+
+    /*@OneToMany(mappedBy = "codUsuario")
+    private Collection<UsuarioRol> usuarioRolCollection;*/
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "TBL_GAI_USUARIO_ROL",
+            joinColumns = {
+                @JoinColumn(name = "COD_USUARIO")},
+            inverseJoinColumns = {
+                @JoinColumn(name = "COD_ROL")}
+    )
+    Set<Rol> roles = new HashSet<>();
 
     public Usuario() {
     }
@@ -67,11 +100,11 @@ public class Usuario implements Serializable {
         this.id = codUsuario;
     }
 
-    public Usuario(Integer codUsuario, int nombreUsuario, String username, String password) {
+    public Usuario(Integer codUsuario, String usuario, String email, Date fechaCreacion) {
         this.id = codUsuario;
-        this.nombreUsuario = nombreUsuario;
-        this.username = username;
-        this.password = password;
+        this.usuario = usuario;
+        this.email = email;
+        this.fechaCreacion = fechaCreacion;
     }
 
     public Integer getId() {
@@ -82,30 +115,64 @@ public class Usuario implements Serializable {
         this.id = id;
     }
 
-    public int getNombreUsuario() {
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getNombreUsuario() {
         return nombreUsuario;
     }
 
-    public void setNombreUsuario(int nombreUsuario) {
+    public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = nombreUsuario;
     }
 
-    public String getUsername() {
-        return username;
+    public Date getFechaCreacion() {
+        return fechaCreacion;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion != null ? fechaCreacion : Date.from(Instant.now());
     }
 
-    public String getPassword() {
-        return password;
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
     }
 
+    public Set<Rol> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Rol> roles) {
+        this.roles = roles;
+    }
+
+    /*
+    @XmlTransient
+    @JsonIgnore
+    public Collection<UsuarioRol> getUsuarioRolCollection() {
+        return usuarioRolCollection;
+    }
+
+    public void setUsuarioRolCollection(Collection<UsuarioRol> usuarioRolCollection) {
+        this.usuarioRolCollection = usuarioRolCollection;
+    }*/
     @Override
     public int hashCode() {
         int hash = 0;
@@ -130,5 +197,20 @@ public class Usuario implements Serializable {
     public String toString() {
         return "co.com.claro.ejb.dao.Usuario[ codUsuario=" + id + " ]";
     }
-    
+
+    public UsuarioDTO toDTO() {
+        UsuarioDTO entidadDTO = new UsuarioDTO();
+        entidadDTO.setId(id);
+        entidadDTO.setFechaCreacion(fechaCreacion);
+        entidadDTO.setFechaActualizacion(fechaActualizacion);
+        entidadDTO.setNombreUsuario(nombreUsuario);
+        entidadDTO.setUsuario(usuario);
+        entidadDTO.setEmail(email);
+
+        if (roles != null) {            
+            Set<RolDTO> lstRoles = roles.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(RolDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+            entidadDTO.setRoles(lstRoles);
+        }
+        return entidadDTO;
+    }
 }

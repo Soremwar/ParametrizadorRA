@@ -5,8 +5,6 @@ import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.IWsTransformacionDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
-import co.com.claro.ejb.dao.WsTransformacionDAO;
-import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
@@ -156,7 +154,7 @@ public class ConciliacionREST {
             //throw new DataAlreadyExistException(Response.Status.NOT_ACCEPTABLE.getReasonPhrase() +  dto.getPaquete());
             WrapperResponseEntity response = new WrapperResponseEntity(ResponseCode.CONFLICT,  "Informacion ya existe", "El paquete " + dto.getPaquete() + " ya existe");
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(response).build();
-        }*/ 
+        }*/
         if (entidadPadreJPA != null) {
             entidadJPA.setPolitica(null);
             managerDAO.create(entidadJPA);
@@ -184,7 +182,7 @@ public class ConciliacionREST {
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
 
-    public void crearPaquete (ConciliacionDTO dto, Conciliacion entidadJPA) {
+    public void crearPaquete(ConciliacionDTO dto, Conciliacion entidadJPA) {
         WsTransformacion transformacion = new WsTransformacion();
         transformacion.setFechaCreacion(Date.from(Instant.now()));
         transformacion.setNombreWs(dto.getPaquete().toUpperCase());
@@ -195,7 +193,7 @@ public class ConciliacionREST {
         entidadJPA.addTransformacion(transformacion);
         managerDAO.edit(entidadJPA);
     }
-    
+
     /**
      * Actualiza la entidadDTO por su Id
      *
@@ -281,17 +279,17 @@ public class ConciliacionREST {
     public int count() {
         return managerDAO.count();
     }
-    
+
     @POST
     @Path("/progEjecucion")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response setProgramacionEjecucion(WsTransformacionDTO dto){
-         WsTransformacion entidadJPA = transformacionDAO.find(dto.getId());
-         entidadJPA.setFechaAgendamiento(dto.getFechaAgendamiento());
-         logger.log(Level.INFO, "fecha agendamiento:{0}", entidadJPA);
-         transformacionDAO.edit(entidadJPA);
-         return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
+    public Response setProgramacionEjecucion(WsTransformacionDTO dto) {
+        WsTransformacion entidadJPA = transformacionDAO.find(dto.getId());
+        entidadJPA.setFechaAgendamiento(dto.getFechaAgendamiento());
+        logger.log(Level.INFO, "fecha agendamiento:{0}", entidadJPA);
+        transformacionDAO.edit(entidadJPA);
+        return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
     }
-    
+
 }
