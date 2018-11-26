@@ -1,17 +1,13 @@
 package co.com.claro.ejb.dao.parent;
 
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
-<<<<<<< HEAD
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
-=======
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
->>>>>>> 16f6ca94640de1eb1591df5dfc60e9d302382607
+
 
 /**
  * Contiene toda la implementacion generica de todos los metodos estandar de DAO

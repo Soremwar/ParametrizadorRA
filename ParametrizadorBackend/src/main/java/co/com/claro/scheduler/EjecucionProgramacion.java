@@ -12,17 +12,15 @@ import co.com.claro.model.dto.request.LoadPlanStartupParameterRequestDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.EjecucionProceso;
 import co.com.claro.model.entity.WsTransformacion;
-<<<<<<< HEAD
-=======
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
->>>>>>> 16f6ca94640de1eb1591df5dfc60e9d302382607
+
 import com.oracle.xmlns.odi.odiinvoke.FacadeODI;
 import com.oracle.xmlns.odi.odiinvoke.OdiStartLoadPlanType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
-import javax.validation.ConstraintViolationException;
+import javax.ws.rs.HEAD;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -51,7 +49,7 @@ public class EjecucionProgramacion implements Job {
             ParametroDAO parametroDAO = (ParametroDAO) _jobDetail.getJobDataMap().get("parametroDAO");
             //conciliacionDAO.find()
             //Conciliacion conciliacion = wsTransformacion.getConciliacion();
-            System.out.println("Concliacion:" + conciliacion.getNombre());
+            System.out.println("Conciliacion:" + conciliacion.getNombre());
 
             // TODO: INTEGRAR CON ODI
             // 1. Registrar log de eventos para inicio de integración
@@ -61,11 +59,7 @@ public class EjecucionProgramacion implements Job {
             logAud.setConciliacion(null);
             logAud.setEstadoEjecucion("INICIADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
             logAud.setFechaEjecucion(new Date());
-<<<<<<< HEAD
-=======
             logAud.setNombre("AGENDADA:" + conciliacion.getNombre());
->>>>>>> 16f6ca94640de1eb1591df5dfc60e9d302382607
-            // logAud.setIdPlanInstance(conciliacion.getId().toString());
             logAud.setNombreConciliacion(conciliacion.getNombre());
 
             System.out.println("OBJ" + logAud.toString());
@@ -146,8 +140,8 @@ public class EjecucionProgramacion implements Job {
                 logEjecucionDAO.create(_logAud);
                 _logAud.setConciliacion(_entidadPadre);
                 logEjecucionDAO.edit(_logAud);
-                 _entidadPadre.addEjecucionProceso(_logAud);
-                 conciliacionDAO.edit(_entidadPadre);
+                _entidadPadre.addEjecucionProceso(_logAud);
+                conciliacionDAO.edit(_entidadPadre);
             } catch (Exception ex) {
                 Conciliacion _entidadPadre = conciliacionDAO.find(conciliacion.getId());
                 EjecucionProceso _logAud = new EjecucionProceso();

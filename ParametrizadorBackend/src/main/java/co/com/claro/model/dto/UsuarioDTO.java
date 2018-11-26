@@ -28,8 +28,6 @@ public class UsuarioDTO implements Serializable {
     
     private Set<RolDTO> roles;
     
-    
-
     public String getUsuario() {
         return usuario;
     }
