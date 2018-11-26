@@ -94,7 +94,7 @@ public class EjecucionProceso implements Serializable {
     private String componenteEjecutado;
     
     @Column(name = "RESPUESTA")
-    @Size(max = 200)
+    @Size(max = 2000)
     private String respuesta;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)

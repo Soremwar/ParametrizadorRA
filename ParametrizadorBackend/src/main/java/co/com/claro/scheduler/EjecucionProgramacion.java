@@ -12,12 +12,17 @@ import co.com.claro.model.dto.request.LoadPlanStartupParameterRequestDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.EjecucionProceso;
 import co.com.claro.model.entity.WsTransformacion;
+<<<<<<< HEAD
+=======
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+>>>>>>> 16f6ca94640de1eb1591df5dfc60e9d302382607
 import com.oracle.xmlns.odi.odiinvoke.FacadeODI;
 import com.oracle.xmlns.odi.odiinvoke.OdiStartLoadPlanType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.validation.ConstraintViolationException;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -56,6 +61,10 @@ public class EjecucionProgramacion implements Job {
             logAud.setConciliacion(null);
             logAud.setEstadoEjecucion("INICIADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
             logAud.setFechaEjecucion(new Date());
+<<<<<<< HEAD
+=======
+            logAud.setNombre("AGENDADA:" + conciliacion.getNombre());
+>>>>>>> 16f6ca94640de1eb1591df5dfc60e9d302382607
             // logAud.setIdPlanInstance(conciliacion.getId().toString());
             logAud.setNombreConciliacion(conciliacion.getNombre());
 
@@ -123,6 +132,12 @@ public class EjecucionProgramacion implements Job {
                 _logAud.setEstadoEjecucion("INTEGRADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
                 _logAud.setFechaEjecucionExitosa(new Date());
                 _logAud.setNombreConciliacion(conciliacion.getNombre());
+
+                XmlMapper xmlMapper = new XmlMapper();
+                String xml = xmlMapper.writeValueAsString(response.getStartedRunInformation());
+
+                _logAud.setRespuesta(xml);
+                _logAud.setNombre("AGENDADA:" + conciliacion.getNombre());
                 Long planInstanceId = response.getStartedRunInformation().getOdiLoadPlanInstanceId();
                 _logAud.setIdPlanInstance(planInstanceId.toString());
 
@@ -131,13 +146,14 @@ public class EjecucionProgramacion implements Job {
                 logEjecucionDAO.create(_logAud);
                 _logAud.setConciliacion(_entidadPadre);
                 logEjecucionDAO.edit(_logAud);
-                _entidadPadre.addEjecucionProceso(_logAud);
-                conciliacionDAO.edit(_entidadPadre);
+                 _entidadPadre.addEjecucionProceso(_logAud);
+                 conciliacionDAO.edit(_entidadPadre);
             } catch (Exception ex) {
                 Conciliacion _entidadPadre = conciliacionDAO.find(conciliacion.getId());
                 EjecucionProceso _logAud = new EjecucionProceso();
                 _logAud.setComponenteEjecutado("INTEGRACION_ODI"); // TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
                 _logAud.setConciliacion(null);
+                _logAud.setNombre("AGENDADA:" + conciliacion.getNombre());
                 _logAud.setEstadoEjecucion("FALLIDA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
                 _logAud.setFechaEjecucion(new Date());
                 _logAud.setNombreConciliacion(conciliacion.getNombre());

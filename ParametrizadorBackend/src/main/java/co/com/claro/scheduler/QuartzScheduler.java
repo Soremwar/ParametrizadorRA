@@ -6,21 +6,17 @@
 package co.com.claro.scheduler;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
-import co.com.claro.ejb.dao.EjecucionDAO;
 import co.com.claro.ejb.dao.IEjecucionDAO;
 import co.com.claro.ejb.dao.IWsTransformacionDAO;
-import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.ParametroDAO;
-import co.com.claro.ejb.dao.WsTransformacionDAO;
-import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import javax.annotation.PostConstruct;
-import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import static org.quartz.CronScheduleBuilder.dailyAtHourAndMinute;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
 
 import org.quartz.JobBuilder;
@@ -51,7 +47,6 @@ public class QuartzScheduler {
     protected ParametroDAO parametroDAO;
 
     private int repeatCount = 3;
-    //private CountDownLatch latch = new CountDownLatch(repeatCount + 1);
 
     @PostConstruct
     public void init() {
@@ -84,14 +79,14 @@ public class QuartzScheduler {
                     .build();
 
             int _horaEjecucionJob = 0;
-            
+
             try {
                 String horaEjecucionJob = parametroDAO.findByParametro("SISTEMA", "horaEjecucionJob");
                 _horaEjecucionJob = Integer.parseInt(horaEjecucionJob);
             } catch (Exception e) {
                 _horaEjecucionJob = 0;
             }
-            
+
             int _minutoEjecucionJob;
             try {
                 String minutoEjecucionJob = parametroDAO.findByParametro("SISTEMA", "minutoEjecucionJob");
@@ -99,18 +94,79 @@ public class QuartzScheduler {
             } catch (Exception e) {
                 _minutoEjecucionJob = 0;
             }
-            
-            
-            System.out.println("A intentar corre a las "+ _horaEjecucionJob + ":" + _minutoEjecucionJob);
-            Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity("trgPrincipal", "group1")
-                   // .startNow()
-                    // .withSchedule(dailyAtHourAndMinute(19, 46))
 
-                     .startAt(DateBuilder.todayAt(_horaEjecucionJob, _minutoEjecucionJob, 00))  
-                    .withSchedule(
-                            SimpleScheduleBuilder.simpleSchedule()
-                                    .withIntervalInHours(24).repeatForever())
+            System.out.println("A intentar corre a las " + _horaEjecucionJob + ":" + _minutoEjecucionJob);
+            Date fechaActual = new Date();
+            Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+            calendar.setTime(fechaActual);   // assigns calendar to given date 
+            int horaActual = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
+            int minutoActual = calendar.get(Calendar.MINUTE);
+            System.out.println("Hora actual: " + horaActual + "**" + "Minuto Actual:" + minutoActual);
+
+            Trigger trigger;
+            if (horaActual < _horaEjecucionJob) {
+
+            } else if (horaActual == _horaEjecucionJob) {
+                if (minutoActual < _minutoEjecucionJob) {
+
+                } else {
+
+                    SchedulerFactory schedFact2 = new org.quartz.impl.StdSchedulerFactory();
+                    Scheduler scheduler2 = schedFact2.getScheduler();
+                    scheduler2.start();
+
+                    JobBuilder jobBuilder2 = JobBuilder.newJob(ValidadorAgendamientoJob.class);
+                    JobDataMap data2 = new JobDataMap();
+                    data2.put("transformacionDAO", transformacionDAO);
+                    data2.put("logEjecucionDAO", logEjecucionDAO);
+                    data2.put("conciliacionDAO", conciliacionDAO);
+                    data2.put("parametroDAO", parametroDAO);
+
+                    JobDetail jobDetail2 = jobBuilder
+                            .withIdentity("jobPrincipal_", "group1")
+                            .usingJobData(data2)
+                            .build();
+
+                    Trigger _trigger = TriggerBuilder.newTrigger()
+                            .withIdentity("trgPrincipal_", "group1")
+                            .startNow()
+                            .build();
+
+                    scheduler2.scheduleJob(jobDetail2, _trigger);
+                }
+            } else {
+                SchedulerFactory schedFact2 = new org.quartz.impl.StdSchedulerFactory();
+                Scheduler scheduler2 = schedFact2.getScheduler();
+                scheduler2.start();
+
+                JobBuilder jobBuilder2 = JobBuilder.newJob(ValidadorAgendamientoJob.class);
+                JobDataMap data2 = new JobDataMap();
+                data2.put("transformacionDAO", transformacionDAO);
+                data2.put("logEjecucionDAO", logEjecucionDAO);
+                data2.put("conciliacionDAO", conciliacionDAO);
+                data2.put("parametroDAO", parametroDAO);
+
+                JobDetail jobDetail2 = jobBuilder2
+                        .withIdentity("jobPrincipal_", "group1")
+                        .usingJobData(data2)
+                        .build();
+
+                Trigger _trigger = TriggerBuilder.newTrigger()
+                        .withIdentity("trgPrincipal_", "group1")
+                        //.withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(horaActual, minutoActual))
+                        /*  .withSchedule(
+                                    CronScheduleBuilder.dailyAtHourAndMinute(18, 59))*/
+                        .startNow()
+                        .build();
+
+                scheduler2.scheduleJob(jobDetail2, _trigger);
+            }
+
+            trigger = TriggerBuilder.newTrigger()
+                    .withIdentity("trgPrincipal", "group1")
+                    .startAt(DateBuilder.todayAt(_horaEjecucionJob, _minutoEjecucionJob, 00))
+                    .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(horaActual, minutoActual))
+                    //.withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(20, 40))
                     .build();
 
             // Tell quartz to schedule the job using our trigger
