@@ -83,7 +83,7 @@ public class Usuario implements Serializable {
 
     /*@OneToMany(mappedBy = "codUsuario")
     private Collection<UsuarioRol> usuarioRolCollection;*/
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "TBL_GAI_USUARIO_ROL",
             joinColumns = {

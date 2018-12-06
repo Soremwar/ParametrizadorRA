@@ -119,7 +119,7 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro> {
         query.setParameter("tipo", "%" + tipo + "%");
         //query.setParameter("codigoPadre", "%" + codPadre + "%");
         List<Parametro> aux = query.getResultList();
-        List<Parametro> results = aux.stream().filter(parametro -> codPadre.equals(parametro.getCodPadre())).collect(Collectors.toList());
+        List<Parametro> results = codPadre != null ? aux.stream().filter(parametro -> codPadre.equals(parametro.getCodPadre())).collect(Collectors.toList()) : aux;
         if (results == null) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
