@@ -135,7 +135,7 @@ public class QueryEscenarioREST {
         logger.log(Level.INFO, "id:{0}", id);
         List<QueryEscenarioDTO> lstDTO;
         List<QueryEscenario> lst;
-        lst = managerDAO.findByConciliacion(id);
+        lst = managerDAO.findByEscenario(id);
         lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId)).collect(toList());
         List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>) (List<?>) lstDTO;
         return lstFinal;
