@@ -6,9 +6,11 @@ import co.com.claro.ejb.dao.IWsTransformacionDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.model.dto.ConciliacionDTO;
+import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.model.entity.WsTransformacion;
@@ -123,6 +125,18 @@ public class ConciliacionREST {
         return lstFinal;
     }
 
+    @GET
+    @Path("/politica/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ConciliacionDTO> getByPolitica(@PathParam("id") int id) {
+        logger.log(Level.INFO, "id:{0}", id);
+        List<ConciliacionDTO> lstDTO;
+        List<Conciliacion> lst;
+        lst = managerDAO.findByPolitica(id);
+        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ConciliacionDTO::getId)).collect(toList());
+        List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>) (List<?>) lstDTO;
+        return lstFinal;
+    }
     @GET
     @Path("/conciliacionesRequierenAprobacion")
     @Produces({MediaType.APPLICATION_JSON})
