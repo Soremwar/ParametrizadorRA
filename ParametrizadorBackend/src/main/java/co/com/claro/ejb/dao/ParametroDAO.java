@@ -125,6 +125,18 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro> {
         }
         return results;
     }
+    
+    public List<Parametro> validarExistenciaParametro(String tipo, Integer codPadre) {
+        logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{tipo, codPadre});
+        TypedQuery<Parametro> query = em.createNamedQuery("Parametro.findByCodPadre", Parametro.class);
+        query.setParameter("tipo", "%" + tipo + "%");
+        List<Parametro> aux = query.getResultList();
+        List<Parametro> results = codPadre != null ? aux.stream().filter(parametro -> codPadre.equals(parametro.getCodPadre())).collect(Collectors.toList()) : aux;
+        if (results != null) {
+            throw new DataNotFoundException("Ya existen parámetros asociados a este padre " + codPadre);
+        }
+        return results;
+    }
 
     public String findByParametro(String tipo, String parametro) {
         logger.log(Level.INFO, "tipo:{0}nombre:{1}", new Object[]{tipo, parametro});

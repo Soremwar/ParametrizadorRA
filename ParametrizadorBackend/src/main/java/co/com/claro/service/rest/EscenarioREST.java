@@ -3,6 +3,7 @@ package co.com.claro.service.rest;
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
+import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
@@ -54,6 +55,9 @@ public class EscenarioREST {
 
     @EJB
     protected ConciliacionDAO padreDAO;
+
+    @EJB
+    protected ParametroDAO parametroDAO;
 
     /**
      * Obtiene las Escenarios Paginadas
@@ -207,6 +211,7 @@ public class EscenarioREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         Escenario entidadJPA = managerDAO.find(id);
+        parametroDAO.validarExistenciaParametro("ESCENARIO", entidadJPA.getId());
         EscenarioDTO dto = entidadJPA.toDTO();
         Conciliacion entidadPadreJPA = null;
         if (entidadJPA.getConciliacion() != null) {

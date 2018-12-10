@@ -11,6 +11,7 @@ import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -28,6 +29,7 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
     
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
+    
 
     public EscenarioDAO() {
         super(Escenario.class);
@@ -137,11 +139,13 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
     }    
     
     public List<Escenario> findByConciliacion(int idConciliacion){
-        //logger.log(Level.INFO, "busqueda:{0}offset:{0}limit:{0}", new Object[]{busqueda, offset, limit});
+        logger.log(Level.INFO, "busqueda:{0}offset:{0}limit:{0}", new Object[]{idConciliacion});
         TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findByConciliacion", Escenario.class);
         query.setParameter("codConciliacion", idConciliacion);
         List<Escenario> results = query.getResultList();
         return results;
-    }   
+    }
+    
+
 }
 
