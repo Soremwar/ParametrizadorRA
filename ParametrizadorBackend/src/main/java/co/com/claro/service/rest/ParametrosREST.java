@@ -46,16 +46,9 @@ public class ParametrosREST {
 
     @Transient
     private static final Logger logger = Logger.getLogger(ParametrosREST.class.getSimpleName());
-<<<<<<< HEAD
     
     private String modulo = "PARAMETROS";
     
-=======
-
-    private String usuario = "admin";
-    private String modulo = "parametros";
-
->>>>>>> origin/master
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;
     @EJB
