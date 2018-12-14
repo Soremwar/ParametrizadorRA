@@ -6,7 +6,6 @@
 package co.com.claro.ejb.dao;
 
 import co.com.claro.ejb.dao.parent.AbstractJpaDAO;
-import co.com.claro.model.entity.Resultado;
 import co.com.claro.model.entity.WsTransformacion;
 import co.com.claro.service.rest.excepciones.DataAlreadyExistException;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
@@ -95,7 +94,7 @@ public class WsTransformacionDAO extends AbstractJpaDAO<WsTransformacion> implem
         query.setParameter("paqueteWs", paqueteWs);
         List<WsTransformacion> results = query.getResultList();
         if (results != null && !results.isEmpty()) {
-            throw new DataAlreadyExistException("El paquete ya esta siendo utilizado");
+            throw new DataAlreadyExistException("El paquete " + paqueteWs + " ya esta siendo utilizado");
         }
         return results;
     }
@@ -106,7 +105,7 @@ public class WsTransformacionDAO extends AbstractJpaDAO<WsTransformacion> implem
         query.setParameter("paqueteWs", paqueteWs);
         List<WsTransformacion> results = query.getResultList();
         if (results != null && !results.isEmpty() && !results.get(0).getPaqueteWs().equalsIgnoreCase(paqueteWs)) {
-            throw new DataAlreadyExistException("El paquete " + paqueteWs.toUpperCase() + " ya esta siendo utilizado");
+            throw new DataAlreadyExistException("El paquete " + paqueteWs + " ya esta siendo utilizado");
         }
         return results;
     }

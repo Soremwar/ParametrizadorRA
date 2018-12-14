@@ -31,7 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -58,6 +58,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Conciliacion.findByTablaDestino", query = "SELECT c FROM Conciliacion c WHERE c.tablaDestino = :tablaDestino")
     , @NamedQuery(name = "Conciliacion.findByPoliticaNull", query = "SELECT c FROM Conciliacion c WHERE c.politica IS null")
     , @NamedQuery(name = "Conciliacion.findByPolitica", query = "SELECT c FROM Conciliacion c WHERE c.politica.id = :codPolitica")
+    //, @NamedQuery(name = "Conciliacion.findByEscenario", query = "SELECT c FROM Conciliacion c WHERE c.escenarios.id = :codPolitica")        
     , @NamedQuery(name = "Conciliacion.findByRequiereAprobacion", query = "SELECT c FROM Conciliacion c WHERE c.requiereAprobacion = :requiereAprobacion")
     , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e WHERE lower(c.id) LIKE lower(:id) or lower(c.requiereAprobacion) LIKE lower(:requiereAprobacion) or lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.descripcion) LIKE lower(:descripcion) or LOWER(c.politica.nombre) LIKE lower(:nombrePolitica) or LOWER(c.usuarioAsignado) LIKE lower(:usuarioAsignado) or LOWER(e.nombre) LIKE lower(:nombreEscenario)")})
     
@@ -108,7 +109,6 @@ public class Conciliacion implements Serializable {
     private String usuarioAsignado;
         
 
-    //@JoinColumn(name = "COD_POLITICA")
     //@OneToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "COD_POLITICA")

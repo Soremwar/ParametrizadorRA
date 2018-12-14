@@ -87,6 +87,22 @@ public class QueryEscenarioDAO extends AbstractJpaDAO<QueryEscenario>{
         }
         return results;
     }
+    
+        /**
+     * Buscar la misma cadena en todos los campos descriptivos
+     * @param busqueda Campo por el cual va a buscar en todos los campos descriptivos
+     * @return Lista de QueryEscenarios que cumplan con el criterio
+     */
+    public List<QueryEscenario> findByEscenario(int idEscenario){
+        logger.log(Level.INFO, "busqueda:{0}", new Object[]{idEscenario});     
+        TypedQuery<QueryEscenario> query = em.createNamedQuery("QueryEscenario.findByCodEscenario", QueryEscenario.class);
+        query.setParameter("codEscenario", idEscenario);
+        List<QueryEscenario> results = query.getResultList();
+        if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }
+        return results;
+    }
         
 }
 

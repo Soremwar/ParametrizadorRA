@@ -6,9 +6,11 @@ import co.com.claro.ejb.dao.IWsTransformacionDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.model.dto.ConciliacionDTO;
+import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.model.entity.WsTransformacion;
@@ -129,6 +131,18 @@ public class ConciliacionREST {
     }
 
     @GET
+    @Path("/politica/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ConciliacionDTO> getByPolitica(@PathParam("id") int id) {
+        logger.log(Level.INFO, "id:{0}", id);
+        List<ConciliacionDTO> lstDTO;
+        List<Conciliacion> lst;
+        lst = managerDAO.findByPolitica(id);
+        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ConciliacionDTO::getId)).collect(toList());
+        List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>) (List<?>) lstDTO;
+        return lstFinal;
+    }
+    @GET
     @Path("/conciliacionesRequierenAprobacion")
     @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
@@ -163,26 +177,24 @@ public class ConciliacionREST {
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(response).build();
         }*/
         if (entidadPadreJPA != null) {
+
+            
             entidadJPA.setPolitica(null);
             managerDAO.create(entidadJPA);
             entidadJPA.setPolitica(entidadPadreJPA);
-            managerDAO.edit(entidadJPA);
             entidadPadreJPA.addConciliaciones(entidadJPA);
-            padreDAO.edit(entidadPadreJPA);
-
+            //transformacionDAO.edit(transformacion);
             if (dto.getPaquete() != null) {
-                crearPaquete(dto, entidadJPA);
-                /*WsTransformacion transformacion = new WsTransformacion();
+                //crearPaquete(dto, entidadJPA);
+                WsTransformacion transformacion = new WsTransformacion();
                 transformacion.setFechaCreacion(Date.from(Instant.now()));
                 transformacion.setNombreWs(dto.getPaquete());
                 transformacion.setPaqueteWs(dto.getPaquete());
-                transformacionDAO.create(transformacion);
                 transformacion.setConciliacion(entidadJPA);
-                transformacionDAO.edit(transformacion);
                 entidadJPA.addTransformacion(transformacion);
-                managerDAO.edit(entidadJPA);*/
-                //padreDAO.edit(entidadPadreJPA);
             }
+            managerDAO.edit(entidadJPA);
+            padreDAO.edit(entidadPadreJPA);
         }
         LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
@@ -192,13 +204,10 @@ public class ConciliacionREST {
     public void crearPaquete(ConciliacionDTO dto, Conciliacion entidadJPA) {
         WsTransformacion transformacion = new WsTransformacion();
         transformacion.setFechaCreacion(Date.from(Instant.now()));
-        transformacion.setNombreWs(dto.getPaquete().toUpperCase());
-        transformacion.setPaqueteWs(dto.getPaquete().toUpperCase());
-        transformacionDAO.create(transformacion);
+        transformacion.setNombreWs(dto.getPaquete());
+        transformacion.setPaqueteWs(dto.getPaquete());
         transformacion.setConciliacion(entidadJPA);
-        transformacionDAO.edit(transformacion);
         entidadJPA.addTransformacion(transformacion);
-        managerDAO.edit(entidadJPA);
     }
 
     /**
@@ -216,7 +225,7 @@ public class ConciliacionREST {
         Politica entidadPadreJPA = null;
         List<WsTransformacion> results = transformacionDAO.validPaqueteWs(entidadDTO.getPaquete());
         String paquete = (results != null && !results.isEmpty()) ? results.get(0).getPaqueteWs() : "";
-        System.out.println("paquete abp" + paquete);
+        //System.out.println("paquete abp" + paquete);
         if (entidadDTO.getIdPolitica() != null) {
             entidadPadreJPA = padreDAO.find(entidadDTO.getIdPolitica());
             if (entidadPadreJPA == null) {
@@ -234,21 +243,20 @@ public class ConciliacionREST {
             entidadJPA.setUsuarioAsignado(entidadDTO.getUsuarioAsignado() != null ? entidadDTO.getUsuarioAsignado() : entidadJPA.getUsuarioAsignado());
             entidadJPA.setRequiereAprobacion(entidadDTO.getRequiereAprobacion() != null ? entidadDTO.getRequiereAprobacion() : entidadJPA.getRequiereAprobacion());
             entidadJPA.setPolitica(entidadDTO.getIdPolitica() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getPolitica());
+
+            if (entidadDTO.getPaquete() != null) {
+                if (!paquete.equalsIgnoreCase(entidadDTO.getPaquete())) {
+                    crearPaquete(entidadDTO, entidadJPA);
+                }
+            }
             managerDAO.edit(entidadJPA);
             if ((entidadPadreJPA != null)) {
                 entidadPadreJPA.addConciliaciones(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
-            if (entidadDTO.getPaquete() != null) {
-                //if (results.size() > 1 && results.get(0).getPaqueteWs().equalsIgnoreCase(entidadDTO.getPaquete())) {
-                if (!paquete.equalsIgnoreCase(entidadDTO.getPaquete())) {
-                    crearPaquete(entidadDTO, entidadJPA);
-                }
-                //}
-            }
             LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidadDTO.getUsername(), entidadJPA.toString());
             logAuditoriaDAO.create(logAud);
-            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
+            return Response.status(Response.Status.OK).entity(entidadJPA).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
 

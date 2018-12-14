@@ -8,7 +8,6 @@ package co.com.claro.service.rest;
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.QueryEscenarioDAO;
-import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.QueryEscenarioDTO;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.LogAuditoria;
@@ -128,6 +127,25 @@ public class QueryEscenarioREST {
         return lstFinal;
     }
 
+        /**
+     * Obtiene una QueryEscenario por id
+     *
+     * @param id Identificador de conciliacion
+     * @return Una QueryEscenario que coincide con el criterio
+     */
+    @GET
+    @Path("/escenario/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<QueryEscenarioDTO> getByIdEscenario(@PathParam("id") int id) {
+        logger.log(Level.INFO, "id:{0}", id);
+        List<QueryEscenarioDTO> lstDTO;
+        List<QueryEscenario> lst;
+        lst = managerDAO.findByEscenario(id);
+        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId)).collect(toList());
+        List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>) (List<?>) lstDTO;
+        return lstFinal;
+    }
+    
     /**
      * Crea una nueva politica
      *
