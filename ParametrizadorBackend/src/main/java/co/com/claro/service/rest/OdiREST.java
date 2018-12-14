@@ -1,15 +1,24 @@
 package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ParametroDAO;
+import co.com.claro.model.dto.ParametroDTO;
 import co.com.claro.model.dto.RequestURLDTO;
+import co.com.claro.model.dto.UsuarioDTO;
 import co.com.claro.model.dto.request.LoadPlanStatusRequestDTO;
 import co.com.claro.model.dto.request.StartLoadPlanRequestDTO;
 import co.com.claro.model.dto.request.StopLoadPlanRequestDTO;
+import co.com.claro.model.entity.Parametro;
+import co.com.claro.model.entity.Usuario;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+
 import com.oracle.xmlns.odi.odiinvoke.FacadeODI;
 import com.oracle.xmlns.odi.odiinvoke.LoadPlanStatusType;
 import com.oracle.xmlns.odi.odiinvoke.OdiStartLoadPlanType;
 import com.oracle.xmlns.odi.odiinvoke.OdiStopLoadPlanType;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
@@ -39,6 +48,7 @@ public class OdiREST{
     
     @GET
     @Path("/getWsdlLocationODIFromDB")
+    @JWTTokenNeeded
     public String getWsdlLocationODIFromDB() {
         String wsdlLocation;
         try {
@@ -50,7 +60,23 @@ public class OdiREST{
     }  
     
     @GET
+    @Path("/getOdiParametros")
+    @JWTTokenNeeded
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ParametroDTO> getOdiParametros() {
+    	
+        List<Parametro> lst = parametrosDAO.findByOdi("odi");
+        List<ParametroDTO> lstDTO = new ArrayList<>();
+        lst.forEach((entidad) -> {
+            lstDTO.add(entidad.toDTO());
+        });
+        List<ParametroDTO> lstFinal = (List<ParametroDTO>) (List<?>) lstDTO;
+        return lstFinal;
+    }  
+    
+    @GET
     @Path("/getVersion")
+    @JWTTokenNeeded
     public String getVersion() {
         return facadeODI.getVersion(wsdlLocation);
         
@@ -58,6 +84,7 @@ public class OdiREST{
     
     @POST
     @Path("/startLoadPlan")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     //public OdiStartLoadPlanType startLoadPlan(StartLoadPlanRequestDTO request) {
     public OdiStartLoadPlanType startLoadPlan(StartLoadPlanRequestDTO request) {
@@ -67,6 +94,7 @@ public class OdiREST{
 
     @POST
     @Path("/stopLoadPlan")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public OdiStopLoadPlanType stopLoadPlan(StopLoadPlanRequestDTO request) {
         return facadeODI.stopLoadPlan(wsdlLocation, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanInstance(), request.getLoadPlanInstanceRunCount(), request.getStopLevel());
@@ -74,6 +102,7 @@ public class OdiREST{
     
     @POST
     @Path("/loadPlanStatus")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<LoadPlanStatusType> loadPlanStatus(LoadPlanStatusRequestDTO request) {
         return facadeODI.loadPlanStatus(wsdlLocation, request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlans());

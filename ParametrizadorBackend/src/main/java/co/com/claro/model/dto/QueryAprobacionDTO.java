@@ -26,6 +26,7 @@ public class QueryAprobacionDTO implements Serializable{
     private String nombreConciliacion;
     private String mensaje;
     private String usuario;
+    private String username;
     
 
 
@@ -92,6 +93,14 @@ public class QueryAprobacionDTO implements Serializable{
 
     public void setUsuario(String usuario) {
         this.usuario = usuario;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
     
     public QueryAprobacion toEntity(){

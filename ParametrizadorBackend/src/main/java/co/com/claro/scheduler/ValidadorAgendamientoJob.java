@@ -77,7 +77,7 @@ public class ValidadorAgendamientoJob implements Job {
             String tempo1 = "Cantidad::" + aAgendarHoy.size();
             System.out.println(tempo1);
 
-            System.out.println("Se lanza job segundario");
+            System.out.println("Se lanza job SECUNDARIO");
             SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
             Scheduler scheduler = schedFact.getScheduler();
             scheduler.start();

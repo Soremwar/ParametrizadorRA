@@ -25,6 +25,7 @@ public class IndicadorDTO implements Serializable{
     private String nombreFormula;
     private String descripcion;
     private String textoFormula;
+    private String username;
 
     public Integer getId() {
         return id;
@@ -73,6 +74,15 @@ public class IndicadorDTO implements Serializable{
     public void setNombreEscenario(String nombreEscenario) {
         this.nombreEscenario = nombreEscenario;
     }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
     public Indicador toEntity(){
         Indicador p = new Indicador();
         //Campos Entidad

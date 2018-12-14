@@ -30,6 +30,7 @@ public class QueryEscenarioDTO implements Serializable{
     private Date fechaCreacion;
     private Date fechaActualizacion;
     private Integer orden;
+    private String username;
 
     public Integer getId() {
         return id;
@@ -109,6 +110,14 @@ public class QueryEscenarioDTO implements Serializable{
 
     public void setNombreConciliacion(String nombreConciliacion) {
         this.nombreConciliacion = nombreConciliacion;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public QueryEscenario toEntity(){

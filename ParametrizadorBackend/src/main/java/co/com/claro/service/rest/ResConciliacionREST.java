@@ -5,15 +5,24 @@
  */
 package co.com.claro.service.rest;
 
+import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.ResConciliacionDAO;
 import co.com.claro.model.dto.ResConciliacionDTO;
+import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.ResConciliacion;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+
 import java.util.ArrayList;
+import java.util.Date;
+
 import static java.util.Comparator.comparing;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
+
+import java.time.Instant;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Transient;
@@ -37,11 +46,16 @@ public class ResConciliacionREST {
 
     @Transient
     private static final Logger logger = Logger.getLogger(ResConciliacionREST.class.getSimpleName());
-
+    
+    private String modulo = "RESCONCILIACION";
+    
+    @EJB
+    protected LogAuditoriaDAO logAuditoriaDAO;
     @EJB
     protected ResConciliacionDAO managerDAO;
 
     @GET
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<ResConciliacionDTO> find(
             @QueryParam("offset") int offset,
@@ -63,6 +77,7 @@ public class ResConciliacionREST {
 
     @GET
     @Path("{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public ResConciliacionDTO findById(@PathParam("id") Integer id) {
         logger.log(Level.INFO, "id:{0}", id);
@@ -73,6 +88,7 @@ public class ResConciliacionREST {
 
     @GET
     @Path("/findByAny")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<ResConciliacionDTO> findByAnyColumn(@QueryParam("texto") String texto) {
         logger.log(Level.INFO, "texto:{0}", texto);
@@ -92,10 +108,13 @@ public class ResConciliacionREST {
      * @return el resultado de la operacion
      */
     @PUT
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ResConciliacionDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidad.toString());
+        logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.OK).entity(entidad).build();
         /*ResConciliacion entidadJPA = managerDAO.find(entidad.getId());
         if (entidadJPA != null) {
@@ -114,6 +133,7 @@ public class ResConciliacionREST {
      */
     @GET
     @Path("/count")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public int count() {
         return managerDAO.count();

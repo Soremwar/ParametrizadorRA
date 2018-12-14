@@ -81,7 +81,7 @@ public class QuartzScheduler {
             int _horaEjecucionJob = 0;
 
             try {
-                String horaEjecucionJob = parametroDAO.findByParametro("SISTEMA", "horaEjecucionJob");
+                String horaEjecucionJob = parametroDAO.findByParametro("SISTEMA", "V_horaEjecucionJob");
                 _horaEjecucionJob = Integer.parseInt(horaEjecucionJob);
             } catch (Exception e) {
                 _horaEjecucionJob = 0;
@@ -89,7 +89,7 @@ public class QuartzScheduler {
 
             int _minutoEjecucionJob;
             try {
-                String minutoEjecucionJob = parametroDAO.findByParametro("SISTEMA", "minutoEjecucionJob");
+                String minutoEjecucionJob = parametroDAO.findByParametro("SISTEMA", "V_minutoEjecucionJob");
                 _minutoEjecucionJob = Integer.parseInt(minutoEjecucionJob);
             } catch (Exception e) {
                 _minutoEjecucionJob = 0;

@@ -8,6 +8,7 @@ import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
 import co.com.claro.service.rest.parent.AbstractParentREST;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -40,8 +41,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @Transient
     private static final Logger logger = Logger.getLogger(PoliticaREST.class.getSimpleName());
     
-    private String usuario = "admin";
-    private String modulo = "politicas";
+    private String modulo = "POLITICAS";
     
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;
@@ -53,6 +53,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     protected ConciliacionDAO conciliacionDAO;
 
     @GET
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     @Override
     public List<PoliticaDTO> find(
@@ -69,6 +70,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     
     @GET
     @Path("{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public PoliticaDTO findById(@PathParam("id") Integer id){
         logger.log(Level.INFO, "id:{0}", id);
@@ -80,6 +82,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     
     @GET
     @Path("/findPoliticasSinConciliacion")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<PoliticaDTO> findPoliticasSinConciliacion(){
         List<Politica> lst = managerDAO.findPoliticaSinConciliacion();
@@ -93,6 +96,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
 
     @GET
     @Path("/findByAny")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<PoliticaDTO> findByAnyColumn(@QueryParam("texto") String texto){
         logger.log(Level.INFO, "texto:{0}", texto);        
@@ -106,6 +110,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     }
    
     @POST
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(PoliticaDTO dto) {
@@ -113,12 +118,13 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
         //Registrando log
         Politica entidadJPA = dto.toEntity();
         managerDAO.create(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
     
     @PUT
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(PoliticaDTO dto) {
@@ -131,7 +137,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
             entidadJPA.setDescripcion(dto.getDescripcion() != null ? dto.getDescripcion() : entidadJPA.getDescripcion());
             entidadJPA.setObjetivo(dto.getObjetivo() != null ? dto.getObjetivo() : entidadJPA.getObjetivo());
             managerDAO.edit(entidadJPA);
-            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
             logAuditoriaDAO.create(logAud);
             return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
        }
@@ -144,14 +150,15 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
      * @return El resultado de la operacion en codigo HTTP
      */
     @DELETE
-    @Path("{id}")
+    @Path("{id}/{username}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     @Override
-    public Response remove(@PathParam("id") Integer id) {
+    public Response remove(@PathParam("id") Integer id, @PathParam("username") String username) {
         Politica entidadJPA = managerDAO.find(id);
         PoliticaDTO dto = entidadJPA.toDTO();
         managerDAO.remove(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
         logAuditoriaDAO.create(logAud);
         WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
         return Response.status(Response.Status.OK).entity(mensaje).build();
@@ -159,6 +166,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
        
     @GET
     @Path("/count")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public int count(){
         return managerDAO.count();

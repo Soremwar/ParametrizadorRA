@@ -16,6 +16,8 @@ import co.com.claro.model.entity.Politica;
 import co.com.claro.model.entity.WsTransformacion;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import static java.util.Comparator.comparing;
@@ -49,8 +51,7 @@ public class ConciliacionREST {
     @Transient
     private static final Logger logger = Logger.getLogger(ConciliacionREST.class.getSimpleName());
 
-    private String usuario = "admin";
-    private String modulo = "conciliaciones";
+    private String modulo = "CONCILIACIONES";
 
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;
@@ -77,6 +78,7 @@ public class ConciliacionREST {
      * @return Toda la lista de conciliaciones que corresponden con el criterio
      */
     @GET
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<ConciliacionDTO> find(
             @QueryParam("offset") int offset,
@@ -98,8 +100,10 @@ public class ConciliacionREST {
      */
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @JWTTokenNeeded
+    @Produces({MediaType.APPLICATION_JSON+";charset=utf-8"})
     public ConciliacionDTO getById(@PathParam("id") int id) {
+    	
         logger.log(Level.INFO, "id:{0}", id);
         Conciliacion entidad = managerDAO.find(id);
         return entidad.toDTO();
@@ -113,6 +117,7 @@ public class ConciliacionREST {
      */
     @GET
     @Path("/findByAny")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<ConciliacionDTO> findByAnyColumn(@QueryParam("texto") String texto) {
         logger.log(Level.INFO, "texto:{0}", texto);
@@ -139,6 +144,7 @@ public class ConciliacionREST {
     }
     @GET
     @Path("/conciliacionesRequierenAprobacion")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<ConciliacionDTO> findConciliacionesRequierenAprobacion() {
         //logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{requiereaprobacion});
@@ -156,6 +162,7 @@ public class ConciliacionREST {
      * @return el la dto recien creada
      */
     @POST
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(ConciliacionDTO dto) {
@@ -189,7 +196,7 @@ public class ConciliacionREST {
             managerDAO.edit(entidadJPA);
             padreDAO.edit(entidadPadreJPA);
         }
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
@@ -210,6 +217,7 @@ public class ConciliacionREST {
      * @return el resultado de la operacion
      */
     @PUT
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ConciliacionDTO entidadDTO) {
@@ -246,7 +254,7 @@ public class ConciliacionREST {
                 entidadPadreJPA.addConciliaciones(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
-            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidadDTO.getUsername(), entidadJPA.toString());
             logAuditoriaDAO.create(logAud);
             return Response.status(Response.Status.OK).entity(entidadJPA).build();
         }
@@ -261,9 +269,10 @@ public class ConciliacionREST {
      * @return el resultado de la operacion
      */
     @DELETE
-    @Path("{id}")
+    @Path("{id}/{username}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
-    public Response remove(@PathParam("id") Integer id) {
+    public Response remove(@PathParam("id") Integer id, @PathParam("username") String username) {
         Conciliacion entidadJPA = managerDAO.find(id);
         ConciliacionDTO dto = entidadJPA.toDTO();
         Politica entidadPadreJPA = null;
@@ -272,7 +281,7 @@ public class ConciliacionREST {
             entidadPadreJPA.removeConciliaciones(entidadJPA);
         }
         managerDAO.remove(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
         logAuditoriaDAO.create(logAud);
         if (entidadPadreJPA != null) {
             padreDAO.edit(entidadPadreJPA);
@@ -283,6 +292,7 @@ public class ConciliacionREST {
 
     @GET
     @Path("/count")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public int count() {
         return managerDAO.count();
@@ -290,6 +300,7 @@ public class ConciliacionREST {
 
     @POST
     @Path("/progEjecucion")
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response setProgramacionEjecucion(WsTransformacionDTO dto) {

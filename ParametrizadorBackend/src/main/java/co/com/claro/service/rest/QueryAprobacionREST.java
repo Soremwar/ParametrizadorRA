@@ -13,6 +13,8 @@ import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.QueryAprobacion;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import static java.util.Comparator.comparing;
@@ -44,8 +46,8 @@ import javax.ws.rs.core.Response;
 public class QueryAprobacionREST {
     @Transient
     private static final Logger logger = Logger.getLogger(QueryAprobacionREST.class.getSimpleName());
-    private String usuario = "admin";
-    private String modulo = "queryaprobacion";
+   
+    private String modulo = "QUERYAPROBACION";
     
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;
@@ -56,6 +58,7 @@ public class QueryAprobacionREST {
     protected ConciliacionDAO padreDAO;
     
     @GET
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<QueryAprobacionDTO> find(
             @QueryParam("offset") int offset,
@@ -78,6 +81,7 @@ public class QueryAprobacionREST {
     
     @GET
     @Path("{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public QueryAprobacionDTO findById(@PathParam("id") Integer id){
         logger.log(Level.INFO, "id:{0}", id);
@@ -89,6 +93,7 @@ public class QueryAprobacionREST {
 
     @GET
     @Path("/findByAny")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<QueryAprobacionDTO> findByAnyColumn(@QueryParam("texto") String texto){
         logger.log(Level.INFO, "texto:{0}", texto);        
@@ -102,6 +107,7 @@ public class QueryAprobacionREST {
     }
    
     @POST
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(QueryAprobacionDTO entidad) {
@@ -123,12 +129,13 @@ public class QueryAprobacionREST {
         } else {
             managerDAO.create(entidadJPA);
         }
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
     
     @PUT
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(QueryAprobacionDTO entidad) {
@@ -147,7 +154,7 @@ public class QueryAprobacionREST {
             entidadJPA.setEstadoAprobacion(entidad.getEstadoAprobacion() != null ? entidad.getEstadoAprobacion() : entidadJPA.getEstadoAprobacion());
             entidadJPA.setConciliacion(entidad.getIdConciliacion() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getConciliacion());
             managerDAO.edit(entidadJPA);
-            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
             logAuditoriaDAO.create(logAud);
             return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
@@ -157,6 +164,7 @@ public class QueryAprobacionREST {
        
     @GET
     @Path("/count")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public int count(){
         return managerDAO.count();

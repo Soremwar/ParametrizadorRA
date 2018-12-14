@@ -86,13 +86,15 @@ public abstract class AbstractParentREST<T extends PadreDTO> {
      * @return El resultado de la operacion en codigo HTTP
      */
     @DELETE
-    @Path("{id}")
+    @Path("{id}/{username}")
     @Produces({MediaType.APPLICATION_JSON})
-    public abstract Response remove(@PathParam("id") Integer id);
+    public abstract Response remove(@PathParam("id") Integer id, @PathParam("username") String username);
 
     @GET
     @Path("/count")
     @Produces({MediaType.APPLICATION_JSON})
     public abstract int count();
+
+	
 
 }
