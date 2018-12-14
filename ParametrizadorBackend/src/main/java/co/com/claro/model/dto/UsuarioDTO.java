@@ -24,7 +24,8 @@ public class UsuarioDTO implements Serializable {
     private String usuario;
     private String nombreUsuario;
     private String email;
-    private String nombreRol;
+    private String username;
+    private Integer idrol;
     
     private Set<RolDTO> roles;
     
@@ -43,7 +44,7 @@ public class UsuarioDTO implements Serializable {
     public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = nombreUsuario;
     }
-
+    
     public String getEmail() {
         return email;
     }
@@ -77,14 +78,6 @@ public class UsuarioDTO implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getNombreRol() {
-        return nombreRol;
-    }
-
-    public void setNombreRol(String nombreRol) {
-        this.nombreRol = nombreRol;
-    }
-
     public Set<RolDTO> getRoles() {
         return roles;
     }
@@ -93,7 +86,22 @@ public class UsuarioDTO implements Serializable {
         this.roles = roles;
     }
     
+    public String getUsername() {
+    	return username;
+    }
     
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    public Integer getIdrol() {
+    	return idrol;
+    }
+    
+    public void setIdrol(Integer idrol) {
+        this.idrol = idrol;
+    }
+       
     public Usuario toEntity() {
         Usuario entity = new Usuario();
         entity.setId(this.getId());

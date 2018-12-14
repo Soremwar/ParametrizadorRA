@@ -31,9 +31,7 @@ public class UsuarioDAO extends AbstractJpaDAO<Usuario> {
     @PersistenceContext(unitName = "co.com.claro_ParametrizadorClaro_war_1.0PU")
     private EntityManager em;
 
-    @EJB
-    protected ConciliacionDAO conciliacionDAO;
-
+    
     public UsuarioDAO() {
         super(Usuario.class);
     }
@@ -54,8 +52,8 @@ public class UsuarioDAO extends AbstractJpaDAO<Usuario> {
         logger.log(Level.INFO, "busqueda:{0}", new Object[]{busqueda});
         TypedQuery<Usuario> query = em.createNamedQuery("Usuario.findByAnyColumn", Usuario.class);
         query.setParameter("usuario", "%" + busqueda + "%");
-        query.setParameter("nombre", "%" + busqueda + "%");
         query.setParameter("email", "%" + busqueda + "%");
+        query.setParameter("nombreUsuario", "%" + busqueda + "%");
         List<Usuario> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
@@ -63,15 +61,36 @@ public class UsuarioDAO extends AbstractJpaDAO<Usuario> {
         return results;
     }
     
-    
+   
     public Usuario findByNombreUsuario(String nombreUsuario) {
         logger.log(Level.INFO, "busqueda:{0}", new Object[]{nombreUsuario});
         TypedQuery<Usuario> query = em.createNamedQuery("Usuario.findByNombreUsuario", Usuario.class);
-        query.setParameter("usuario", nombreUsuario);
+        query.setParameter("nombreUsuario", nombreUsuario);
         List<Usuario> results = query.getResultList();
         if (results == null || results.isEmpty()) {
             throw new DataNotFoundException("No se encontraron datos de Busqueda");
         }
         return results.get(0);
+    }
+    
+    public List<Usuario> findByNombreUsuarioLogin(String usuario) {
+        logger.log(Level.INFO, "busqueda:{0}", new Object[]{usuario});
+        TypedQuery<Usuario> query = em.createNamedQuery("Usuario.findByUsuario", Usuario.class);
+        query.setParameter("usuario", usuario);
+        List<Usuario> results = query.getResultList();
+        return results;
+    }
+    
+    public Integer deleteUser(Integer id) {
+    	int count = 0;
+    	try {
+    		logger.log(Level.INFO, "eliminar id:{0}", new Object[]{id});
+        	TypedQuery<Usuario> query = em.createNamedQuery("Usuario.deleteUser", Usuario.class);
+        	query.setParameter("id", id);
+        	count = query.executeUpdate();
+    	}catch(Exception ex) {
+    		throw ex;
+    	}  
+    	return count;
     }
 }

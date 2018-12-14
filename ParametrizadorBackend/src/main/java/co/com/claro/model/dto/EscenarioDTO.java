@@ -22,10 +22,11 @@ public class EscenarioDTO extends PadreDTO implements Serializable {
     //Campos padre
     private Integer idConciliacion;
     private String nombreConciliacion;
-
+    
     //Campos propios
     private String impacto;
     private String descripcion;
+    private String username;
 
     private Set<QueryEscenarioDTO> queryescenarios;
     private Set<IndicadorDTO> indicadores;
@@ -76,6 +77,14 @@ public class EscenarioDTO extends PadreDTO implements Serializable {
 
     public void setIndicadores(Set<IndicadorDTO> indicadores) {
         this.indicadores = indicadores;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Escenario toEntity() {

@@ -15,6 +15,8 @@ import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.QueryEscenario;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+
 import java.time.Instant;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -47,8 +49,8 @@ public class QueryEscenarioREST {
 
     @Transient
     private static final Logger logger = Logger.getLogger(QueryEscenarioREST.class.getSimpleName());
-    private String usuario = "admin";
-    private String modulo = "queryescenario";
+   
+    private String modulo = "QUERYESCENARIO";
 
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;
@@ -69,6 +71,7 @@ public class QueryEscenarioREST {
      * @return Toda la lista de conciliaciones que corresponden con el criterio
      */
     @GET
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<QueryEscenarioDTO> find(
             @QueryParam("offset") int offset,
@@ -97,6 +100,7 @@ public class QueryEscenarioREST {
      */
     @GET
     @Path("{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public QueryEscenarioDTO getById(@PathParam("id") int id) {
         logger.log(Level.INFO, "id:{0}", id);
@@ -112,6 +116,7 @@ public class QueryEscenarioREST {
      */
     @GET
     @Path("/conciliacion/{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<QueryEscenarioDTO> getByIdConciliacion(@PathParam("id") int id) {
         logger.log(Level.INFO, "id:{0}", id);
@@ -130,6 +135,7 @@ public class QueryEscenarioREST {
      * @return el la entidad recien creada
      */
     @POST
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(QueryEscenarioDTO entidad) {
@@ -152,13 +158,14 @@ public class QueryEscenarioREST {
             managerDAO.create(entidadJPA);
         }
         managerDAO.edit(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
 
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
 
     @PUT
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(QueryEscenarioDTO entidad) {
@@ -180,7 +187,7 @@ public class QueryEscenarioREST {
             entidadJPA.setQuery(entidad.getQuery() != null ? entidad.getQuery() : entidadJPA.getQuery());
             entidadJPA.setEscenario(entidad.getIdEscenario() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getEscenario());
             managerDAO.edit(entidadJPA);
-            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
             logAuditoriaDAO.create(logAud);
             return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
@@ -194,9 +201,10 @@ public class QueryEscenarioREST {
      * @return El resultado de la operacion en codigo HTTP
      */
     @DELETE
-    @Path("{id}")
+    @Path("{id}/{username}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
-    public Response remove(@PathParam("id") Integer id) {
+    public Response remove(@PathParam("id") Integer id, @PathParam("username") String username) {
         QueryEscenario entidadJPA = managerDAO.find(id);
         QueryEscenarioDTO dto = entidadJPA.toDTO();
         Escenario entidadPadreJPA = null;
@@ -205,7 +213,7 @@ public class QueryEscenarioREST {
             entidadPadreJPA.removeIndicador(entidadJPA);
         }
         managerDAO.remove(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, dto.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
         logAuditoriaDAO.create(logAud);
 
         if (entidadPadreJPA != null) {
@@ -217,6 +225,7 @@ public class QueryEscenarioREST {
 
     @GET
     @Path("/count")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public int count() {
         return managerDAO.count();

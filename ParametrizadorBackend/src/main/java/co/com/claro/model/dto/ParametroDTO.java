@@ -26,6 +26,7 @@ public class ParametroDTO implements Serializable {
     private Date fechaCreacion;
     private Date fechaActualizacion;
     private String tipo;
+    private String username;
 
     public Integer getId() {
         return id;
@@ -89,6 +90,14 @@ public class ParametroDTO implements Serializable {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Parametro toEntity() {

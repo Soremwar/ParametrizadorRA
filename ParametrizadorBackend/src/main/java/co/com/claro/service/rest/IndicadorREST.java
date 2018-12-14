@@ -15,6 +15,8 @@ import co.com.claro.model.entity.Indicador;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+
 import java.time.Instant;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -49,8 +51,7 @@ public class IndicadorREST{
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;
 
-    private String usuario = "admin";
-    private String modulo = "indicadores";
+    private String modulo = "INDICADORES";
     
     @EJB
     protected IndicadorDAO managerDAO;
@@ -66,6 +67,7 @@ public class IndicadorREST{
      * @return Toda la lista de escenarios que corresponden con el criterio
      */
     @GET
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<IndicadorDTO> find(
             @QueryParam("offset") int offset,
@@ -87,6 +89,7 @@ public class IndicadorREST{
      */
     @GET
     @Path("{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public IndicadorDTO getById(@PathParam("id") int id){
         logger.log(Level.INFO, "id:{0}", id);
@@ -101,6 +104,7 @@ public class IndicadorREST{
      * @return Lista de Escenarios que cumplen con el criterio
      */
     @GET
+    @JWTTokenNeeded
     @Path("/findByAny")
     @Produces({MediaType.APPLICATION_JSON})
     public List<IndicadorDTO> findByAnyColumn(@QueryParam("texto") String texto){
@@ -117,6 +121,7 @@ public class IndicadorREST{
      * @return el la entidad recien creada
      */
     @POST
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(IndicadorDTO entidad) {
@@ -138,7 +143,7 @@ public class IndicadorREST{
         } else {
             managerDAO.create(entidadJPA);
         }
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }  
@@ -149,6 +154,7 @@ public class IndicadorREST{
      * @return el resultado de la operacion
      */
     @PUT
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(IndicadorDTO entidad) {
@@ -172,7 +178,7 @@ public class IndicadorREST{
                 entidadPadreJPA.addIndicador(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
-            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), usuario, entidadJPA.toString());
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
             logAuditoriaDAO.create(logAud);
             return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
         }
@@ -186,9 +192,10 @@ public class IndicadorREST{
      * @return el resultado de la operacion
      */
     @DELETE
-    @Path("{id}")
+    @Path("{id}/{username}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
-    public Response remove(@PathParam("id") Integer id) {
+    public Response remove(@PathParam("id") Integer id, @PathParam("username") String username) {
         Indicador hijo = managerDAO.find(id);
         Escenario entidadPadreJPA = null;
         if (hijo.getEscenario() != null) {
@@ -196,7 +203,7 @@ public class IndicadorREST{
             entidadPadreJPA.removeIndicador(hijo);
         }
         managerDAO.remove(hijo);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), usuario, "id=" + id);
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, "id=" + id);
         logAuditoriaDAO.create(logAud);
         
         if (entidadPadreJPA != null) {
@@ -208,6 +215,7 @@ public class IndicadorREST{
     
     @GET
     @Path("/count")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public int count(){
         return managerDAO.count();

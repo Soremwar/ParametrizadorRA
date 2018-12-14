@@ -72,31 +72,31 @@ public class EjecucionProgramacion implements Job {
             // 2. Lanzar odi
             String wsdlLocation;
             try {
-                wsdlLocation = parametroDAO.findByParametro("SISTEMA", "odiUrl");
+                wsdlLocation = parametroDAO.findByParametro("SISTEMA", "V_odiUrl");
             } catch (Exception e) {
                 wsdlLocation = "http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl";
             }
             String odiUsuario;
             try {
-                odiUsuario = parametroDAO.findByParametro("SISTEMA", "odiUsuario");
+                odiUsuario = parametroDAO.findByParametro("SISTEMA", "V_odiUsuario");
             } catch (Exception e) {
                 odiUsuario = "EQK7054A";
             }
             String odiPassword;
             try {
-                odiPassword = parametroDAO.findByParametro("SISTEMA", "odiPassword");
+                odiPassword = parametroDAO.findByParametro("SISTEMA", "V_odiPassword");
             } catch (Exception e) {
                 odiPassword = "1234567";
             }
             String odiWorkRepository;
             try {
-                odiWorkRepository = parametroDAO.findByParametro("SISTEMA", "odiWorkRepository");
+                odiWorkRepository = parametroDAO.findByParametro("SISTEMA", "V_odiWorkRepository");
             } catch (Exception e) {
                 odiWorkRepository = "WRDEV_ASSURANCE1";
             }
             String odiContext;
             try {
-                odiContext = parametroDAO.findByParametro("SISTEMA", "odiContext");
+                odiContext = parametroDAO.findByParametro("SISTEMA", "V_odiContext");
             } catch (Exception e) {
                 odiContext = "CNTX_DESARROLLO";
             }

@@ -47,7 +47,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Usuario.findByEmail", query = "SELECT u FROM Usuario u WHERE u.email = :email")
     , @NamedQuery(name = "Usuario.findByNombreUsuario", query = "SELECT u FROM Usuario u WHERE u.nombreUsuario = :nombreUsuario")
     , @NamedQuery(name = "Usuario.findByFechaCreacion", query = "SELECT u FROM Usuario u WHERE u.fechaCreacion = :fechaCreacion")
-    , @NamedQuery(name = "Usuario.findByFechaActualizacion", query = "SELECT u FROM Usuario u WHERE u.fechaActualizacion = :fechaActualizacion")})
+    , @NamedQuery(name = "Usuario.findByFechaActualizacion", query = "SELECT u FROM Usuario u WHERE u.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "Usuario.deleteUser", query = "DELETE FROM Usuario u WHERE u.id = :id")
+    , @NamedQuery(name = "Usuario.findByAnyColumn", query = "SELECT DISTINCT(u) FROM Usuario u WHERE lower(u.usuario) LIKE lower(:usuario) or lower(u.email) LIKE lower(:email) or lower(u.nombreUsuario) LIKE lower(:nombreUsuario)")})
+
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;

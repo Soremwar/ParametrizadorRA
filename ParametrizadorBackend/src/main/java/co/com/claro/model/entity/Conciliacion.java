@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author andres
+ * @author andres 
  */
 @Entity
 @Table(name = "TBL_GAI_CONCILIACION")

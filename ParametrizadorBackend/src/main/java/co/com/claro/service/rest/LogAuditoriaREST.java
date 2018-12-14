@@ -3,6 +3,8 @@ package co.com.claro.service.rest;
 import co.com.claro.ejb.dao.ResultadoDAO;
 import co.com.claro.model.dto.ResultadoDTO;
 import co.com.claro.model.entity.Resultado;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,6 +40,7 @@ public class LogAuditoriaREST{
      * @return Toda la lista de resultados que corresponden con el criterio
      */
     @GET
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<ResultadoDTO> find(
             @QueryParam("offset") int offset,
@@ -58,6 +61,7 @@ public class LogAuditoriaREST{
      */
     @GET
     @Path("{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public ResultadoDTO getById(@PathParam("id") Integer id){
         logger.log(Level.INFO, "id:{0}", id);
@@ -73,6 +77,7 @@ public class LogAuditoriaREST{
      */
     @GET
     @Path("/findByAny")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<ResultadoDTO> findByAnyColumn(@QueryParam("texto") String texto){
         logger.log(Level.INFO, "texto:{0}", texto);        
@@ -91,6 +96,7 @@ public class LogAuditoriaREST{
      */
     @GET
     @Path("/count")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public int count(){
         return managerDAO.count();

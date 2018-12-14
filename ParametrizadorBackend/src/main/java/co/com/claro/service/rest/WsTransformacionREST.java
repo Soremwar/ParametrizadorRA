@@ -10,6 +10,8 @@ import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.WsTransformacion;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +56,7 @@ public class WsTransformacionREST{
      * @return Toda la lista de resultados que corresponden con el criterio
      */
     @GET
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<WsTransformacionDTO> find(
             @QueryParam("offset") int offset,
@@ -74,6 +77,7 @@ public class WsTransformacionREST{
      */
     @GET
     @Path("{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public WsTransformacionDTO getById(@PathParam("id") Integer id){
         logger.log(Level.INFO, "id:{0}", id);
@@ -89,6 +93,7 @@ public class WsTransformacionREST{
      */
     @GET
     @Path("/findByAny")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<WsTransformacionDTO> findByAnyColumn(@QueryParam("texto") String texto){
         logger.log(Level.INFO, "texto:{0}", texto);        
@@ -107,6 +112,7 @@ public class WsTransformacionREST{
      * @return el la entidad recien creada
      */
     @POST
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(WsTransformacionDTO entidad) {
@@ -138,6 +144,7 @@ public class WsTransformacionREST{
      * @return el resultado de la operacion
      */
     @PUT
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(WsTransformacionDTO entidad) {
@@ -173,6 +180,7 @@ public class WsTransformacionREST{
      */
     @DELETE
     @Path("{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id) {
         WsTransformacion hijo = managerDAO.find(id);
@@ -194,6 +202,7 @@ public class WsTransformacionREST{
      */
     @GET
     @Path("/count")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public int count(){
         return managerDAO.count();

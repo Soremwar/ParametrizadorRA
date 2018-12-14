@@ -29,6 +29,7 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
     private String paquete;
     //private String estadoAprobacion;
     private String requiereAprobacion;
+    private String username;
     
     
     private Set<EscenarioDTO> escenarios;
@@ -141,6 +142,14 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
 
     public void setQueryAprobaciones(Set<QueryAprobacionDTO> queryAprobaciones) {
         this.queryAprobaciones = queryAprobaciones;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
     
     public Conciliacion toEntity(){

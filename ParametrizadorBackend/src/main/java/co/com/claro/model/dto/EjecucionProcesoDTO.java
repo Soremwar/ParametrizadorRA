@@ -29,9 +29,10 @@ public class EjecucionProcesoDTO implements Serializable{
     private String estadoEjecucion;
     private String componenteEjecutado;
     private String idPlanInstance;
-   private String respuesta;
+    private String respuesta;
     private Date fechaEjecucion;
     private Date fechaEjecucionExitosa;
+    private String username;
     
     public Integer getIdConciliacion() {
         return idConciliacion;
@@ -127,6 +128,14 @@ public class EjecucionProcesoDTO implements Serializable{
 
     public void setRespuesta(String respuesta) {
         this.respuesta = respuesta;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     

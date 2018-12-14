@@ -8,12 +8,16 @@ package co.com.claro.service.rest;
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EjecucionDAO;
 import co.com.claro.ejb.dao.IEjecucionDAO;
+import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.EjecucionProcesoDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.EjecucionProceso;
+import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+
 import java.time.Instant;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -45,6 +49,11 @@ import javax.ws.rs.core.Response;
 public class EjecucionProcesoREST {
     @Transient
     private static final Logger logger = Logger.getLogger(EjecucionProcesoREST.class.getSimpleName());
+    
+    private String modulo = "EJECUCIONPROCESO";
+    
+    @EJB
+    protected LogAuditoriaDAO logAuditoriaDAO;
 
     @EJB
     protected IEjecucionDAO managerDAO;
@@ -60,6 +69,7 @@ public class EjecucionProcesoREST {
      * @return Toda la lista de conciliaciones que corresponden con el criterio
      */
     @GET
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<EjecucionProcesoDTO> find(
             @QueryParam("offset") int offset,
@@ -80,6 +90,7 @@ public class EjecucionProcesoREST {
      */
     @GET
     @Path("{id}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public EjecucionProcesoDTO getById(@PathParam("id") int id){
         logger.log(Level.INFO, "id:{0}" , id);
@@ -95,6 +106,7 @@ public class EjecucionProcesoREST {
      */
     @GET
     @Path("/findByEscenario")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<EjecucionProcesoDTO> getByEscenario(@QueryParam("codEscenario") int id) {
         logger.log(Level.INFO, "id:{0}", new Object[]{id});
@@ -111,6 +123,7 @@ public class EjecucionProcesoREST {
      */
     @GET
     @Path("/findByIdPlanInstance")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public List<EjecucionProcesoDTO> getIdPlanInstance(@QueryParam("idPlanInstance") String id) {
         logger.log(Level.INFO, "id:{0}", new Object[]{id});
@@ -127,6 +140,7 @@ public class EjecucionProcesoREST {
      * @return el la entidad recien creada
      */
     @POST
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(EjecucionProcesoDTO entidad) {
@@ -142,6 +156,8 @@ public class EjecucionProcesoREST {
                 entidadPadreJPA.addEjecucionProceso(entidadJPA);
                 padreDAO.edit(entidadPadreJPA);
         }
+        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
+        logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
     
@@ -151,6 +167,7 @@ public class EjecucionProcesoREST {
      * @return el resultado de la operacion
      */
     @PUT
+    @JWTTokenNeeded
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(EjecucionProcesoDTO entidad) {
@@ -182,6 +199,8 @@ public class EjecucionProcesoREST {
                 entidadPadreJPA.addEjecucionProceso(entidadHijaJPA);
                 padreDAO.edit(entidadPadreJPA);
             }
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadHijaJPA.toString());
+            logAuditoriaDAO.create(logAud);
             return Response.status(Response.Status.OK).entity(entidadHijaJPA.toDTO()).build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
@@ -194,9 +213,10 @@ public class EjecucionProcesoREST {
      * @return El resultado de la operacion en codigo HTTP
      */
     @DELETE
-    @Path("{id}")
+    @Path("{id}/{username}")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
-    public Response remove(@PathParam("id") Integer id) {
+    public Response remove(@PathParam("id") Integer id, @PathParam("username") String username) {
         EjecucionProceso ejecucionProceso = managerDAO.find(id);
         WrapperResponseEntity mensaje;
         if (ejecucionProceso == null) {
@@ -205,6 +225,8 @@ public class EjecucionProcesoREST {
         } else {
             managerDAO.remove(managerDAO.find(id));
             mensaje = new WrapperResponseEntity(200, "OK", "Registro borrado exitosamente");
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, ejecucionProceso.toString());
+            logAuditoriaDAO.create(logAud);
         }
         return Response.status(Response.Status.OK).entity(mensaje).build();
     }
@@ -212,6 +234,7 @@ public class EjecucionProcesoREST {
     
     @GET
     @Path("/count")
+    @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public int count(){
         return managerDAO.count();
