@@ -45,17 +45,8 @@ public class EscenarioREST {
 
     @Transient
     private static final Logger logger = Logger.getLogger(EscenarioREST.class.getSimpleName());
-<<<<<<< HEAD
-    
-    
     private String modulo = "ESCENARIOS";
-    
-=======
 
-    private String usuario = "admin";
-    private String modulo = "escenarios";
-
->>>>>>> origin/master
     @EJB
     protected LogAuditoriaDAO logAuditoriaDAO;
 

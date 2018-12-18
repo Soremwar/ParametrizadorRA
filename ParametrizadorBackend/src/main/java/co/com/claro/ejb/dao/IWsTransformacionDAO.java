@@ -5,12 +5,9 @@
  */
 package co.com.claro.ejb.dao;
 
-import co.com.claro.model.entity.Resultado;
 import co.com.claro.model.entity.WsTransformacion;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
 import javax.ejb.Remote;
 
 /**
@@ -28,6 +25,8 @@ public interface IWsTransformacionDAO {
 
     public List<WsTransformacion> findByAnyColumn(String busqueda);
 
+    public List<WsTransformacion> findAgendadas(); 
+   
     public void create(WsTransformacion entity);
 
     public WsTransformacion edit(WsTransformacion entity);
