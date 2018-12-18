@@ -4,7 +4,7 @@
     <keepgenerated>true</keepgenerated>
     <debug>true</debug>
   </jsp-descriptor>
-  <context-root>/ParametrizadorBackend</context-root>
+  <context-root>ParametrizadorClaro</context-root>
   <resource-description>
     <jndi-name>ParametrizadorDS</jndi-name>
     <res-ref-name>jdbc/parametrizadorDS</res-ref-name>
