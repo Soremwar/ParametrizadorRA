@@ -105,6 +105,22 @@ public class WsTransformacionREST{
         List<WsTransformacionDTO> lstFinal = (List<WsTransformacionDTO>)(List<?>) lstDTO;
         return lstFinal;
     }
+    
+    
+    @GET
+    @Path("/findAgendadas")
+    @JWTTokenNeeded
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<WsTransformacionDTO> findAgendadas(){
+        logger.log(Level.INFO, "findAgendadas");        
+        List<WsTransformacion> lst = managerDAO.findAgendadas();
+        List<WsTransformacionDTO> lstDTO = new ArrayList<>();        
+        lst.forEach((entidad) -> {
+            lstDTO.add(entidad.toDTO());
+        });
+        List<WsTransformacionDTO> lstFinal = (List<WsTransformacionDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }
    
     /**
      * Crea una nueva entidad

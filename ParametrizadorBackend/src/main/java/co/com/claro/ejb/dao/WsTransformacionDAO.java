@@ -128,5 +128,14 @@ public class WsTransformacionDAO extends AbstractJpaDAO<WsTransformacion> implem
         }*/
         return results;
     }
+    
+    public List<WsTransformacion> findAgendadas() {
+        TypedQuery<WsTransformacion> query = em.createNamedQuery("WsTransformacion.findAgendadas", WsTransformacion.class);
+        List<WsTransformacion> results = query.getResultList();
+        if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }
+        return results;
+    }
 
 }
