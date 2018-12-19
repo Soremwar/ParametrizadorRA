@@ -13,10 +13,8 @@ import co.com.claro.model.entity.Usuario;
 import co.com.claro.model.entity.UsuarioRol;
 import co.com.claro.service.rest.ldap.AutenticacionLDAP;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
-import co.com.claro.service.rest.tokenFilter.JWTLogin;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeededFilter;
-import com.sun.org.apache.xml.internal.security.algorithms.SignatureAlgorithm;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -118,7 +116,6 @@ public class UsuarioREST {
     }
     
     @POST
-    @JWTLogin 
     @Path("/login")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
