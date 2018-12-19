@@ -111,7 +111,7 @@ public class QueryAprobacionDTO implements Serializable{
         entity.setFechaCreacion(fechaCreacion);
         entity.setFechaActualizacion(fechaActualizacion);
         entity.setMensaje(mensaje);
-        entity.setUsuario(usuario);
+        entity.setUsuario(username);
         
         return entity;
         
