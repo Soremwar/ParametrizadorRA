@@ -13,6 +13,7 @@ import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Parametro;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+import co.com.claro.service.rest.tokenFilter.JWTTokenNeededFilter;
 
 import java.time.Instant;
 import static java.util.Comparator.comparing;
@@ -76,6 +77,23 @@ public class ParametrosREST {
         //lstDTO = UtilListas.ordenarListaParametros(lstDTO, orderby);
         List<ParametroDTO> lstFinal = (List<ParametroDTO>) (List<?>) lstDTO;
         return lstFinal;
+    }
+    
+    @GET
+    @Path("/returnSeed")
+    @Produces({MediaType.APPLICATION_JSON})
+    public ParametroDTO returnSeed() {
+       Parametro response = new Parametro();
+       String seed = JWTTokenNeededFilter.KEYPAR;
+       String asc = "";
+       for(int i=0; i<seed.length(); i++) {
+    	   char c = seed.charAt (i); 
+    	   int ascii = (int) c;
+    	   ascii = ascii - 3;
+    	   asc = asc + (char)ascii;     	  
+       }       
+       response.setValor(asc);
+       return response.toDTO();
     }
 
     @GET
