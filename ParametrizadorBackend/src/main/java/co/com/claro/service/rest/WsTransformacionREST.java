@@ -3,8 +3,6 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.IWsTransformacionDAO;
-import co.com.claro.ejb.dao.WsTransformacionDAO;
-import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.WsTransformacion;
