@@ -12,8 +12,6 @@ import javax.naming.directory.InitialDirContext;
 
 public class AutenticacionLDAP {
 	
-	static final String LDAP_URL = "ldap://ldap.forumsys.com:389/cn=read-only-admin,dc=example,dc=com";
-	
 	 public boolean login(String username, String password, String ip, String port, String cN, String dC, String oU) {
 		 
 		 
@@ -23,6 +21,8 @@ public class AutenticacionLDAP {
 		         * IP, PUERTO, CN, DC, OU
 		         * En caso de que no exista un parametro como por ejemplo OU, la base de datos lo llena con un simbolo asterisco (*)
 		         * el servicio convierte el asterisco en una cadena vacia para que no interfiera con la creacion de la url
+		         * 
+		         * 
 		         * LA SIGUIENTE URL ES 100% FUNCIONAL: ldap://ldap.forumsys.com:389/cn=read-only-admin,dc=example,dc=com  
 		         *                                                
 		         * user: riemann
@@ -30,19 +30,29 @@ public class AutenticacionLDAP {
 		         * IP: ldap.forumsys.com
 		         * PUERTTO: 389
 		         * CN: cn=read-only-admin
-		         * DC: ,dc=example,dc=com
-		         * OU: uid=
+		         * DC: dc=example,dc=com
+		         * OU: uid
 		         * */
 		         
 		         //Creacion de la url con los parametros en DB	  
 		 
-		         if(cN.equals("")) {
-		        	 dC = dC.replace(",", "");
-		         }
+		         String ldapUrl = "";
+		         String credentialUrl = "";
 		 
-                 String ldapUrl = "ldap://" + ip + ":" + port + "/" + cN + dC;	
-                 
-                 //Logger.getLogger(AutenticacionLDAP.class.getName()).log(Level.INFO, ldapUrl);
+		         if(cN.equals("")) {
+		        	 ldapUrl = "ldap://" + ip + ":" + port + "/" + dC;	
+		         }else {		        	 
+		        	 ldapUrl = "ldap://" + ip + ":" + port + "/" + cN + "," + dC;			        	 
+		         }
+		         
+		         if(oU.equals("")) {
+		        	 credentialUrl = username + "," + dC;
+		         }else {
+		        	 credentialUrl = oU + "=" + username + "," + dC;
+		         }
+		                               
+                 Logger.getLogger(AutenticacionLDAP.class.getName()).log(Level.INFO, ldapUrl);
+                 Logger.getLogger(AutenticacionLDAP.class.getName()).log(Level.INFO, credentialUrl);
 
 		          Hashtable env = new Hashtable();
 		          
@@ -51,10 +61,11 @@ public class AutenticacionLDAP {
 		          env.put(Context.SECURITY_AUTHENTICATION, "simple");
 		          
 		          //BUSQUEDA DE UNA CREDENCIAL DE USUARIO, OU + USUARIO + DC
-		          //EJEMPLO 100% FUNCIONAL CON EL LDAP DE PRUEBA: uid=riemann,dc=example,dc=co
-		          //OU: uid, username: riemann, DC:,dc=example,dc=co
 		          
-		          env.put(Context.SECURITY_PRINCIPAL, oU + username + dC);
+		          //EJEMPLO 100% FUNCIONAL CON EL LDAP DE PRUEBA: uid=riemann,dc=example,dc=com
+		          //OU: uid, username: riemann, DC:,dc=example,dc=com
+		          
+		          env.put(Context.SECURITY_PRINCIPAL, credentialUrl);
 		          env.put(Context.SECURITY_CREDENTIALS, password);
 		          
 		          try {
@@ -67,5 +78,4 @@ public class AutenticacionLDAP {
 		          return false;
 		   }
 	 
-
 }

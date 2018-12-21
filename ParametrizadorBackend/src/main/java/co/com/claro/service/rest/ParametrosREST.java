@@ -8,6 +8,7 @@ package co.com.claro.service.rest;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
+import co.com.claro.model.dto.CredencialesDTO;
 import co.com.claro.model.dto.ParametroDTO;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Parametro;
@@ -93,6 +94,30 @@ public class ParametrosREST {
     	   asc = asc + (char)ascii;     	  
        }       
        response.setValor(asc);
+       return response.toDTO();
+    }
+    
+    @POST
+    @Path("/ldapURL")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public ParametroDTO returnldap(CredencialesDTO credentials) {
+       Parametro response = new Parametro();
+       String ldapUrl = "";
+       String credentialUrl = "";
+       
+       if(credentials.getCommonName().trim().equals("*")) {
+      	 ldapUrl = "ldap://" + credentials.getIp().trim() + ":" + credentials.getPort().trim() + "/" + credentials.getDomainGroup().trim();	
+       }else {		        	 
+      	 ldapUrl = "ldap://" + credentials.getIp().trim() + ":" + credentials.getPort().trim() + "/" + credentials.getCommonName().trim() + "," + credentials.getDomainGroup().trim();			        	 
+       }      
+       if(credentials.getOrganization().trim().equals("*")) {
+      	 credentialUrl = credentials.getUserName().trim() + "," + credentials.getDomainGroup().trim();
+       }else {
+      	 credentialUrl = credentials.getOrganization().trim() + "=" + credentials.getUserName().trim() + "," +credentials.getDomainGroup().trim();
+       }     
+       response.setValor("url: "+ ldapUrl + " busqueda: " + credentialUrl);
+              
        return response.toDTO();
     }
 
