@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -32,6 +33,7 @@ import javax.ws.rs.POST;
  * Clase que maneja el API Rest de Resultados
  * @author Andres Bedoya
  */
+//@Stateless
 @Path("odiRest")
 public class OdiREST{
     @Transient

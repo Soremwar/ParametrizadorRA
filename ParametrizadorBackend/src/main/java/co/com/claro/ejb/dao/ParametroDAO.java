@@ -144,6 +144,7 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro> {
         query.setParameter("tipo", tipo);
         query.setParameter("parametro", parametro);
         List<Parametro> result = query.getResultList();
+        
         return result.get(0).getValor();
     }
     

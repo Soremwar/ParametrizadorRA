@@ -133,5 +133,18 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         getEntityManager().persist(entity);
         
     }
+    
+    public List<Conciliacion> findAll(String name){
+    	TypedQuery<Conciliacion> query;
+    	if(name == null) {
+    		query =  em.createNamedQuery("Conciliacion.findAll", Conciliacion.class);
+    	}else {
+    		query =  em.createNamedQuery("Conciliacion.findByName", Conciliacion.class);
+    		query.setParameter("name", "%" + name + "%");
+    	}
+    	
+        List<Conciliacion> results = query.getResultList();
+        return results;
+    }
 }
 

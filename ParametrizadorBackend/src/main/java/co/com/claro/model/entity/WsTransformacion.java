@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "WsTransformacion.findByAnyColumn", query = "SELECT DISTINCT(w) FROM WsTransformacion w WHERE lower(w.nombreWs) LIKE lower(:nombreWs) or lower(w.paqueteWs) LIKE lower(:paqueteWs)")})
 
 public class WsTransformacion implements Serializable {
-
+	
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)

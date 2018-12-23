@@ -48,6 +48,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Politica.findAllTree", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN FETCH p.conciliaciones c")
     , @NamedQuery(name = "Politica.findAllTreeById", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN FETCH p.conciliaciones c WHERE p.id = :idPolitica")
     , @NamedQuery(name = "Politica.findPoliticaSinConciliacion", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN p.conciliaciones c WHERE c.id IS NULL")
+    , @NamedQuery(name = "Politica.findPoliticaSinConciliacionByName", query = "SELECT DISTINCT(p) FROM Politica p LEFT JOIN p.conciliaciones c WHERE c.id IS NULL and p.nombre like :name")
     , @NamedQuery(name = "Politica.findByCodPolitica", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.id = :codPolitica")
     , @NamedQuery(name = "Politica.findByNombrePolitica", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.nombre LIKE :nombrePolitica")
     , @NamedQuery(name = "Politica.findByDescripcion", query = "SELECT DISTINCT(p) FROM Politica p WHERE p.descripcion = :descripcion")

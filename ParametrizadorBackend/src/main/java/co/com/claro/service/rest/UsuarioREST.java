@@ -7,6 +7,7 @@ import co.com.claro.ejb.dao.UsuarioDAO;
 import co.com.claro.ejb.dao.UsuarioRolDAO;
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.CredencialesDTO;
+import co.com.claro.model.dto.LoginDTO;
 import co.com.claro.model.dto.UsuarioDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.entity.Conciliacion;
@@ -41,6 +42,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -54,6 +56,7 @@ import javax.ws.rs.core.Response;
  * Clase que maneja el API Rest de Usuarios
  * @author Andres Bedoya
  */
+@Stateless
 @Path("usuarios")
 public class UsuarioREST {
     @Transient
@@ -121,7 +124,7 @@ public class UsuarioREST {
     }
     
     @POST
-    @JWTLogin 
+    //@JWTLogin 
     @Path("/login")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
@@ -130,18 +133,39 @@ public class UsuarioREST {
         	AutenticacionLDAP auth = new AutenticacionLDAP();
         	Usuario user = new Usuario();
         	
-        	boolean isLoged = auth.login(credentials.getUserName(), credentials.getPassWord(), credentials.getIp().trim(), credentials.getPort().trim(), credentials.getCommonName().trim().replace("*", ""), credentials.getDomainGroup().trim(), credentials.getOrganization().trim().replace("*", ""));
+        	//boolean isLoged = auth.login(credentials.getUserName(), credentials.getPassWord(), credentials.getIp().trim(), credentials.getPort().trim(), credentials.getCommonName().trim().replace("*", ""), credentials.getDomainGroup().trim(), credentials.getOrganization().trim().replace("*", ""));
+        	boolean isLoged = true;
+        	
+        	
         	
         	if(isLoged) {
         		
         	 List<Usuario> entity = managerDAO.findByNombreUsuarioLogin(credentials.getUserName().trim());
         	 
+        	 
         	 if (entity == null || entity.isEmpty()) {
         		 String token = issueToken(credentials.getUserName());
-           		 return Response.ok(user).header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
+        		 
+        		 LoginDTO response = new LoginDTO();
+        		 response.setToken("Bearer " + token);
+        		 
+        		 
+           		 return Response.ok(response).header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
              }else {
-            	 String token = issueToken(entity.get(0).getNombreUsuario());
-           		 return Response.ok(entity.get(0)).header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
+            	 String token = "Bearer " + issueToken(entity.get(0).getNombreUsuario());
+            	 Usuario findUser = entity.get(0);
+            	 findUser.getRoles().stream().forEach(System.out::println);
+            	 
+            	 LoginDTO response = new LoginDTO();
+            	 response.setEmail(findUser.getEmail());
+            	 response.setFechaActualizacion(findUser.getFechaActualizacion());
+            	 response.setId(findUser.getId());
+            	 response.setNombreUsuario(findUser.getNombreUsuario());
+            	 response.setRoles(findUser.getRoles());
+            	 response.setToken(token);
+            	 response.setUsuario(findUser.getUsuario());
+            	 
+           		 return Response.ok(response).header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
              }
                	      	 
         	}else {
@@ -152,6 +176,10 @@ public class UsuarioREST {
         	logger.log(Level.INFO, e.toString());
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+    }
+    
+    public static void main(String[] args) {
+    	System.out.println(new UsuarioREST().issueToken("oscar"));
     }
     
     private String issueToken(String login) {

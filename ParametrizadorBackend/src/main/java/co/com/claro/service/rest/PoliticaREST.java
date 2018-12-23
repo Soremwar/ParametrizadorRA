@@ -23,6 +23,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -36,6 +37,7 @@ import javax.ws.rs.core.Response;
  * Clase que maneja el API Rest de Politicas
  * @author Andres Bedoya
  */
+@Stateless
 @Path("politicas")
 public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @Transient
@@ -84,8 +86,9 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @Path("/findPoliticasSinConciliacion")
     @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
-    public List<PoliticaDTO> findPoliticasSinConciliacion(){
-        List<Politica> lst = managerDAO.findPoliticaSinConciliacion();
+    public List<PoliticaDTO> findPoliticasSinConciliacion(@QueryParam("name") String name){
+    	
+        List<Politica> lst = managerDAO.findPoliticaSinConciliacion(name);
         List<PadreDTO> lstDTO = new ArrayList<>();        
         lst.forEach((entidad) -> {
             lstDTO.add(entidad.toDTO());
