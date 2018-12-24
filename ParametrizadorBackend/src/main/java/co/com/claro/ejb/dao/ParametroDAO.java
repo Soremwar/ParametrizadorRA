@@ -147,7 +147,7 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro> {
         
         return result.get(0).getValor();
     }
-    
+
     public List<Parametro> findByOdi(String parametro){
         logger.log(Level.INFO, "nombre:{0}", new Object[]{parametro});     
         TypedQuery<Parametro> query = em.createNamedQuery("Parametro.findByOdi", Parametro.class);
@@ -158,5 +158,3 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro> {
     }
    
 }
-
-

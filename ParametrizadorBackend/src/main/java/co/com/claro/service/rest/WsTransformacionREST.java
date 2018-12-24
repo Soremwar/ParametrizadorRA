@@ -3,8 +3,6 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.IWsTransformacionDAO;
-import co.com.claro.ejb.dao.WsTransformacionDAO;
-import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.WsTransformacion;
@@ -98,6 +96,22 @@ public class WsTransformacionREST{
     public List<WsTransformacionDTO> findByAnyColumn(@QueryParam("texto") String texto){
         logger.log(Level.INFO, "texto:{0}", texto);        
         List<WsTransformacion> lst = managerDAO.findByAnyColumn(texto);
+        List<WsTransformacionDTO> lstDTO = new ArrayList<>();        
+        lst.forEach((entidad) -> {
+            lstDTO.add(entidad.toDTO());
+        });
+        List<WsTransformacionDTO> lstFinal = (List<WsTransformacionDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }
+    
+    
+    @GET
+    @Path("/findAgendadas")
+    @JWTTokenNeeded
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<WsTransformacionDTO> findAgendadas(){
+        logger.log(Level.INFO, "findAgendadas");        
+        List<WsTransformacion> lst = managerDAO.findAgendadas();
         List<WsTransformacionDTO> lstDTO = new ArrayList<>();        
         lst.forEach((entidad) -> {
             lstDTO.add(entidad.toDTO());

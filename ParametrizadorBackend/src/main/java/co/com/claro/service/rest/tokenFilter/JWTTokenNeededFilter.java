@@ -25,6 +25,8 @@ import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
 public class JWTTokenNeededFilter implements ContainerRequestFilter{
 	
 	public static final Key KEY = MacProvider.generateKey();
+	public static final String KEYPAR = "Sdudphwul}dgruFodur534;bQlwror";   
+	
 	@Transient
    	
     @Override

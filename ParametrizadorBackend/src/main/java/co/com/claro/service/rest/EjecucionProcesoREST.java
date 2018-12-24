@@ -6,10 +6,8 @@
 package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
-import co.com.claro.ejb.dao.EjecucionDAO;
 import co.com.claro.ejb.dao.IEjecucionDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
-import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.EjecucionProcesoDTO;
 import co.com.claro.model.entity.Conciliacion;
 import co.com.claro.model.entity.EjecucionProceso;

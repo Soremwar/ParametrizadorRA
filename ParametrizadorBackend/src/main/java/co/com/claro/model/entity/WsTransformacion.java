@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "WsTransformacion.findByPaqueteWs", query = "SELECT w FROM WsTransformacion w WHERE w.paqueteWs = :paqueteWs")
     , @NamedQuery(name = "WsTransformacion.findByFechaCreacion", query = "SELECT w FROM WsTransformacion w WHERE w.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "WsTransformacion.findByFechaActualizacion", query = "SELECT w FROM WsTransformacion w WHERE w.fechaActualizacion = :fechaActualizacion")
+    , @NamedQuery(name = "WsTransformacion.findAgendadas", query = "SELECT w FROM WsTransformacion w WHERE w.fechaAgendamiento IS NOT NULL ORDER BY w.fechaAgendamiento DESC")
     , @NamedQuery(name = "WsTransformacion.findByFechaAgendamiento", query =  "SELECT w FROM WsTransformacion w WHERE w.fechaAgendamiento between :fechaAgendamientoDesde and :fechaAgendamientoHasta")
     , @NamedQuery(name = "WsTransformacion.findByAnyColumn", query = "SELECT DISTINCT(w) FROM WsTransformacion w WHERE lower(w.nombreWs) LIKE lower(:nombreWs) or lower(w.paqueteWs) LIKE lower(:paqueteWs)")})
 
