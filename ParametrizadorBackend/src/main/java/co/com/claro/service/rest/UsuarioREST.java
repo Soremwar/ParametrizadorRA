@@ -7,6 +7,7 @@ import co.com.claro.ejb.dao.UsuarioDAO;
 import co.com.claro.ejb.dao.UsuarioRolDAO;
 import co.com.claro.model.dto.CredencialesDTO;
 import co.com.claro.model.dto.LoginDTO;
+import co.com.claro.model.dto.RolDTO;
 import co.com.claro.model.dto.UsuarioDTO;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Rol;
@@ -127,11 +128,9 @@ public class UsuarioREST {
         	AutenticacionLDAP auth = new AutenticacionLDAP();
         	Usuario user = new Usuario();
         	
-        	//boolean isLoged = auth.login(credentials.getUserName(), credentials.getPassWord(), credentials.getIp().trim(), credentials.getPort().trim(), credentials.getCommonName().trim().replace("*", ""), credentials.getDomainGroup().trim(), credentials.getOrganization().trim().replace("*", ""));
-        	boolean isLoged = true;
-        	
-        	
-        	
+        	boolean isLoged = auth.login(credentials.getUserName(), credentials.getPassWord(), credentials.getIp().trim(), credentials.getPort().trim(), credentials.getCommonName().trim().replace("*", ""), credentials.getDomainGroup().trim(), credentials.getOrganization().trim().replace("*", ""));
+        	//boolean isLoged = true;
+        	       	
         	if(isLoged) {
         		
         	 List<Usuario> entity = managerDAO.findByNombreUsuarioLogin(credentials.getUserName().trim());
@@ -197,6 +196,22 @@ public class UsuarioREST {
        
         return jwtToken;
     }
+    
+    @GET
+    @Path("/getRoles")
+    @JWTTokenNeeded
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<RolDTO> getRoles(
+            @QueryParam("offset") int offset,
+            @QueryParam("limit") int limit,
+            @QueryParam("orderby") String orderby) {
+        logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
+        List<Rol> lst = rolDAO.findRange(new int[]{offset, limit});
+        List<RolDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(RolDTO::getId).reversed()).collect(toList());
+        //UtilListas.ordenarLista(lstDTO, orderby);
+        List<RolDTO> lstFinal = (List<RolDTO>)(List<?>) lstDTO;
+        return lstFinal;
+    }   
     
    
     @POST
