@@ -88,8 +88,10 @@ public abstract class AbstractJpaDAO<T> {
         cq.select(c);
         cq.orderBy(cb.desc(c.get("id")));
         javax.persistence.Query query = getEntityManager().createQuery(cq);
-        query.setMaxResults(range[1]);// - range[0] + 1);
-        query.setFirstResult(range[0]);
+        if(range != null) {
+        	query.setMaxResults(range[1]);// - range[0] + 1);
+            query.setFirstResult(range[0]);
+        }
         
         List<T> lst = query.getResultList();
         if (lst == null || lst.isEmpty()) {
@@ -97,6 +99,8 @@ public abstract class AbstractJpaDAO<T> {
         }
         return query.getResultList();
     }
+    
+    
 
     public int count() {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();

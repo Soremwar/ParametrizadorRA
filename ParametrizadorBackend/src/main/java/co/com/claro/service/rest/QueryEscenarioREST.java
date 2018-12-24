@@ -83,7 +83,7 @@ public class QueryEscenarioREST {
         if (texto != null && !texto.isEmpty()) {
             lst = managerDAO.findByAnyColumn(texto);
         } else {
-            lst = managerDAO.findRange(new int[]{offset, limit});
+            lst = managerDAO.findRange(null);
         }
         lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId).reversed()).collect(toList());
         //UtilListas.ordenarQueryEjecucion(lstDTO, orderby);

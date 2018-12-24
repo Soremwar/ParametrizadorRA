@@ -146,6 +146,12 @@ public class EscenarioDAO extends AbstractJpaDAO<Escenario>{
         return results;
     }
     
+    
+    public List<Escenario> findByName(String name){
+    	TypedQuery<Escenario> query = em.createNamedQuery("Escenario.findByName", Escenario.class);
+    	query.setParameter("name", "%" + name + "%");
+    	return query.getResultList();
+    }
 
 }
 

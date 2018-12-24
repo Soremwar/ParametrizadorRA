@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.codehaus.jackson.JsonProcessingException;
-import org.eclipse.persistence.exceptions.DatabaseException;
+//import org.eclipse.persistence.exceptions.DatabaseException;
 
 /**
  *
@@ -49,7 +49,7 @@ public class ExcepcionGenericaMapper implements ExceptionMapper<Throwable>{
             response = new WrapperResponseEntity(ResponseCode.ERROR_JSON, mensaje, descripcion);
 	} else if (e instanceof NotSupportedException) {
             response = new WrapperResponseEntity(ResponseCode.UNSUPPORTED_MEDIA_TYPE, mensaje, descripcion);
-	} else if (e.getCause() instanceof PersistenceException || e.getCause() instanceof DatabaseException || e.getCause() instanceof TransactionRolledbackLocalException) {
+	} else if (e.getCause() instanceof PersistenceException  || e.getCause() instanceof TransactionRolledbackLocalException) {
            response = new WrapperResponseEntity(ResponseCode.CONFLICT, mensaje, descripcion);            
         }
         if(response == null) {

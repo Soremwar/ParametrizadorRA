@@ -29,12 +29,15 @@ import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -44,6 +47,8 @@ import javax.ws.rs.core.Response;
  */
 @Stateless
 @Path("parametros")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class ParametrosREST {
 
     @Transient
@@ -53,7 +58,7 @@ public class ParametrosREST {
     protected LogAuditoriaDAO logAuditoriaDAO;
     @EJB
     protected ParametroDAO managerDAO;
-
+    
     //@EJB
     //protected EscenarioDAO padreDAO;
     /**
@@ -153,15 +158,25 @@ public class ParametrosREST {
      * @return Lista de Escenarios que cumplen con el criterio
      */
     @GET
-    @Path("/findByAny")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Path("findByAny")
     public List<ParametroDTO> findByAnyColumn(@QueryParam("texto") String texto) {
-        logger.log(Level.INFO, "texto:{0}", texto);
-        List<Parametro> lst = managerDAO.findByAnyColumn(texto);
-        List<ParametroDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ParametroDTO::getId)).collect(toList());
-        List<ParametroDTO> lstFinal = (List<ParametroDTO>) (List<?>) lstDTO;
-        return lstFinal;
+    	try {
+    		logger.log(Level.INFO, "texto:{0}", texto);
+            List<Parametro> lst = managerDAO.findByAnyColumn(texto);
+            List<ParametroDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ParametroDTO::getId)).collect(toList());
+            List<ParametroDTO> lstFinal = (List<ParametroDTO>) (List<?>) lstDTO;
+            return lstFinal;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+        
     }
+    
+//    @OPTIONS
+//    @Path("findByAny")
+//    public Response findByAnyColumnOption() {
+//       return Response.ok().header(HttpHeaders.ALLOW, HttpMethod.POST).build();
+//    }
 
     /**
      * Busca los Parametros por algun padre. Recuerden que la relacion es logica

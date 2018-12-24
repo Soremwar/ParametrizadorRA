@@ -31,6 +31,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -45,6 +46,7 @@ import javax.ws.rs.core.Response;
  *
  * @author Andres Bedoya
  */
+@Stateless
 @Path("conciliaciones")
 public class ConciliacionREST {
 
@@ -83,9 +85,11 @@ public class ConciliacionREST {
     public List<ConciliacionDTO> find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
-            @QueryParam("orderby") String orderby) {
+            @QueryParam("orderby") String orderby,
+            @QueryParam("name") String name) {
+    	
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
-        List<Conciliacion> lst = managerDAO.findRange(new int[]{offset, limit});
+        List<Conciliacion> lst = managerDAO.findAll(name);
         List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(ConciliacionDTO::getId).reversed()).collect(toList());
         //UtilListas.ordenarLista(lstDTO, orderby);
         List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>) (List<?>) lstDTO;
@@ -170,14 +174,16 @@ public class ConciliacionREST {
         Politica entidadPadreJPA;
         Conciliacion entidadJPA = dto.toEntity();
         entidadPadreJPA = padreDAO.find(dto.getIdPolitica());
+        System.out.println("1 =>" );
         transformacionDAO.verificarSiExistePaqueteWs(dto.getPaquete());
+        System.out.println("2 =>");
         /*if (transformacionDAO.findByPaqueteWs(dto.getPaquete()) != null) {
             //throw new DataAlreadyExistException(Response.Status.NOT_ACCEPTABLE.getReasonPhrase() +  dto.getPaquete());
             WrapperResponseEntity response = new WrapperResponseEntity(ResponseCode.CONFLICT,  "Informacion ya existe", "El paquete " + dto.getPaquete() + " ya existe");
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(response).build();
         }*/
         if (entidadPadreJPA != null) {
-
+        	System.out.println("3 =>");
             
             entidadJPA.setPolitica(null);
             managerDAO.create(entidadJPA);
@@ -185,17 +191,23 @@ public class ConciliacionREST {
             entidadPadreJPA.addConciliaciones(entidadJPA);
             //transformacionDAO.edit(transformacion);
             if (dto.getPaquete() != null) {
+            	System.out.println("4 =>");
                 //crearPaquete(dto, entidadJPA);
                 WsTransformacion transformacion = new WsTransformacion();
                 transformacion.setFechaCreacion(Date.from(Instant.now()));
+                transformacion.setFechaAgendamiento(new Date());
                 transformacion.setNombreWs(dto.getPaquete());
                 transformacion.setPaqueteWs(dto.getPaquete());
                 transformacion.setConciliacion(entidadJPA);
                 entidadJPA.addTransformacion(transformacion);
             }
+            System.out.println("4.z =>");
             managerDAO.edit(entidadJPA);
+            System.out.println("4.x =>");
             padreDAO.edit(entidadPadreJPA);
+            System.out.println("5 =>");
         }
+        System.out.println("6 =>");
         LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
         logAuditoriaDAO.create(logAud);
         return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();

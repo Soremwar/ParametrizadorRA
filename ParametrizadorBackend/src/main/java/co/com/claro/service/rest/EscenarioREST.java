@@ -26,6 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -40,6 +41,7 @@ import javax.ws.rs.core.Response;
  *
  * @author Andres Bedoya
  */
+@Stateless
 @Path("escenarios")
 public class EscenarioREST {
 
@@ -75,9 +77,17 @@ public class EscenarioREST {
     public List<EscenarioDTO> find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
-            @QueryParam("orderby") String orderby) {
+            @QueryParam("orderby") String orderby,
+            @QueryParam("name") String name) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
-        List<Escenario> lst = managerDAO.findRange(new int[]{offset, limit});
+        
+        List<Escenario> lst = null;
+        if(name == null) {
+        	lst = managerDAO.findRange(new int[]{offset, limit});
+        }else {
+        	lst = managerDAO.findByName(name);
+        }
+        
         List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(EscenarioDTO::getId).reversed()).collect(toList());
 
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
