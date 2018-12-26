@@ -140,12 +140,10 @@ public class UsuarioREST {
         		 String token = issueToken(credentials.getUserName());
         		 
         		 LoginDTO response = new LoginDTO();
-        		 
-        		 
-        		 
+        		        		       		 
            		 return Response.ok(response).header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
              }else {
-            	 String token = "Bearer " + issueToken(entity.get(0).getNombreUsuario());
+            	 String token = issueToken(entity.get(0).getNombreUsuario());
             	 Usuario findUser = entity.get(0);
             	 findUser.getRoles().stream().forEach(System.out::println);
            	 
@@ -170,10 +168,7 @@ public class UsuarioREST {
         }
     }
     
-    public static void main(String[] args) {
-    	System.out.println(new UsuarioREST().issueToken("oscar"));
-    }
-    
+       
     private String issueToken(String login) {
     	
     	//Calculamos la fecha de expiración del token--- Tiene configurado 2H
