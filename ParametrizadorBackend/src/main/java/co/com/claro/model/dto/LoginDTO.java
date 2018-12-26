@@ -23,7 +23,6 @@ public class LoginDTO {
     private String nombreUsuario;
     private Date fechaCreacion;
     private Date fechaActualizacion;
-    private String token;
     Set<Rol> roles = new HashSet<>();
 	public Integer getId() {
 		return id;
@@ -60,12 +59,6 @@ public class LoginDTO {
 	}
 	public void setFechaActualizacion(Date fechaActualizacion) {
 		this.fechaActualizacion = fechaActualizacion;
-	}
-	public String getToken() {
-		return token;
-	}
-	public void setToken(String token) {
-		this.token = token;
 	}
 	public Set<Rol> getRoles() {
 		return roles;

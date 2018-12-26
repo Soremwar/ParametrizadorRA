@@ -140,7 +140,7 @@ public class UsuarioREST {
         		 String token = issueToken(credentials.getUserName());
         		 
         		 LoginDTO response = new LoginDTO();
-        		 response.setToken("Bearer " + token);
+        		 
         		 
         		 
            		 return Response.ok(response).header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
@@ -148,14 +148,13 @@ public class UsuarioREST {
             	 String token = "Bearer " + issueToken(entity.get(0).getNombreUsuario());
             	 Usuario findUser = entity.get(0);
             	 findUser.getRoles().stream().forEach(System.out::println);
-            	 
+           	 
             	 LoginDTO response = new LoginDTO();
             	 response.setEmail(findUser.getEmail());
             	 response.setFechaActualizacion(findUser.getFechaActualizacion());
             	 response.setId(findUser.getId());
             	 response.setNombreUsuario(findUser.getNombreUsuario());
             	 response.setRoles(findUser.getRoles());
-            	 response.setToken(token);
             	 response.setUsuario(findUser.getUsuario());
             	 
            		 return Response.ok(response).header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
