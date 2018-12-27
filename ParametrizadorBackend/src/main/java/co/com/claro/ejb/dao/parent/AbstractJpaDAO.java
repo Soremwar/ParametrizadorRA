@@ -1,6 +1,8 @@
 package co.com.claro.ejb.dao.parent;
 
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
+
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,7 +17,7 @@ import javax.validation.ConstraintViolationException;
  * @author andres bedoya
  * @param <T>
  */
-public abstract class AbstractJpaDAO<T> {
+public abstract class AbstractJpaDAO<T extends Serializable> {
 
     private final Class<T> entityClass;
 

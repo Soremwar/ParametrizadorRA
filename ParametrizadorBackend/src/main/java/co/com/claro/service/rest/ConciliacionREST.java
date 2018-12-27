@@ -14,9 +14,12 @@ import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
 import co.com.claro.model.entity.WsTransformacion;
+import co.com.claro.service.rest.excepciones.DataAlreadyExistException;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import co.com.claro.service.rest.i18n.I18N;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+import co.com.claro.service.rest.util.ResponseWrapper;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -171,46 +174,55 @@ public class ConciliacionREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(ConciliacionDTO dto) {
         logger.log(Level.INFO, "entidad:{0}", dto);
-        Politica entidadPadreJPA;
-        Conciliacion entidadJPA = dto.toEntity();
-        entidadPadreJPA = padreDAO.find(dto.getIdPolitica());
-        System.out.println("1 =>" );
-        transformacionDAO.verificarSiExistePaqueteWs(dto.getPaquete());
-        System.out.println("2 =>");
-        /*if (transformacionDAO.findByPaqueteWs(dto.getPaquete()) != null) {
-            //throw new DataAlreadyExistException(Response.Status.NOT_ACCEPTABLE.getReasonPhrase() +  dto.getPaquete());
-            WrapperResponseEntity response = new WrapperResponseEntity(ResponseCode.CONFLICT,  "Informacion ya existe", "El paquete " + dto.getPaquete() + " ya existe");
-            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(response).build();
-        }*/
-        if (entidadPadreJPA != null) {
-        	System.out.println("3 =>");
-            
-            entidadJPA.setPolitica(null);
-            managerDAO.create(entidadJPA);
-            entidadJPA.setPolitica(entidadPadreJPA);
-            entidadPadreJPA.addConciliaciones(entidadJPA);
-            //transformacionDAO.edit(transformacion);
-            if (dto.getPaquete() != null) {
-            	System.out.println("4 =>");
-                //crearPaquete(dto, entidadJPA);
-                WsTransformacion transformacion = new WsTransformacion();
-                transformacion.setFechaCreacion(Date.from(Instant.now()));
-                transformacion.setFechaAgendamiento(new Date());
-                transformacion.setNombreWs(dto.getPaquete());
-                transformacion.setPaqueteWs(dto.getPaquete());
-                transformacion.setConciliacion(entidadJPA);
-                entidadJPA.addTransformacion(transformacion);
+        
+        
+        try {
+        	Politica entidadPadreJPA;
+            Conciliacion entidadJPA = dto.toEntity();
+            entidadPadreJPA = padreDAO.find(dto.getIdPolitica());
+            transformacionDAO.verificarSiExistePaqueteWs(dto.getPaquete());
+            /*if (transformacionDAO.findByPaqueteWs(dto.getPaquete()) != null) {
+                //throw new DataAlreadyExistException(Response.Status.NOT_ACCEPTABLE.getReasonPhrase() +  dto.getPaquete());
+                WrapperResponseEntity response = new WrapperResponseEntity(ResponseCode.CONFLICT,  "Informacion ya existe", "El paquete " + dto.getPaquete() + " ya existe");
+                return Response.status(Response.Status.NOT_ACCEPTABLE).entity(response).build();
+            }*/
+            if (entidadPadreJPA != null) {
+                entidadJPA.setPolitica(null);
+                managerDAO.create(entidadJPA);
+                entidadJPA.setPolitica(entidadPadreJPA);
+                entidadPadreJPA.addConciliaciones(entidadJPA);
+                //transformacionDAO.edit(transformacion);
+                if (dto.getPaquete() != null) {
+                	System.out.println("4 =>");
+                    //crearPaquete(dto, entidadJPA);
+                    WsTransformacion transformacion = new WsTransformacion();
+                    transformacion.setFechaCreacion(Date.from(Instant.now()));
+                    transformacion.setFechaAgendamiento(new Date());
+                    transformacion.setNombreWs(dto.getPaquete());
+                    transformacion.setPaqueteWs(dto.getPaquete());
+                    transformacion.setConciliacion(entidadJPA);
+                    entidadJPA.addTransformacion(transformacion);
+                }
+                managerDAO.edit(entidadJPA);
+                padreDAO.edit(entidadPadreJPA);
             }
-            System.out.println("4.z =>");
-            managerDAO.edit(entidadJPA);
-            System.out.println("4.x =>");
-            padreDAO.edit(entidadPadreJPA);
-            System.out.println("5 =>");
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
+            logAuditoriaDAO.create(logAud);
+        	
+        	ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("conciliaciones.save", entidadJPA.getNombre()), entidadJPA.toDTO());
+        	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        }catch (Exception e) {
+        	if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+        	
         }
-        System.out.println("6 =>");
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
-        logAuditoriaDAO.create(logAud);
-        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
     }
 
     public void crearPaquete(ConciliacionDTO dto, Conciliacion entidadJPA) {
@@ -234,44 +246,63 @@ public class ConciliacionREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ConciliacionDTO entidadDTO) {
         logger.log(Level.INFO, "entidad:{0}", entidadDTO);
-        Politica entidadPadreJPA = null;
-        List<WsTransformacion> results = transformacionDAO.validPaqueteWs(entidadDTO.getPaquete());
-        String paquete = (results != null && !results.isEmpty()) ? results.get(0).getPaqueteWs() : "";
-        //System.out.println("paquete abp" + paquete);
-        if (entidadDTO.getIdPolitica() != null) {
-            entidadPadreJPA = padreDAO.find(entidadDTO.getIdPolitica());
-            if (entidadPadreJPA == null) {
-                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidadDTO.getIdPolitica());
-            }
-        }
-        //Hallar La entidadDTO actual para actualizarla
-        Conciliacion entidadJPA = managerDAO.find(entidadDTO.getId());
-        if (entidadJPA != null) {
-            entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
-            entidadJPA.setNombre(entidadDTO.getNombre() != null ? entidadDTO.getNombre() : entidadJPA.getNombre());
-            entidadJPA.setTablaDestino(entidadDTO.getTablaDestino() != null ? entidadDTO.getTablaDestino() : entidadJPA.getTablaDestino());
-            entidadJPA.setCamposTablaDestino(entidadDTO.getCamposTablaDestino() != null ? entidadDTO.getCamposTablaDestino() : entidadJPA.getCamposTablaDestino());
-            entidadJPA.setDescripcion(entidadDTO.getDescripcion() != null ? entidadDTO.getDescripcion() : entidadJPA.getDescripcion());
-            entidadJPA.setUsuarioAsignado(entidadDTO.getUsuarioAsignado() != null ? entidadDTO.getUsuarioAsignado() : entidadJPA.getUsuarioAsignado());
-            entidadJPA.setRequiereAprobacion(entidadDTO.getRequiereAprobacion() != null ? entidadDTO.getRequiereAprobacion() : entidadJPA.getRequiereAprobacion());
-            entidadJPA.setPolitica(entidadDTO.getIdPolitica() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getPolitica());
-
-            if (entidadDTO.getPaquete() != null) {
-                if (!paquete.equalsIgnoreCase(entidadDTO.getPaquete())) {
-                    crearPaquete(entidadDTO, entidadJPA);
+        
+        
+        try {
+        	Politica entidadPadreJPA = null;
+            List<WsTransformacion> results = transformacionDAO.validPaqueteWs(entidadDTO.getPaquete());
+            String paquete = (results != null && !results.isEmpty()) ? results.get(0).getPaqueteWs() : "";
+            //System.out.println("paquete abp" + paquete);
+            if (entidadDTO.getIdPolitica() != null) {
+                entidadPadreJPA = padreDAO.find(entidadDTO.getIdPolitica());
+                if (entidadPadreJPA == null) {
+                    throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidadDTO.getIdPolitica());
                 }
             }
-            managerDAO.edit(entidadJPA);
-            if ((entidadPadreJPA != null)) {
-                entidadPadreJPA.addConciliaciones(entidadJPA);
-                padreDAO.edit(entidadPadreJPA);
-            }
-            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidadDTO.getUsername(), entidadJPA.toString());
-            logAuditoriaDAO.create(logAud);
-            return Response.status(Response.Status.OK).entity(entidadJPA).build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).build();
+            //Hallar La entidadDTO actual para actualizarla
+            Conciliacion entidadJPA = managerDAO.find(entidadDTO.getId());
+            if (entidadJPA != null) {
+                entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
+                entidadJPA.setNombre(entidadDTO.getNombre() != null ? entidadDTO.getNombre() : entidadJPA.getNombre());
+                entidadJPA.setTablaDestino(entidadDTO.getTablaDestino() != null ? entidadDTO.getTablaDestino() : entidadJPA.getTablaDestino());
+                entidadJPA.setCamposTablaDestino(entidadDTO.getCamposTablaDestino() != null ? entidadDTO.getCamposTablaDestino() : entidadJPA.getCamposTablaDestino());
+                entidadJPA.setDescripcion(entidadDTO.getDescripcion() != null ? entidadDTO.getDescripcion() : entidadJPA.getDescripcion());
+                entidadJPA.setUsuarioAsignado(entidadDTO.getUsuarioAsignado() != null ? entidadDTO.getUsuarioAsignado() : entidadJPA.getUsuarioAsignado());
+                entidadJPA.setRequiereAprobacion(entidadDTO.getRequiereAprobacion() != null ? entidadDTO.getRequiereAprobacion() : entidadJPA.getRequiereAprobacion());
+                entidadJPA.setPolitica(entidadDTO.getIdPolitica() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getPolitica());
 
+                if (entidadDTO.getPaquete() != null) {
+                    if (!paquete.equalsIgnoreCase(entidadDTO.getPaquete())) {
+                        crearPaquete(entidadDTO, entidadJPA);
+                    }
+                }
+                managerDAO.edit(entidadJPA);
+                if ((entidadPadreJPA != null)) {
+                    entidadPadreJPA.addConciliaciones(entidadJPA);
+                    padreDAO.edit(entidadPadreJPA);
+                }
+                LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidadDTO.getUsername(), entidadJPA.toString());
+                logAuditoriaDAO.create(logAud);
+                
+                ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("conciliaciones.update", entidadJPA.getNombre()) ,entidadDTO);
+            	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+            }
+            
+            ResponseWrapper wraper = new ResponseWrapper(false,I18N.getMessage("conciliaciones.notfound", entidadJPA.getNombre()));
+        	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	
+        }catch (Exception e) {
+        	if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+        	
+        }
     }
 
     /**
@@ -285,21 +316,36 @@ public class ConciliacionREST {
     @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id, @PathParam("username") String username) {
-        Conciliacion entidadJPA = managerDAO.find(id);
-        ConciliacionDTO dto = entidadJPA.toDTO();
-        Politica entidadPadreJPA = null;
-        if (entidadJPA.getPolitica() != null) {
-            entidadPadreJPA = padreDAO.find(entidadJPA.getPolitica().getId());
-            entidadPadreJPA.removeConciliaciones(entidadJPA);
-        }
-        managerDAO.remove(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
-        logAuditoriaDAO.create(logAud);
-        if (entidadPadreJPA != null) {
-            padreDAO.edit(entidadPadreJPA);
-        }
-        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
-        return Response.status(Response.Status.OK).entity(mensaje).build();
+    	try {
+    		Conciliacion entidadJPA = managerDAO.find(id);
+            ConciliacionDTO dto = entidadJPA.toDTO();
+            Politica entidadPadreJPA = null;
+            if (entidadJPA.getPolitica() != null) {
+                entidadPadreJPA = padreDAO.find(entidadJPA.getPolitica().getId());
+                entidadPadreJPA.removeConciliaciones(entidadJPA);
+            }
+            managerDAO.remove(entidadJPA);
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
+            logAuditoriaDAO.create(logAud);
+            if (entidadPadreJPA != null) {
+                padreDAO.edit(entidadPadreJPA);
+            }
+    		ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("conciliaciones.delete"), entidadJPA.getNombre());
+    		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+    	}catch (Exception e) {
+    		if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+    	}
+    	
+    	
+        
     }
 
     @GET
@@ -316,11 +362,26 @@ public class ConciliacionREST {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response setProgramacionEjecucion(WsTransformacionDTO dto) {
-        WsTransformacion entidadJPA = transformacionDAO.find(dto.getId());
-        entidadJPA.setFechaAgendamiento(dto.getFechaAgendamiento());
-        logger.log(Level.INFO, "fecha agendamiento:{0}", entidadJPA);
-        transformacionDAO.edit(entidadJPA);
-        return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
+    	try {
+    		WsTransformacion entidadJPA = transformacionDAO.find(dto.getId());
+            entidadJPA.setFechaAgendamiento(dto.getFechaAgendamiento());
+            logger.log(Level.INFO, "fecha agendamiento:{0}", entidadJPA);
+            transformacionDAO.edit(entidadJPA);
+            
+    		ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("programaciones.programar") ,entidadJPA.toDTO());
+    		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+    	}catch (Exception e) {
+    		if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+    			logger.log(Level.SEVERE, e.getMessage(), e);
+    			ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+    			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+    		}else {
+    			logger.log(Level.SEVERE, e.getMessage(), e);
+    			ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+    			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+    		}
+    	}
+        
     }
 
 }

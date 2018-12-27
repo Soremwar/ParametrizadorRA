@@ -13,9 +13,12 @@ import co.com.claro.model.dto.IndicadorDTO;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.Indicador;
 import co.com.claro.model.entity.LogAuditoria;
+import co.com.claro.service.rest.excepciones.DataAlreadyExistException;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import co.com.claro.service.rest.i18n.I18N;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+import co.com.claro.service.rest.util.ResponseWrapper;
 
 import java.time.Instant;
 import static java.util.Comparator.comparing;
@@ -126,26 +129,43 @@ public class IndicadorREST{
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(IndicadorDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Escenario entidadPadreJPA;
-        Indicador entidadJPA = entidad.toEntity();
-        entidadJPA.setEscenario(null);
-        if ( entidad.getIdEscenario() != null) {
-            entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
-            if (entidadPadreJPA == null) {
-                throw new DataNotFoundException("Datos no encontrados " + entidad.getIdEscenario());
+        
+        try {
+        	
+        	Escenario entidadPadreJPA;
+            Indicador entidadJPA = entidad.toEntity();
+            entidadJPA.setEscenario(null);
+            if ( entidad.getIdEscenario() != null) {
+                entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
+                if (entidadPadreJPA == null) {
+                    throw new DataNotFoundException("Datos no encontrados " + entidad.getIdEscenario());
+                } else {
+                    managerDAO.create(entidadJPA);
+                    entidadJPA.setEscenario(entidadPadreJPA);
+                    managerDAO.edit(entidadJPA);
+                    entidadPadreJPA.addIndicador(entidadJPA);
+                    padreDAO.edit(entidadPadreJPA);
+                }
             } else {
                 managerDAO.create(entidadJPA);
-                entidadJPA.setEscenario(entidadPadreJPA);
-                managerDAO.edit(entidadJPA);
-                entidadPadreJPA.addIndicador(entidadJPA);
-                padreDAO.edit(entidadPadreJPA);
             }
-        } else {
-            managerDAO.create(entidadJPA);
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
+            logAuditoriaDAO.create(logAud);
+            
+        	ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("indicadores.save", entidadJPA.getNombreFormula()) ,entidadJPA.toDTO());
+        	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        }catch (Exception e) {
+        	if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
         }
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
-        logAuditoriaDAO.create(logAud);
-        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
+        
     }  
     
     /**
@@ -159,30 +179,52 @@ public class IndicadorREST{
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(IndicadorDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Escenario entidadPadreJPA = null;
-        if (entidad.getIdEscenario() != null) {
-            entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
-            if (entidadPadreJPA == null) {
-                throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdEscenario());
+        
+        try {
+        	
+        	Escenario entidadPadreJPA = null;
+            if (entidad.getIdEscenario() != null) {
+                entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
+                if (entidadPadreJPA == null) {
+                    throw new DataNotFoundException(Response.Status.NOT_FOUND.getReasonPhrase() + entidad.getIdEscenario());
+                }
             }
-        }
-        //Hallar La entidad actual para actualizarla
-        Indicador entidadJPA = managerDAO.find(entidad.getId());
-        if (entidadJPA != null) {
-            entidadJPA.setNombreFormula(entidad.getNombreFormula()!= null ? entidad.getNombreFormula(): entidadJPA.getNombreFormula());
-            entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion(): entidadJPA.getDescripcion());
-            entidadJPA.setTextoFormula(entidad.getTextoFormula() != null ? entidad.getTextoFormula(): entidadJPA.getTextoFormula());
-            entidadJPA.setEscenario(entidad.getIdEscenario() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadJPA.getEscenario());
-            managerDAO.edit(entidadJPA);
-            if ((entidadPadreJPA != null)){
-                entidadPadreJPA.addIndicador(entidadJPA);
-                padreDAO.edit(entidadPadreJPA);
+            //Hallar La entidad actual para actualizarla
+            Indicador entidadJPA = managerDAO.find(entidad.getId());
+            if (entidadJPA != null) {
+                entidadJPA.setNombreFormula(entidad.getNombreFormula()!= null ? entidad.getNombreFormula(): entidadJPA.getNombreFormula());
+                entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion(): entidadJPA.getDescripcion());
+                entidadJPA.setTextoFormula(entidad.getTextoFormula() != null ? entidad.getTextoFormula(): entidadJPA.getTextoFormula());
+                entidadJPA.setEscenario(entidad.getIdEscenario() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadJPA.getEscenario());
+                managerDAO.edit(entidadJPA);
+                if ((entidadPadreJPA != null)){
+                    entidadPadreJPA.addIndicador(entidadJPA);
+                    padreDAO.edit(entidadPadreJPA);
+                }
+                LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
+                logAuditoriaDAO.create(logAud);
+                
+                ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("indicadores.update", entidadJPA.getNombreFormula()) ,entidadJPA.toDTO());
+            	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
             }
-            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
-            logAuditoriaDAO.create(logAud);
-            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
+            ResponseWrapper wraper = new ResponseWrapper(false,I18N.getMessage("indicadores.notfound", entidad.getNombreFormula()), null);
+        	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+            
+        	
+        }catch (Exception e) {
+        	if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        
+        
+        
       
     }
     

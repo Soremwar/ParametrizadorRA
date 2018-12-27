@@ -1,6 +1,8 @@
 
 package com.oracle.xmlns.odi.odiinvoke;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "OdiStopLoadPlanType", propOrder = {
     "stoppedRunInformation"
 })
-public class OdiStopLoadPlanType {
+public class OdiStopLoadPlanType implements Serializable {
 
     @XmlElement(name = "StoppedRunInformation", required = true)
     protected OdiLoadPlanInstanceRunInformationType stoppedRunInformation;
