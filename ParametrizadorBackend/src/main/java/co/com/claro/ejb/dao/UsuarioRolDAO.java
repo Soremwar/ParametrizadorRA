@@ -15,7 +15,7 @@ import co.com.claro.model.entity.UsuarioRol;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 
 @Stateless
-public class UsuarioRolDAO extends AbstractJpaDAO<UsuarioRolDAO>{
+public class UsuarioRolDAO extends AbstractJpaDAO<UsuarioRol>{
 	
 	private static final Logger logger = Logger.getLogger(UsuarioDAO.class.getSimpleName());
 

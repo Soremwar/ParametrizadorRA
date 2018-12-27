@@ -27,24 +27,7 @@ import javax.ws.rs.core.Response;
  */
 public abstract class AbstractParentREST<T extends PadreDTO> {
 
-    /**
-     *
-     * @param offset
-     * @param limit
-     * @param orderby
-     * @return
-     */
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    public abstract List<T> find(
-        @QueryParam("offset") int offset,
-        @QueryParam("limit") int limit,
-        @QueryParam("orderby") String orderby);
-    
-    @GET
-    @Path("/findById")
-    @Produces({MediaType.APPLICATION_JSON})
-    public abstract T findById(@PathParam("id") Integer id);
+
 
     /**
      * Busca las politicas por cualquier columna

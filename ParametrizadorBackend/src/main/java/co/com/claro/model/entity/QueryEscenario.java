@@ -42,7 +42,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "QueryEscenario.findByOrden", query = "SELECT q FROM QueryEscenario q WHERE q.orden = :orden")
     , @NamedQuery(name = "QueryEscenario.findByFechaCreacion", query = "SELECT q FROM QueryEscenario q WHERE q.fechaCreacion = :fechaCreacion")
     , @NamedQuery(name = "QueryEscenario.findByFechaActualizacion", query = "SELECT q FROM QueryEscenario q WHERE q.fechaActualizacion = :fechaActualizacion")
+    
     , @NamedQuery(name = "QueryEscenario.findByCodEscenario", query = "SELECT q FROM QueryEscenario q WHERE q.escenario.id = :codEscenario")
+    
     , @NamedQuery(name = "QueryEscenario.findByCodConciliacion", query = "SELECT q FROM QueryEscenario q WHERE q.escenario.conciliacion.id = :codConciliacion")    
     , @NamedQuery(name = "QueryEscenario.findByAnyColumn", query = "SELECT DISTINCT(q) FROM QueryEscenario q WHERE lower(q.nombreQuery) LIKE lower(:nombreQuery) or lower(q.query) LIKE lower(:query) or lower(q.escenario.nombre) LIKE lower(:queryEscenarioNombre)")})
 

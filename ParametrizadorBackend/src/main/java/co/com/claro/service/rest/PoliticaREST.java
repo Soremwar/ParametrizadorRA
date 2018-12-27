@@ -7,8 +7,13 @@ import co.com.claro.model.dto.parent.PadreDTO;
 import co.com.claro.model.dto.PoliticaDTO;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
+import co.com.claro.service.rest.response.ResponseCode;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+import co.com.claro.service.rest.util.ResponseWrapper;
+import co.com.claro.service.rest.excepciones.DataAlreadyExistException;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import co.com.claro.service.rest.i18n.I18N;
 import co.com.claro.service.rest.parent.AbstractParentREST;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -24,6 +29,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.PersistenceException;
 import javax.persistence.Transient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -57,28 +63,51 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @GET
     @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
-    @Override
-    public List<PoliticaDTO> find(
+    public Response find(
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit,
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
-        List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(PadreDTO::getId).reversed()).collect(toList());
-        //UtilListas.ordenarLista(lstDTO, orderby);
-        List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
-        return lstFinal;
+    	try {
+    		List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
+            List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(PadreDTO::getId).reversed()).collect(toList());
+            List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
+            ResponseWrapper wraper = new ResponseWrapper(true,lstFinal);
+    		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+		}catch (Exception e) {
+			if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+		}
     }   
     
     @GET
     @Path("{id}")
     @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
-    public PoliticaDTO findById(@PathParam("id") Integer id){
-        logger.log(Level.INFO, "id:{0}", id);
-        Politica entidad = managerDAO.findByAllTreeById(id);
-        return entidad.toDTO();
-
+    public Response findById(@PathParam("id") Integer id){
+    	logger.log(Level.INFO, "id:{0}", id);
+    	try {
+            Politica entidad = managerDAO.findByAllTreeById(id);
+            ResponseWrapper wraper = new ResponseWrapper(true,entidad.toDTO());
+    		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+		}catch (Exception e) {
+			if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+		}
     }
 
     
@@ -118,12 +147,24 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(PoliticaDTO dto) {
         logger.log(Level.INFO, "entidad:{0}", dto);
-        //Registrando log
-        Politica entidadJPA = dto.toEntity();
-        managerDAO.create(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
-        logAuditoriaDAO.create(logAud);
-        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
+        try {
+            Politica entidadJPA = dto.toEntity();
+            managerDAO.create(entidadJPA);
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
+            logAuditoriaDAO.create(logAud);
+            ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("politicas.save", entidadJPA.getNombre()), entidadJPA.toDTO());
+        	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        }catch (Exception e) {
+        	if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+        }
     }
     
     @PUT
@@ -133,21 +174,37 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     public Response update(PoliticaDTO dto) {
         logger.log(Level.INFO, "entidad:{0}", dto);  
         //Hallar La dto actual para actualizarla
-        Politica entidadJPA = managerDAO.find(dto.getId());
-        if (entidadJPA != null) {
-            entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
-            entidadJPA.setNombre(dto.getNombre() != null ? dto.getNombre() : entidadJPA.getNombre());
-            entidadJPA.setDescripcion(dto.getDescripcion() != null ? dto.getDescripcion() : entidadJPA.getDescripcion());
-            entidadJPA.setObjetivo(dto.getObjetivo() != null ? dto.getObjetivo() : entidadJPA.getObjetivo());
-            managerDAO.edit(entidadJPA);
-            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
-            logAuditoriaDAO.create(logAud);
-            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
-       }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        logger.log(Level.INFO, "entidad:{0}", dto);
+        try {
+			 Politica entidadJPA = managerDAO.find(dto.getId());
+		     if (entidadJPA != null) {
+				entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
+				entidadJPA.setNombre(dto.getNombre() != null ? dto.getNombre() : entidadJPA.getNombre());
+				entidadJPA.setDescripcion(dto.getDescripcion() != null ? dto.getDescripcion() : entidadJPA.getDescripcion());
+				entidadJPA.setObjetivo(dto.getObjetivo() != null ? dto.getObjetivo() : entidadJPA.getObjetivo());
+				managerDAO.edit(entidadJPA);
+				LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), dto.getUsername(), entidadJPA.toString());
+				logAuditoriaDAO.create(logAud);
+				ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("politicas.update", entidadJPA.getNombre()), entidadJPA.toDTO());
+				return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+		    }else {
+		    	ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("politicas.notfound"), 500);
+	        	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+		    }
+        }catch (Exception e) {
+        	if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+        }
     }
     
-     /**
+    /**
      * Borra una politica por su Id
      * @param id Identificador de la entidadJPA
      * @return El resultado de la operacion en codigo HTTP
@@ -158,13 +215,26 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
     @Produces({MediaType.APPLICATION_JSON})
     @Override
     public Response remove(@PathParam("id") Integer id, @PathParam("username") String username) {
-        Politica entidadJPA = managerDAO.find(id);
-        PoliticaDTO dto = entidadJPA.toDTO();
-        managerDAO.remove(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
-        logAuditoriaDAO.create(logAud);
-        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
-        return Response.status(Response.Status.OK).entity(mensaje).build();
+        try {
+        	Politica entidadJPA = managerDAO.find(id);
+            PoliticaDTO dto = entidadJPA.toDTO();
+            managerDAO.remove(entidadJPA);
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
+            logAuditoriaDAO.create(logAud);
+            WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+        	ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("politicas.delete", entidadJPA.getNombre()), mensaje);
+        	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        }catch (Exception e) {
+        	if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+        }
     }
        
     @GET

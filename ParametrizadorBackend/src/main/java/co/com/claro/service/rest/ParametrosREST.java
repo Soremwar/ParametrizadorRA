@@ -12,9 +12,16 @@ import co.com.claro.model.dto.CredencialesDTO;
 import co.com.claro.model.dto.ParametroDTO;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Parametro;
+import co.com.claro.service.rest.excepciones.DataAlreadyExistException;
+import co.com.claro.service.rest.excepciones.DataNotFoundException;
+import co.com.claro.service.rest.i18n.I18N;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+<<<<<<< HEAD
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeededFilter;
+=======
+import co.com.claro.service.rest.util.ResponseWrapper;
+>>>>>>> tunning2
 
 import java.time.Instant;
 import static java.util.Comparator.comparing;
@@ -210,11 +217,29 @@ public class ParametrosREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response add(ParametroDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Parametro entidadJPA = entidad.toEntity();
-        managerDAO.create(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
-        logAuditoriaDAO.create(logAud);
-        return Response.status(Response.Status.CREATED).entity(entidadJPA.toDTO()).build();
+        
+        try {
+        	
+        	Parametro entidadJPA = entidad.toEntity();
+            managerDAO.create(entidadJPA);
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
+            logAuditoriaDAO.create(logAud);
+        	
+        	ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("parametros.save", entidad.getParametro()) ,entidadJPA.toDTO());
+        	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        }catch (Exception e) {
+        	if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+        }
+        
+        
     }
 
     /**
@@ -229,21 +254,34 @@ public class ParametrosREST {
     @Produces({MediaType.APPLICATION_JSON})
     public Response update(ParametroDTO entidad) {
         logger.log(Level.INFO, "entidad:{0}", entidad);
-        Parametro entidadJPA = managerDAO.find(entidad.getId());
-        if (entidadJPA != null) {
-            entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
-            entidadJPA.setParametro(entidad.getParametro() != null ? entidad.getParametro() : entidadJPA.getParametro());
-            entidadJPA.setValor(entidad.getValor() != null ? entidad.getValor() : entidadJPA.getValor());
-            entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadJPA.getDescripcion());
-            entidadJPA.setTipo(entidad.getTipo() != null ? entidad.getTipo() : entidadJPA.getTipo());
-            entidadJPA.setCodPadre(entidad.getCodPadre() != null ? entidad.getCodPadre() : entidadJPA.getCodPadre());
-            managerDAO.edit(entidadJPA);
-            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
-            logAuditoriaDAO.create(logAud);
-            return Response.status(Response.Status.OK).entity(entidadJPA.toDTO()).build();
+        try {
+            Parametro entidadJPA = managerDAO.find(entidad.getId());
+            if (entidadJPA != null) {
+                entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
+                entidadJPA.setParametro(entidad.getParametro() != null ? entidad.getParametro() : entidadJPA.getParametro());
+                entidadJPA.setValor(entidad.getValor() != null ? entidad.getValor() : entidadJPA.getValor());
+                entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadJPA.getDescripcion());
+                entidadJPA.setTipo(entidad.getTipo() != null ? entidad.getTipo() : entidadJPA.getTipo());
+                entidadJPA.setCodPadre(entidad.getCodPadre() != null ? entidad.getCodPadre() : entidadJPA.getCodPadre());
+                managerDAO.edit(entidadJPA);
+                LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
+                logAuditoriaDAO.create(logAud);
+                ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("parametros.update", entidadJPA.getParametro()),entidadJPA.toDTO() );
+            	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+            }
+        	ResponseWrapper wraper = new ResponseWrapper(false,I18N.getMessage("parametros.notfound", entidadJPA.getParametro()) );
+        	return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        }catch (Exception e) {
+        	if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
-
     }
 
     /**
@@ -257,13 +295,27 @@ public class ParametrosREST {
     @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id, @PathParam("username") String username) {
-        Parametro entidadJPA = managerDAO.find(id);
-        ParametroDTO dto = entidadJPA.toDTO();
-        managerDAO.remove(entidadJPA);
-        LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
-        logAuditoriaDAO.create(logAud);
-        WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
-        return Response.status(Response.Status.OK).entity(mensaje).build();
+    	try {
+    		Parametro entidadJPA = managerDAO.find(id);
+            ParametroDTO dto = entidadJPA.toDTO();
+            managerDAO.remove(entidadJPA);
+            LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
+            logAuditoriaDAO.create(logAud);
+            WrapperResponseEntity mensaje = new WrapperResponseEntity(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase(), "Registro borrado exitosamente");
+            
+    		ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("parametros.delete", entidadJPA.getParametro()) ,mensaje);
+    		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+    	}catch (Exception e) {
+    		if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}else {
+        		logger.log(Level.SEVERE, e.getMessage(), e);
+        		ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+        		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+        	}
+    	}
     }
 
     @GET
