@@ -169,6 +169,7 @@ public class ConciliacionDTO extends PadreDTO implements Serializable{
         entity.setCamposTablaDestino(this.camposTablaDestino);
         //entity.setEstadoAprobacion(this.estadoAprobacion);
         entity.setRequiereAprobacion(this.requiereAprobacion);
+        
         entity.setPolitica(this.idPolitica != null ? new Politica(this.idPolitica) : null);
         return entity;
         

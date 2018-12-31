@@ -121,7 +121,7 @@ public class ParametroDAO extends AbstractJpaDAO<Parametro> {
         List<Parametro> aux = query.getResultList();
         List<Parametro> results = codPadre != null ? aux.stream().filter(parametro -> codPadre.equals(parametro.getCodPadre())).collect(Collectors.toList()) : aux;
         if (results == null) {
-            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+            throw new DataNotFoundException("No se encontraron datos de Busqueda para el tipo de parametro: " + tipo + " padre: " + codPadre);
         }
         return results;
     }

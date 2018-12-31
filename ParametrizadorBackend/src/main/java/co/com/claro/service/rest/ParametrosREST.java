@@ -17,11 +17,8 @@ import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.i18n.I18N;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
-<<<<<<< HEAD
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeededFilter;
-=======
 import co.com.claro.service.rest.util.ResponseWrapper;
->>>>>>> tunning2
 
 import java.time.Instant;
 import static java.util.Comparator.comparing;
