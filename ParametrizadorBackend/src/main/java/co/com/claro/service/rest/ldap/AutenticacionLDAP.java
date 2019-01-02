@@ -46,9 +46,9 @@ public class AutenticacionLDAP {
 		         }
 		         
 		         if(oU.equals("")) {
-		        	 credentialUrl = "uid=" + username + "," + dC;
+		        	 credentialUrl = username + "," + dC;
 		         }else {
-		        	 credentialUrl = "uid=" + username+ ",ou" + "=" + oU + "," + dC;
+		        	 credentialUrl = oU + "=" + username + "," + dC;
 		         }
 		                               
                  Logger.getLogger(AutenticacionLDAP.class.getName()).log(Level.INFO, ldapUrl);

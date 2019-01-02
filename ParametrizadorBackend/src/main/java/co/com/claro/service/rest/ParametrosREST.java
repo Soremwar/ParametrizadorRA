@@ -121,9 +121,9 @@ public class ParametrosREST {
       	 ldapUrl = "ldap://" + credentials.getIp().trim() + ":" + credentials.getPort().trim() + "/" + credentials.getCommonName().trim() + "," + credentials.getDomainGroup().trim();			        	 
        }      
        if(credentials.getOrganization().trim().equals("*")) {
-      	 credentialUrl = "uid=" + credentials.getUserName().trim() + "," + credentials.getDomainGroup().trim();
+      	 credentialUrl = credentials.getUserName().trim() + "," + credentials.getDomainGroup().trim();
        }else {
-      	 credentialUrl = "uid=" + credentials.getUserName().trim() + ",ou=" + credentials.getOrganization().trim() + "," +credentials.getDomainGroup().trim();
+      	 credentialUrl = credentials.getOrganization().trim() + "=" + credentials.getUserName().trim() + "," +credentials.getDomainGroup().trim();
        }     
        response.setValor("url: "+ ldapUrl + " busqueda: " + credentialUrl);
               
