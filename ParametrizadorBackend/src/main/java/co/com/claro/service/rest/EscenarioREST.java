@@ -270,7 +270,8 @@ public class EscenarioREST {
             EscenarioDTO dto = entidadJPA.toDTO();
             Conciliacion entidadPadreJPA = null;
             if (entidadJPA.getConciliacion() != null) {
-                entidadPadreJPA = padreDAO.find(entidadJPA.getConciliacion().getId());
+            	entidadPadreJPA = padreDAO.findById(entidadJPA.getConciliacion().getId());
+                //entidadPadreJPA = padreDAO.find(entidadJPA.getConciliacion().getId());
                 entidadPadreJPA.removeEscenario(entidadJPA);
             }
             managerDAO.remove(entidadJPA);

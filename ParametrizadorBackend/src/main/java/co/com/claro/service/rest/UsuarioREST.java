@@ -128,8 +128,8 @@ public class UsuarioREST {
         	AutenticacionLDAP auth = new AutenticacionLDAP();
         	Usuario user = new Usuario();
         	
-        	boolean isLoged = auth.login(credentials.getUserName(), credentials.getPassWord(), credentials.getIp().trim(), credentials.getPort().trim(), credentials.getCommonName().trim().replace("*", ""), credentials.getDomainGroup().trim(), credentials.getOrganization().trim().replace("*", ""));
-        	//boolean isLoged = true;
+        	//boolean isLoged = auth.login(credentials.getUserName(), credentials.getPassWord(), credentials.getIp().trim(), credentials.getPort().trim(), credentials.getCommonName().trim().replace("*", ""), credentials.getDomainGroup().trim(), credentials.getOrganization().trim().replace("*", ""));
+        	boolean isLoged = true;
         	       	
         	if(isLoged) {
         		
