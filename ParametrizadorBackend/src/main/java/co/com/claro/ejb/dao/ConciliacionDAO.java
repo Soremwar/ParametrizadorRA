@@ -146,9 +146,5 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         List<Conciliacion> results = query.getResultList();
         return results;
     }
-    
-    public Conciliacion findById(Integer id) {
-    	return em.find(Conciliacion.class, id);
-    }
 }
 
