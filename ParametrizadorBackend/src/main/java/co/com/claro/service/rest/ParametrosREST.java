@@ -5,11 +5,15 @@
  */
 package co.com.claro.service.rest;
 
+import co.com.claro.ejb.dao.ConciliacionDAO;
+import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.CredencialesDTO;
 import co.com.claro.model.dto.ParametroDTO;
+import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Parametro;
 import co.com.claro.service.rest.excepciones.DataAlreadyExistException;
@@ -63,8 +67,12 @@ public class ParametrosREST {
     @EJB
     protected ParametroDAO managerDAO;
     
-    //@EJB
-    //protected EscenarioDAO padreDAO;
+    @EJB
+    protected EscenarioDAO escenarioDAO;
+    
+    @EJB
+    private ConciliacionDAO conciliacionDAO;
+    
     /**
      * Obtiene las Parametros Paginadas
      *
@@ -151,7 +159,18 @@ public class ParametrosREST {
     public ParametroDTO getById(@PathParam("id") int id) {
         logger.log(Level.INFO, "id:{0}", id);
         Parametro entidad = managerDAO.find(id);
-        return entidad.toDTO();
+        
+        ParametroDTO dto = entidad.toDTO();
+        
+        if("ESCENARIO".equals(dto.getTipo())) {
+        	Escenario escenario = escenarioDAO.find(dto.getCodPadre());
+        	dto.setCodPadreDesc(escenario.getNombre());
+        }else if("CONCILIACION".equals(dto.getTipo())) {
+        	Conciliacion conciliacion = conciliacionDAO.find(dto.getCodPadre());
+        	dto.setCodPadreDesc(conciliacion.getNombre());
+        }
+        
+        return dto;
 
     }
 
