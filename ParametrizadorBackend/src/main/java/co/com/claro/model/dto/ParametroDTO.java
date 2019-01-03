@@ -20,6 +20,7 @@ public class ParametroDTO implements Serializable {
 
     private Integer id;
     private Integer codPadre;
+    private String codPadreDesc;
     private String parametro;
     private String valor;
     private String descripcion;
@@ -27,8 +28,16 @@ public class ParametroDTO implements Serializable {
     private Date fechaActualizacion;
     private String tipo;
     private String username;
+    
+    public String getCodPadreDesc() {
+		return codPadreDesc;
+	}
 
-    public Integer getId() {
+	public void setCodPadreDesc(String codPadreDesc) {
+		this.codPadreDesc = codPadreDesc;
+	}
+
+	public Integer getId() {
         return id;
     }
 
