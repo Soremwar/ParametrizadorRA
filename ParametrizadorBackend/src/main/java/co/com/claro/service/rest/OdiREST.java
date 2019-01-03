@@ -60,7 +60,7 @@ public class OdiREST{
     public String getWsdlLocationODIFromDB() {
         String wsdlLocation;
         try {
-            wsdlLocation = parametrosDAO.findByParametro("SISTEMA", "odiUrl");
+            wsdlLocation = parametrosDAO.findByParametro("SISTEMA", "V_odiUrl");
         } catch (Exception e) {
             wsdlLocation = "http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl";
         }
@@ -73,7 +73,7 @@ public class OdiREST{
     @Produces({MediaType.APPLICATION_JSON})
     public List<ParametroDTO> getOdiParametros() {
     	
-        List<Parametro> lst = parametrosDAO.findByOdi("odi");
+        List<Parametro> lst = parametrosDAO.findByOdi("V_odi");
         List<ParametroDTO> lstDTO = new ArrayList<>();
         lst.forEach((entidad) -> {
             lstDTO.add(entidad.toDTO());
