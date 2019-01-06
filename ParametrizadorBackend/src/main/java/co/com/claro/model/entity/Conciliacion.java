@@ -314,17 +314,17 @@ public class Conciliacion implements Serializable {
         //entidadDTO.setEstadoAprobacion(estadoAprobacion);
         entidadDTO.setRequiereAprobacion(requiereAprobacion);
         if (escenarios != null) {
-            Set<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).sorted(comparing(EscenarioDTO::getId)).collect(Collectors.toCollection(LinkedHashSet::new));
+            Set<EscenarioDTO> lstEscenarios = escenarios.stream().map((escenarioDTO) -> escenarioDTO.toDTO()).sorted(comparing(EscenarioDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setEscenarios(lstEscenarios);
         }
         
         if (transformaciones != null) {
-            Set<WsTransformacionDTO> lstTransformaciones = transformaciones.stream().map((transformacionDTO) -> transformacionDTO.toDTO()).sorted(comparing(WsTransformacionDTO::getId)).collect(Collectors.toCollection(LinkedHashSet::new));
+            Set<WsTransformacionDTO> lstTransformaciones = transformaciones.stream().map((transformacionDTO) -> transformacionDTO.toDTO()).sorted(comparing(WsTransformacionDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setTransformaciones(lstTransformaciones);
         }
 
         if (ejecucionesProceso != null) {
-            Set<EjecucionProcesoDTO> lstEjecuciones = ejecucionesProceso.stream().map((ejecucionProcesoDTO) -> ejecucionProcesoDTO.toDTO()).sorted(comparing(EjecucionProcesoDTO::getId)).collect(Collectors.toCollection(LinkedHashSet::new));
+            Set<EjecucionProcesoDTO> lstEjecuciones = ejecucionesProceso.stream().map((ejecucionProcesoDTO) -> ejecucionProcesoDTO.toDTO()).sorted(comparing(EjecucionProcesoDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setEjecucionesProceso(lstEjecuciones);
         }
 
