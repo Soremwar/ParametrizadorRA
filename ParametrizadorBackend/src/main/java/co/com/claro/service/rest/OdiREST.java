@@ -2,19 +2,15 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.model.dto.ParametroDTO;
-import co.com.claro.model.dto.RequestURLDTO;
-import co.com.claro.model.dto.UsuarioDTO;
 import co.com.claro.model.dto.request.LoadPlanStatusRequestDTO;
 import co.com.claro.model.dto.request.StartLoadPlanRequestDTO;
 import co.com.claro.model.dto.request.StopLoadPlanRequestDTO;
 import co.com.claro.model.entity.Parametro;
-import co.com.claro.model.entity.Usuario;
 import co.com.claro.service.rest.excepciones.DataAlreadyExistException;
 import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.i18n.I18N;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
 import co.com.claro.service.rest.util.ResponseWrapper;
-import io.jsonwebtoken.lang.Collections;
 
 import com.oracle.xmlns.odi.odiinvoke.FacadeODI;
 import com.oracle.xmlns.odi.odiinvoke.LoadPlanStatusType;
@@ -146,7 +142,7 @@ public class OdiREST{
     			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
     		}else {
     			logger.log(Level.SEVERE, e.getMessage(), e);
-    			ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.readerror"), 500);
+    			ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("odiinvoke.execute"), 500);
     			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
     		}
     	}
