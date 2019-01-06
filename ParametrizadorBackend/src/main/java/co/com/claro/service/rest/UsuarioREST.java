@@ -81,7 +81,7 @@ public class UsuarioREST {
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
         List<Usuario> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<UsuarioDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(UsuarioDTO::getId).reversed()).collect(toList());
+        List<UsuarioDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(UsuarioDTO::getId)).collect(toList());
         //UtilListas.ordenarLista(lstDTO, orderby);
         List<UsuarioDTO> lstFinal = (List<UsuarioDTO>)(List<?>) lstDTO;
         return lstFinal;
@@ -201,7 +201,7 @@ public class UsuarioREST {
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
         List<Rol> lst = rolDAO.findRange(new int[]{offset, limit});
-        List<RolDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(RolDTO::getId).reversed()).collect(toList());
+        List<RolDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(RolDTO::getId)).collect(toList());
         //UtilListas.ordenarLista(lstDTO, orderby);
         List<RolDTO> lstFinal = (List<RolDTO>)(List<?>) lstDTO;
         return lstFinal;

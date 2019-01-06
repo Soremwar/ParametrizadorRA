@@ -91,7 +91,7 @@ public class EscenarioREST {
         	lst = managerDAO.findByName(name);
         }
         
-        List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(EscenarioDTO::getId).reversed()).collect(toList());
+        List<PadreDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(EscenarioDTO::getId)).collect(toList());
 
         lstDTO = UtilListas.ordenarLista(lstDTO, orderby);
         List<EscenarioDTO> lstFinal = (List<EscenarioDTO>) (List<?>) lstDTO;

@@ -75,7 +75,7 @@ public class EjecucionProcesoREST {
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});
         List<EjecucionProceso> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<EjecucionProcesoDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(EjecucionProcesoDTO::getId).reversed()).collect(toList());
+        List<EjecucionProcesoDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(EjecucionProcesoDTO::getId)).collect(toList());
         //UtilListas.ordenarListaEjecucion(lstDTO, orderby);
         List<EjecucionProcesoDTO> lstFinal = (List<EjecucionProcesoDTO>)(List<?>) lstDTO;
         return lstFinal;

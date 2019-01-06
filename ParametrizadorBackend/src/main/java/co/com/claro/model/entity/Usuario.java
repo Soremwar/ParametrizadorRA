@@ -194,7 +194,7 @@ public class Usuario implements Serializable {
         entidadDTO.setEmail(email);
 
         if (roles != null) {            
-            Set<RolDTO> lstRoles = roles.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(RolDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+            Set<RolDTO> lstRoles = roles.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(RolDTO::getId)).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setRoles(lstRoles);
         }
         return entidadDTO;

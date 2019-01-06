@@ -220,12 +220,12 @@ public class Escenario implements Serializable {
         entidadDTO.setIdConciliacion(conciliacion != null ? conciliacion.getId() : null);
         entidadDTO.setNombreConciliacion(conciliacion != null ? conciliacion.getNombre() : null);
         if (queryEscenarios != null) {
-            Set<QueryEscenarioDTO> lstqueryEscenarios = queryEscenarios.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(QueryEscenarioDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+            Set<QueryEscenarioDTO> lstqueryEscenarios = queryEscenarios.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(QueryEscenarioDTO::getId)).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setQueryescenarios(lstqueryEscenarios);
         }
         
         if (indicadores != null) {
-            Set<IndicadorDTO> lstIndicadores = indicadores.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(IndicadorDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+            Set<IndicadorDTO> lstIndicadores = indicadores.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(IndicadorDTO::getId)).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setIndicadores(lstIndicadores);
         }
         

@@ -70,7 +70,7 @@ public class PoliticaREST extends AbstractParentREST<PoliticaDTO>{
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2}", new Object[]{offset, limit, orderby});     
     	try {
     		List<Politica> lst = managerDAO.findRange(new int[]{offset, limit});
-            List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(PadreDTO::getId).reversed()).collect(toList());
+            List<PadreDTO> lstDTO = lst.stream().map(item -> (item.toDTO())).distinct().sorted(comparing(PadreDTO::getId)).collect(toList());
             List<PoliticaDTO> lstFinal = (List<PoliticaDTO>)(List<?>) lstDTO;
             ResponseWrapper wraper = new ResponseWrapper(true,lstFinal);
     		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();

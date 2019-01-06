@@ -154,7 +154,7 @@ public class Rol implements Serializable {
         entidadDTO.setMenus(menus);
 
         /*if (usuarioRolCollection != null) {            
-            Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(ConciliacionDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+            Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(ConciliacionDTO::getId).).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setConciliaciones(lstConciliaciones);
         }*/
         return entidadDTO;

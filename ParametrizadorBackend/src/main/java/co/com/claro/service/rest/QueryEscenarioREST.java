@@ -88,7 +88,7 @@ public class QueryEscenarioREST {
         } else {
             lst = managerDAO.findRange(null);
         }
-        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId).reversed()).collect(toList());
+        lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(QueryEscenarioDTO::getId)).collect(toList());
         //UtilListas.ordenarQueryEjecucion(lstDTO, orderby);
         List<QueryEscenarioDTO> lstFinal = (List<QueryEscenarioDTO>) (List<?>) lstDTO;
         return lstFinal;

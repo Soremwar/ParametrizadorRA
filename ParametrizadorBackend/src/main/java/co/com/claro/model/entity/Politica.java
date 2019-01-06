@@ -196,7 +196,7 @@ public class Politica implements Serializable {
         entidadDTO.setObjetivo(objetivo);
         entidadDTO.setDescripcion(descripcion);
         if (conciliaciones != null) {            
-            Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(ConciliacionDTO::getId).reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+            Set<ConciliacionDTO> lstConciliaciones = conciliaciones.stream().map((itemDTO) -> itemDTO.toDTO()).sorted(Comparator.comparing(ConciliacionDTO::getId)).collect(Collectors.toCollection(LinkedHashSet::new));
             entidadDTO.setConciliaciones(lstConciliaciones);
         }
 

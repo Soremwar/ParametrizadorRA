@@ -78,7 +78,7 @@ public class IndicadorREST{
             @QueryParam("orderby") String orderby) {
         logger.log(Level.INFO, "offset:{0}limit:{1}orderby:{2} ", new Object[]{offset, limit, orderby});     
         List<Indicador> lst = managerDAO.findRange(new int[]{offset, limit});
-        List<IndicadorDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(IndicadorDTO::getId).reversed()).collect(toList());
+        List<IndicadorDTO> lstDTO = lst.stream().map(item -> item.toDTO()).distinct().sorted(comparing(IndicadorDTO::getId)).collect(toList());
 
         lstDTO = UtilListas.ordenarListaIndicadores(lstDTO, orderby);
         List<IndicadorDTO> lstFinal = (List<IndicadorDTO>)(List<?>) lstDTO;
