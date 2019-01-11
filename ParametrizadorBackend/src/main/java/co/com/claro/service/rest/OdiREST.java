@@ -111,7 +111,7 @@ public class OdiREST{
     			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
     		}else {
     			logger.log(Level.SEVERE, e.getMessage(), e);
-    			ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("general.saveerror"), 500);
+    			ResponseWrapper wraper = new ResponseWrapper(false,  e.getMessage(), 500);
     			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
     		}
     	}
@@ -133,7 +133,7 @@ public class OdiREST{
     	try {
     		List<LoadPlanStatusType> responses = facadeODI.loadPlanStatus(getWsdlLocationODIFromDB(), request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlans());
     		
-    		ResponseWrapper wraper = new ResponseWrapper(true,responses);
+    		ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("odiinvoke.execute"), responses);
     		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
     	}catch (Exception e) {
     		if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
@@ -142,12 +142,10 @@ public class OdiREST{
     			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
     		}else {
     			logger.log(Level.SEVERE, e.getMessage(), e);
-    			ResponseWrapper wraper = new ResponseWrapper(false,  I18N.getMessage("odiinvoke.execute"), 500);
+    			ResponseWrapper wraper = new ResponseWrapper(false,  e.getMessage(), 500);
+    			
     			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
     		}
     	}
-        
     }  
-
-
 }
