@@ -119,7 +119,7 @@ public class Conciliacion implements Serializable {
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
     private Collection<Escenario> escenarios;
 
-    @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")
+    @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion", cascade= {CascadeType.PERSIST, CascadeType.MERGE})
     private Collection<WsTransformacion> transformaciones;
 
     @OneToMany(fetch=FetchType.LAZY, mappedBy = "conciliacion")

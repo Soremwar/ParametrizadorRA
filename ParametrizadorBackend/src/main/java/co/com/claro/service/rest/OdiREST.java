@@ -121,8 +121,25 @@ public class OdiREST{
     @Path("/stopLoadPlan")
     @JWTTokenNeeded
     @Produces({MediaType.APPLICATION_JSON})
-    public OdiStopLoadPlanType stopLoadPlan(StopLoadPlanRequestDTO request) {
-        return facadeODI.stopLoadPlan(getWsdlLocationODIFromDB(), request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanInstance(), request.getLoadPlanInstanceRunCount(), request.getStopLevel());
+    public Response stopLoadPlan(StopLoadPlanRequestDTO request) {
+    	try {
+    		OdiStopLoadPlanType stopLoadPlan = facadeODI.stopLoadPlan(getWsdlLocationODIFromDB(), request.getOdiUser(), request.getOdiPassword(), request.getWorkRepository(), request.getLoadPlanInstance(), request.getLoadPlanInstanceRunCount(), request.getStopLevel());
+    		
+    		ResponseWrapper wraper = new ResponseWrapper(true,I18N.getMessage("odiinvoke.execute"), stopLoadPlan);
+    		return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+    	}catch (Exception e) {
+    		if(e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+    			logger.log(Level.SEVERE, e.getMessage(), e);
+    			ResponseWrapper wraper = new ResponseWrapper(false,  e.getCause().getMessage(), 500);
+    			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+    		}else {
+    			logger.log(Level.SEVERE, e.getMessage(), e);
+    			ResponseWrapper wraper = new ResponseWrapper(false,  e.getMessage(), 500);
+    			
+    			return Response.ok(wraper,MediaType.APPLICATION_JSON).build();
+    		}
+    	}
+        
     }   
     
     @POST
