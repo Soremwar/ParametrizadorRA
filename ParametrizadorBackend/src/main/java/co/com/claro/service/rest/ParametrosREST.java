@@ -5,11 +5,34 @@
  */
 package co.com.claro.service.rest;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.persistence.Transient;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
 import co.com.claro.ejb.dao.ParametroDAO;
-import co.com.claro.ejb.dao.utils.UtilListas;
 import co.com.claro.model.dto.CredencialesDTO;
 import co.com.claro.model.dto.ParametroDTO;
 import co.com.claro.model.entity.Conciliacion;
@@ -23,31 +46,6 @@ import co.com.claro.service.rest.response.WrapperResponseEntity;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeededFilter;
 import co.com.claro.service.rest.util.ResponseWrapper;
-
-import java.time.Instant;
-import static java.util.Comparator.comparing;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import static java.util.stream.Collectors.toList;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.persistence.Transient;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  *
@@ -96,11 +94,12 @@ public class ParametrosREST {
         List<ParametroDTO> lstFinal = (List<ParametroDTO>) (List<?>) lstDTO;
         return lstFinal;
     }
-    
+        
     @GET
     @Path("/returnSeed")
     @Produces({MediaType.APPLICATION_JSON})
     public ParametroDTO returnSeed() {
+    	    
        Parametro response = new Parametro();
        String seed = JWTTokenNeededFilter.KEYPAR;
        String asc = "";
@@ -113,6 +112,8 @@ public class ParametrosREST {
        response.setValor(asc);
        return response.toDTO();
     }
+    
+    
     
     @POST
     @Path("/ldapURL")
