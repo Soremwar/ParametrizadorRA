@@ -12,8 +12,9 @@ import javax.naming.directory.InitialDirContext;
 
 public class AutenticacionLDAP {
 	
-	 public boolean login(String username, String password, String ip, String port, String cN, String dC, String oU) {
+	 public String[] login(String username, String password, String ip, String port, String cN, String dC, String oU) {
 		 
+		 String[] result = new String[2];
 		 
 		        /* AUTENTICACION EN EL LDAP:
 		         * (Se toma como base una conexion estable y 100% funcional de un LDAP existente)
@@ -70,12 +71,15 @@ public class AutenticacionLDAP {
 		          
 		          try {
 		              DirContext ctx = new InitialDirContext(env);
-		              return true;
+		              result[0] = "true";
+		              result[1] = "";
+		              return result;
 		          } catch (NamingException ex) {
-		              Logger.getLogger(AutenticacionLDAP.class.getName()).log(Level.INFO, "No se pudo registrar en el LDAP", ex);
+		              Logger.getLogger(AutenticacionLDAP.class.getName()).log(Level.INFO, "No se pudo conectar con el LDAP", ex);
+		              result[0] = "false";
+		              result[1] = ex.toString();
+		              return result;
 		          }
-
-		          return false;
+		          
 		   }
-	 
 }

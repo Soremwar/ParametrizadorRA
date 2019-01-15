@@ -128,10 +128,9 @@ public class UsuarioREST {
         	AutenticacionLDAP auth = new AutenticacionLDAP();
         	Usuario user = new Usuario();
         	
-        	boolean isLoged = auth.login(credentials.getUserName(), credentials.getPassWord(), credentials.getIp().trim(), credentials.getPort().trim(), credentials.getCommonName().trim().replace("*", ""), credentials.getDomainGroup().trim(), credentials.getOrganization().trim().replace("*", ""));
-        	//boolean isLoged = true;
+        	String[] isLoged = auth.login(credentials.getUserName(), credentials.getPassWord(), credentials.getIp().trim(), credentials.getPort().trim(), credentials.getCommonName().trim().replace("*", ""), credentials.getDomainGroup().trim(), credentials.getOrganization().trim().replace("*", ""));
         	       	
-        	if(isLoged) {
+        	if(isLoged[0].equals("true")) {
         		
         	 List<Usuario> entity = managerDAO.findByNombreUsuarioLogin(credentials.getUserName().trim());
         	 
@@ -159,12 +158,12 @@ public class UsuarioREST {
              }
                	      	 
         	}else {
-        		 return Response.status(Response.Status.UNAUTHORIZED).build();
+        		 return Response.status(Response.Status.UNAUTHORIZED).header("LDAPerror", isLoged[1]).build();
         	}
         	                    	   
         } catch (Exception e) {
         	logger.log(Level.INFO, e.toString());
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+        	throw new RuntimeException(e);
         }
     }
     
