@@ -2,14 +2,19 @@ package co.com.claro.service.rest;
 
 import co.com.claro.ejb.dao.ConciliacionDAO;
 import co.com.claro.ejb.dao.EscenarioDAO;
+import co.com.claro.ejb.dao.IEjecucionDAO;
 import co.com.claro.ejb.dao.IWsTransformacionDAO;
 import co.com.claro.ejb.dao.LogAuditoriaDAO;
+import co.com.claro.ejb.dao.ParametroDAO;
 import co.com.claro.ejb.dao.PoliticaDAO;
 import co.com.claro.model.dto.ConciliacionDTO;
 import co.com.claro.model.dto.EscenarioDTO;
 import co.com.claro.model.dto.WsTransformacionDTO;
 import co.com.claro.model.dto.parent.PadreDTO;
+import co.com.claro.model.dto.request.LoadPlanStartupParameterRequestDTO;
+import co.com.claro.model.dto.request.StartLoadPlanRequestDTO;
 import co.com.claro.model.entity.Conciliacion;
+import co.com.claro.model.entity.EjecucionProceso;
 import co.com.claro.model.entity.Escenario;
 import co.com.claro.model.entity.LogAuditoria;
 import co.com.claro.model.entity.Politica;
@@ -19,7 +24,11 @@ import co.com.claro.service.rest.excepciones.DataNotFoundException;
 import co.com.claro.service.rest.i18n.I18N;
 import co.com.claro.service.rest.response.WrapperResponseEntity;
 import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
+import co.com.claro.service.rest.util.Crypto;
 import co.com.claro.service.rest.util.ResponseWrapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.oracle.xmlns.odi.odiinvoke.FacadeODI;
+import com.oracle.xmlns.odi.odiinvoke.OdiStartLoadPlanType;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -73,6 +82,11 @@ public class ConciliacionREST {
     @EJB
     protected IWsTransformacionDAO transformacionDAO;
 
+    @EJB
+    protected IEjecucionDAO logEjecucionDAO;
+    
+    @EJB
+    protected ParametroDAO parametroDAO;
     /**
      * Obtiene las Conciliaciones Paginadas
      *
@@ -376,4 +390,157 @@ public class ConciliacionREST {
 
     }
 
+    @POST
+    @Path("/ejecutar")
+    @JWTTokenNeeded
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response ejecutar(WsTransformacionDTO request) {            
+            // 1. Registrar log de eventos para inicio de integración
+            Conciliacion entidadPadre = managerDAO.find(request.getIdConciliacion());
+            EjecucionProceso logAud = new EjecucionProceso();
+            logAud.setComponenteEjecutado("INTEGRACION_ODI"); // TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+            logAud.setConciliacion(null);
+            logAud.setEstadoEjecucion("INICIADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+            logAud.setFechaEjecucion(new Date());
+            logAud.setNombre("EJECUTADA:" + entidadPadre.getNombre());
+            logAud.setNombreConciliacion(entidadPadre.getNombre());
+
+            logEjecucionDAO.create(logAud);
+            logAud.setConciliacion(entidadPadre);
+            logEjecucionDAO.edit(logAud);
+            entidadPadre.addEjecucionProceso(logAud);
+            managerDAO.edit(entidadPadre);
+
+            // 2. Lanzar odi
+            String wsdlLocation;
+            try {
+                wsdlLocation = parametroDAO.findByParametro("SISTEMA", "V_odiUrl");
+            } catch (Exception e) {
+                wsdlLocation = "http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl";
+            }
+
+            String odiUsuario;
+            try {
+                String _odiUsuario = parametroDAO.findByParametro("SEGURIDAD", "V_odiUsuario");
+                System.out.println("without encrypt::"+_odiUsuario);
+                odiUsuario = Crypto.cryptoParam(_odiUsuario);
+            } catch (Exception e) {
+                odiUsuario = "EQK7054A";
+            }
+            
+            String odiPassword;
+            try {
+                odiPassword = Crypto.cryptoParam(parametroDAO.findByParametro("SEGURIDAD", "V_odiPassword"));
+            } catch (Exception e) {
+                odiPassword = "1234567";
+            }
+            String odiWorkRepository;
+            try {
+                odiWorkRepository = Crypto.cryptoParam(parametroDAO.findByParametro("SEGURIDAD", "V_odiWorkRepository"));
+            } catch (Exception e) {
+                odiWorkRepository = "WRDEV_ASSURANCE1";
+            }
+            String odiContext;
+            try {
+                odiContext = Crypto.cryptoParam(parametroDAO.findByParametro("SEGURIDAD", "V_odiContext"));
+            } catch (Exception e) {
+                odiContext = "CNTX_DESARROLLO";
+            }
+
+            List<LoadPlanStartupParameterRequestDTO> params = new ArrayList<LoadPlanStartupParameterRequestDTO>();
+            LoadPlanStartupParameterRequestDTO param = new LoadPlanStartupParameterRequestDTO();
+            param.setNombre("GLOBAL.V_CTL_PAQUETE");
+            param.setValor("JP_NO_EXISTE");
+            params.add(param);
+            LoadPlanStartupParameterRequestDTO param1 = new LoadPlanStartupParameterRequestDTO();
+            param1.setNombre("GLOBAL.V_CTL_SESION");
+            param1.setValor("0");
+            params.add(param1);
+
+            System.out.println("wsdlLocation:" + wsdlLocation);
+            try {
+                FacadeODI fachadaOdi = new FacadeODI();
+                OdiStartLoadPlanType response = fachadaOdi.startLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, request.getPaqueteWs(), odiContext, params);
+                System.out.println("después de starloadplan:**" + response.toString());
+
+                // 3. poner log
+                // Si todo va en orden registrar grabación con éxito
+                Conciliacion _entidadPadre = managerDAO.find(entidadPadre.getId());
+                EjecucionProceso _logAud = new EjecucionProceso();
+                _logAud.setComponenteEjecutado("INTEGRACION_ODI"); // TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+                _logAud.setConciliacion(null);
+                _logAud.setEstadoEjecucion("INTEGRADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+                _logAud.setFechaEjecucionExitosa(new Date());
+                _logAud.setNombreConciliacion(entidadPadre.getNombre());
+
+                XmlMapper xmlMapper = new XmlMapper();
+                String xml = xmlMapper.writeValueAsString(response.getStartedRunInformation());
+
+                _logAud.setRespuesta(xml);
+                _logAud.setNombre("EJECUTADA:" + entidadPadre.getNombre());
+                Long planInstanceId = response.getStartedRunInformation().getOdiLoadPlanInstanceId();
+                _logAud.setIdPlanInstance(planInstanceId.toString());
+
+                 logEjecucionDAO.create(_logAud);
+                _logAud.setConciliacion(_entidadPadre);
+                logEjecucionDAO.edit(_logAud);
+                _entidadPadre.addEjecucionProceso(_logAud);
+                managerDAO.edit(_entidadPadre);
+                
+                
+                // 3.1 en la implementación actual desde el front auditan otra tabla --[TBL_GAI_LOG_AUDITORIA]                
+                Conciliacion entidadPadreJPA;
+                EjecucionProceso entidadJPA = new EjecucionProceso();// entidad.toEntity();
+                entidadJPA.setNombre(entidadPadre.getNombre());
+                entidadJPA.setIdPlanInstance(planInstanceId.toString());
+                entidadJPA.setConciliacion(entidadPadre);
+                
+                entidadPadreJPA = managerDAO.find(entidadPadre.getId());
+                if ( entidadPadreJPA != null) {
+                        entidadJPA.setConciliacion(null);
+                        logEjecucionDAO.create(entidadJPA);
+                        entidadJPA.setConciliacion(entidadPadreJPA);
+                        logEjecucionDAO.edit(entidadJPA);
+                        entidadPadreJPA.addEjecucionProceso(entidadJPA);
+                        managerDAO.edit(entidadPadreJPA);
+                }
+                LogAuditoria logAud_ = new LogAuditoria("EJECUCIONPROCESO", Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), request.getUserName(), entidadJPA.toString());
+                logAuditoriaDAO.create(logAud_);
+                
+                
+                // 4 Todo en orden, retornando
+                  ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("resultados.aprovacion"), response);
+                return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+            } catch (Exception e) {
+                Conciliacion _entidadPadre = managerDAO.find(entidadPadre.getId());
+                EjecucionProceso _logAud = new EjecucionProceso();
+                _logAud.setComponenteEjecutado("INTEGRACION_ODI"); // TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+                _logAud.setConciliacion(null);
+                _logAud.setNombre("EJECUTADA:" + entidadPadre.getNombre());
+                _logAud.setEstadoEjecucion("FALLIDA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+                _logAud.setFechaEjecucion(new Date());
+                _logAud.setNombreConciliacion(entidadPadre.getNombre());
+                _logAud.setRespuesta(e.toString());
+
+                System.out.println("INTEGRACIÓN FALLIDA: " + e.toString());
+                System.out.println("----------");
+                logEjecucionDAO.create(_logAud);
+                _logAud.setConciliacion(_entidadPadre);
+                logEjecucionDAO.edit(_logAud);
+                _entidadPadre.addEjecucionProceso(_logAud);
+                managerDAO.edit(_entidadPadre);
+                
+                // 4 Falló
+                  if (e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+                    logger.log(Level.SEVERE, e.getMessage(), e);
+                    ResponseWrapper wraper = new ResponseWrapper(false, e.getCause().getMessage(), 500);
+                    return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+                  } else 
+                  {
+                    logger.log(Level.SEVERE, e.getMessage(), e);
+                    ResponseWrapper wraper = new ResponseWrapper(false, e.getMessage(), 500);
+                    return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+                  }
+            }
+    }
 }

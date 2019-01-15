@@ -26,6 +26,16 @@ public class WsTransformacionDTO implements Serializable{
     private Date fechaAgendamiento;
     private Integer idConciliacion;
 
+    private String userName;
+    
+    public String getUserName(){
+        return userName;
+    }
+    
+    public void setUserName(String username){
+        this.userName = username;
+    }    
+
     public Integer getIdConciliacion() {
         return idConciliacion;
     }

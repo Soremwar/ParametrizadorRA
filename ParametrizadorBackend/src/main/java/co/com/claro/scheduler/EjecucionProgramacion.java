@@ -51,7 +51,6 @@ public class EjecucionProgramacion implements Job {
             //Conciliacion conciliacion = wsTransformacion.getConciliacion();
             System.out.println("Conciliacion:" + conciliacion.getNombre());
 
-            // TODO: INTEGRAR CON ODI
             // 1. Registrar log de eventos para inicio de integración
             Conciliacion entidadPadre = conciliacionDAO.find(conciliacion.getId());
             EjecucionProceso logAud = new EjecucionProceso();
@@ -78,25 +77,25 @@ public class EjecucionProgramacion implements Job {
             }
             String odiUsuario;
             try {
-                odiUsuario = parametroDAO.findByParametro("SISTEMA", "V_odiUsuario");
+                odiUsuario = parametroDAO.findByParametro("SEGURIDAD", "V_odiUsuario");
             } catch (Exception e) {
                 odiUsuario = "EQK7054A";
             }
             String odiPassword;
             try {
-                odiPassword = parametroDAO.findByParametro("SISTEMA", "V_odiPassword");
+                odiPassword = parametroDAO.findByParametro("SEGURIDAD", "V_odiPassword");
             } catch (Exception e) {
                 odiPassword = "1234567";
             }
             String odiWorkRepository;
             try {
-                odiWorkRepository = parametroDAO.findByParametro("SISTEMA", "V_odiWorkRepository");
+                odiWorkRepository = parametroDAO.findByParametro("SEGURIDAD", "V_odiWorkRepository");
             } catch (Exception e) {
                 odiWorkRepository = "WRDEV_ASSURANCE1";
             }
             String odiContext;
             try {
-                odiContext = parametroDAO.findByParametro("SISTEMA", "V_odiContext");
+                odiContext = parametroDAO.findByParametro("SEGURIDAD", "V_odiContext");
             } catch (Exception e) {
                 odiContext = "CNTX_DESARROLLO";
             }
