@@ -62,7 +62,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     //, @NamedQuery(name = "Conciliacion.findByEscenario", query = "SELECT c FROM Conciliacion c WHERE c.escenarios.id = :codPolitica")        
     , @NamedQuery(name = "Conciliacion.findByName", query="SELECT DISTINCT(c) FROM Conciliacion c where c.nombre like :name")
     , @NamedQuery(name = "Conciliacion.findByRequiereAprobacion", query = "SELECT c FROM Conciliacion c WHERE c.requiereAprobacion = :requiereAprobacion")
-    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e WHERE lower(c.id) LIKE lower(:id) or lower(c.requiereAprobacion) LIKE lower(:requiereAprobacion) or lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.descripcion) LIKE lower(:descripcion) or LOWER(c.politica.nombre) LIKE lower(:nombrePolitica) or LOWER(c.usuarioAsignado) LIKE lower(:usuarioAsignado) or LOWER(e.nombre) LIKE lower(:nombreEscenario)")})
+    , @NamedQuery(name = "Conciliacion.findByAnyColumn", query = "SELECT DISTINCT(c) FROM Conciliacion c LEFT JOIN FETCH c.escenarios e WHERE lower(c.id) LIKE lower(:id) or lower(c.requiereAprobacion) LIKE lower(:requiereAprobacion) or lower(c.nombre) LIKE lower(:nombreConciliacion) or lower(c.descripcion) LIKE lower(:descripcion) or LOWER(c.politica.nombre) LIKE lower(:nombrePolitica) or LOWER(c.usuarioAsignado) LIKE lower(:usuarioAsignado) or LOWER(e.nombre) LIKE lower(:nombreEscenario)")
+    , @NamedQuery(name = "Conciliacion.findByEjecutables", query = "SELECT c FROM Conciliacion c WHERE size(c.transformaciones) > 0")// (select count(t) from WsTransformacion t member of t.conciliacion)>0")
+        
+}
+)
     
 public class Conciliacion implements Serializable {
 

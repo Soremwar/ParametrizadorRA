@@ -128,6 +128,16 @@ public class ConciliacionDAO extends AbstractJpaDAO<Conciliacion>{
         }*/
         return results;
     }
+    public List<Conciliacion> findByEjecutables(){
+        //logger.log(Level.INFO, "busqueda:{0}offset:{0}limit:{0}", new Object[]{busqueda, offset, limit});
+        TypedQuery<Conciliacion> query = em.createNamedQuery("Conciliacion.findByEjecutables", Conciliacion.class);
+        List<Conciliacion> results = query.getResultList();
+        /*if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }*/
+        return results;
+    }
+    
     
     public void create(Conciliacion entity) {
         getEntityManager().persist(entity);
