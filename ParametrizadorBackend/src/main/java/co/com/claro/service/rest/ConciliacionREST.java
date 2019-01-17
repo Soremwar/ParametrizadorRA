@@ -31,7 +31,11 @@ import co.com.claro.service.rest.util.ResponseWrapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.oracle.xmlns.odi.odiinvoke.FacadeODI;
 import com.oracle.xmlns.odi.odiinvoke.LoadPlanStatusType;
+import com.oracle.xmlns.odi.odiinvoke.OdiCredentialType;
 import com.oracle.xmlns.odi.odiinvoke.OdiStartLoadPlanType;
+import com.oracle.xmlns.odi.odiinvoke.OdiStopLoadPlanResponse;
+import com.oracle.xmlns.odi.odiinvoke.OdiStopLoadPlanType;
+import com.oracle.xmlns.odi.odiinvoke.StopLoadPlanRequestType;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -466,7 +470,7 @@ public class ConciliacionREST {
 
         // 2.2 Consultar última ejecución en log
         ConciliacionDTO cdto_ = entidadPadre.toDTO();
-        EjecucionProcesoDTO ejecucion;
+        EjecucionProcesoDTO ejecucion = null;
         if (!cdto_.getEjecucionesProceso().isEmpty()) {
             ejecucion = cdto_.getEjecucionesProceso().iterator().next();
         }
@@ -474,18 +478,19 @@ public class ConciliacionREST {
         FacadeODI fachadaOdi = new FacadeODI();
 
         // 2.3 Lanzar odi s i no hay última ejecución si su id plan es cero
-        if (ejecucion != null && ejecucion.getIdPlanInstance() != "0") {
+        if (ejecucion != null && ejecucion.getIdPlanInstance() != null && ejecucion.getIdPlanInstance() != "0") {
             try {
                 List<LoadPlanRequestDTO> lstLoadRequest = new ArrayList<LoadPlanRequestDTO>();
                 LoadPlanRequestDTO loadrequest = new LoadPlanRequestDTO();
-                loadrequest.setLoadPlanInstanceId(ejecucion.getIdPlanInstance());
+                long idPlan = Long.parseLong(ejecucion.getIdPlanInstance());
+                loadrequest.setLoadPlanInstanceId(idPlan);
                 loadrequest.setLoadPlanRunNumber(1);
                 lstLoadRequest.add(loadrequest);
                 List<LoadPlanStatusType> responses = fachadaOdi.loadPlanStatus(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, lstLoadRequest);
 
                 if (responses.size() > 0 || responses.get(0).getLoadPlanStatus() == "R") {
                     // Ya está corriendo por tanto no puede volver a lanzarlo
-                    
+
                     ResponseWrapper wraper = new ResponseWrapper(false, "Se encuentra en ejecución " + entidadPadre.getNombre() + " con id " + ejecucion.getIdPlanInstance(), 500);
                     return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
                 }
@@ -596,4 +601,121 @@ public class ConciliacionREST {
             }
         }
     }
+
+    @POST
+    @Path("/cancelar")
+    @JWTTokenNeeded
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response cancelar(WsTransformacionDTO request) {
+        // 1. Registrar log de eventos para inicio de integración
+        Conciliacion entidadPadre = managerDAO.find(request.getIdConciliacion());
+        EjecucionProceso logAud = new EjecucionProceso();
+        logAud.setComponenteEjecutado("INTEGRACION_ODI"); // TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+        logAud.setConciliacion(null);
+        logAud.setEstadoEjecucion("CANCELADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+        logAud.setFechaEjecucion(new Date());
+        logAud.setNombre("INICIADA:" + entidadPadre.getNombre());
+        logAud.setNombreConciliacion(entidadPadre.getNombre());
+
+    /*    logEjecucionDAO.create(logAud);
+        logAud.setConciliacion(entidadPadre);
+        logEjecucionDAO.edit(logAud);
+        entidadPadre.addEjecucionProceso(logAud);
+        managerDAO.edit(entidadPadre);*/
+
+        // 2.1 Traer parámetros
+        String wsdlLocation;
+        try {
+            wsdlLocation = parametroDAO.findByParametro("SISTEMA", "V_odiUrl");
+        } catch (Exception e) {
+            wsdlLocation = "http://172.24.42.164:8100/oraclediagent/OdiInvoke?wsdl";
+        }
+
+        String odiUsuario;
+        try {
+            String _odiUsuario = parametroDAO.findByParametro("SEGURIDAD", "V_odiUsuario");
+            odiUsuario = Crypto.cryptoParam(_odiUsuario);
+        } catch (Exception e) {
+            odiUsuario = "EQK7054A";
+        }
+
+        String odiPassword;
+        try {
+            odiPassword = Crypto.cryptoParam(parametroDAO.findByParametro("SEGURIDAD", "V_odiPassword"));
+        } catch (Exception e) {
+            odiPassword = "1234567";
+        }
+        String odiWorkRepository;
+        try {
+            odiWorkRepository = Crypto.cryptoParam(parametroDAO.findByParametro("SEGURIDAD", "V_odiWorkRepository"));
+        } catch (Exception e) {
+            odiWorkRepository = "WRDEV_ASSURANCE1";
+        }
+        String odiContext;
+        try {
+            odiContext = Crypto.cryptoParam(parametroDAO.findByParametro("SEGURIDAD", "V_odiContext"));
+        } catch (Exception e) {
+            odiContext = "CNTX_DESARROLLO";
+        }
+
+        // 2.2 Consultar última ejecución en log
+        ConciliacionDTO cdto_ = entidadPadre.toDTO();
+        EjecucionProcesoDTO ejecucion = null;
+        if (!cdto_.getEjecucionesProceso().isEmpty()) {
+            ejecucion = cdto_.getEjecucionesProceso().iterator().next();
+        }
+
+        FacadeODI fachadaOdi = new FacadeODI();
+
+        System.out.println("listo el pollo:"+ejecucion.getIdPlanInstance());
+        // 2.3 Lanzar odi s i no hay última ejecución si su id plan es cero
+        if (ejecucion != null && ejecucion.getIdPlanInstance() != null && ejecucion.getIdPlanInstance() != "0") {
+            try {
+                List<LoadPlanRequestDTO> lstLoadRequest = new ArrayList<LoadPlanRequestDTO>();
+                LoadPlanRequestDTO loadrequest = new LoadPlanRequestDTO();
+                long idPlan = Long.parseLong(ejecucion.getIdPlanInstance());
+                loadrequest.setLoadPlanInstanceId(idPlan);
+                loadrequest.setLoadPlanRunNumber(1);
+                lstLoadRequest.add(loadrequest);
+                List<LoadPlanStatusType> responses = fachadaOdi.loadPlanStatus(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, lstLoadRequest);
+
+                if (responses.size() > 0) {
+                    String estado = responses.get(0).getLoadPlanStatus();
+                    if (estado == "Q" || estado == "R" || estado == "W") {
+                        // Ya está corriendo por tanto no puede cancelarlo
+                        OdiStopLoadPlanType stopLoadPlan = fachadaOdi.stopLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, idPlan, 1, "IMMEDIATE");
+                        ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("odiinvoke.execute"), stopLoadPlan);
+                        return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+                    } else {
+                        // Está en un etado que no permite cancelación
+                        ResponseWrapper wraper = new ResponseWrapper(false, "El estado (" + estado + ") actual de " + entidadPadre.getNombre() + " no permite cancelación!", 500);
+                        return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+                    }
+                } else {
+                    // No hay  nada que cancelar
+                    ResponseWrapper wraper = new ResponseWrapper(false, "No se puede cancelar, dado que " + entidadPadre.getNombre() + " no se encuentra en ejecución.", 500);
+                    return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+                }
+
+            } catch (Exception e) {
+                if (e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
+                    logger.log(Level.SEVERE, e.getMessage(), e);
+                    ResponseWrapper wraper = new ResponseWrapper(false, e.getCause().getMessage(), 500);
+                    return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+                } else {
+                    logger.log(Level.SEVERE, e.getMessage(), e);
+                    ResponseWrapper wraper = new ResponseWrapper(false, e.getMessage(), 500);
+
+                    return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+                }
+            }
+        } else {
+            // No hay  nada que cancelar
+            ResponseWrapper wraper = new ResponseWrapper(false, "No se puede cancelar, dado que " + entidadPadre.getNombre() + " no se encuentra en ejecución.", 500);
+            return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+        }
+
+    }
+
 }
