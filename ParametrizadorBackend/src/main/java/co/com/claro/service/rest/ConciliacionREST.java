@@ -488,10 +488,15 @@ public class ConciliacionREST {
                 lstLoadRequest.add(loadrequest);
                 List<LoadPlanStatusType> responses = fachadaOdi.loadPlanStatus(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, lstLoadRequest);
 
-                if (responses.size() > 0 || responses.get(0).getLoadPlanStatus() == "R") {
+                if (responses.size() > 0 && 
+                        (responses.get(0).getLoadPlanStatus() == "R" || 
+                            responses.get(0).getLoadPlanStatus() == "Q" || 
+                            responses.get(0).getLoadPlanStatus() == "W"
+                        )
+                ) {
                     // Ya está corriendo por tanto no puede volver a lanzarlo
 
-                    ResponseWrapper wraper = new ResponseWrapper(false, "Se encuentra en ejecución " + entidadPadre.getNombre() + " con id " + ejecucion.getIdPlanInstance(), 500);
+                    ResponseWrapper wraper = new ResponseWrapper(false, "No es posible ejecutar el paquete "+ request.getPaqueteWs() +" dado que esta en estado " + responses.get(0).getLoadPlanStatus(), 500);
                     return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
                 }
 
@@ -668,7 +673,6 @@ public class ConciliacionREST {
 
         FacadeODI fachadaOdi = new FacadeODI();
 
-        System.out.println("listo el pollo:"+ejecucion.getIdPlanInstance());
         // 2.3 Lanzar odi s i no hay última ejecución si su id plan es cero
         if (ejecucion != null && ejecucion.getIdPlanInstance() != null && ejecucion.getIdPlanInstance() != "0") {
             try {
