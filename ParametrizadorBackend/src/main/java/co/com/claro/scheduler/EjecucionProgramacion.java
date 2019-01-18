@@ -29,6 +29,7 @@ import com.oracle.xmlns.odi.odiinvoke.LoadPlanStatusType;
 import com.oracle.xmlns.odi.odiinvoke.OdiStartLoadPlanType;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -139,11 +140,13 @@ public class EjecucionProgramacion implements Job {
                     lstLoadRequest.add(loadrequest);
                     List<LoadPlanStatusType> responses = fachadaOdi.loadPlanStatus(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, lstLoadRequest);
 
-                    if (responses.size() > 0
-                            && (responses.get(0).getLoadPlanStatus() == "R"
+                    String estadosNoEjecucion = parametroDAO.findByParametro("SISTEMA", "V_odiEstadosNoEjecucion");
+                    String[] estados = estadosNoEjecucion.split(",");
+
+                    if (responses.size() > 0 && Arrays.asList(estados).contains(responses.get(0).getLoadPlanStatus()) /*(responses.get(0).getLoadPlanStatus() == "R"
                             || responses.get(0).getLoadPlanStatus() == "Q"
                             || responses.get(0).getLoadPlanStatus() == "W"
-                            || responses.get(0).getLoadPlanStatus() == "E")) {
+                            || responses.get(0).getLoadPlanStatus() == "E")*/) {
                         // Ya está corriendo por tanto no puede volver a lanzarlo
 
                         throw new Exception("No es posible ejecutar el paquete " + wsTransformacion.getPaqueteWs() + " dado que esta en estado " + responses.get(0).getLoadPlanStatus());
@@ -157,11 +160,11 @@ public class EjecucionProgramacion implements Job {
             List<LoadPlanStartupParameterRequestDTO> params = new ArrayList<LoadPlanStartupParameterRequestDTO>();
             LoadPlanStartupParameterRequestDTO param = new LoadPlanStartupParameterRequestDTO();
             param.setNombre("GLOBAL.V_CTL_PAQUETE");
-            param.setValor("JP_NO_EXISTE");
+            param.setValor(parametroDAO.findByParametro("SISTEMA", "V_odiGLOBAL.V_CTL_PAQUETE"));
             params.add(param);
             LoadPlanStartupParameterRequestDTO param1 = new LoadPlanStartupParameterRequestDTO();
             param1.setNombre("GLOBAL.V_CTL_SESION");
-            param1.setValor("0");
+            param1.setValor(parametroDAO.findByParametro("SISTEMA", "V_odiGLOBAL.V_CTL_SESION"));
             params.add(param1);
 
             System.out.println("wsdlLocation:" + wsdlLocation);

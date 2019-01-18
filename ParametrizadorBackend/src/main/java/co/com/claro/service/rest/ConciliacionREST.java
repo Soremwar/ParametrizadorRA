@@ -39,6 +39,7 @@ import com.oracle.xmlns.odi.odiinvoke.StopLoadPlanRequestType;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.List;
@@ -488,16 +489,16 @@ public class ConciliacionREST {
                 lstLoadRequest.add(loadrequest);
                 List<LoadPlanStatusType> responses = fachadaOdi.loadPlanStatus(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, lstLoadRequest);
 
-                if (responses.size() > 0 && 
-                        (responses.get(0).getLoadPlanStatus() == "R" || 
-                            responses.get(0).getLoadPlanStatus() == "Q" || 
-                            responses.get(0).getLoadPlanStatus() == "W" ||
-                        responses.get(0).getLoadPlanStatus() == "E"
-                        )
-                ) {
+                String estadosNoEjecucion = parametroDAO.findByParametro("SISTEMA", "V_odiEstadosNoEjecucion");
+                String[] estados = estadosNoEjecucion.split(",");
+
+                if (responses.size() > 0 && Arrays.asList(estados).contains(responses.get(0).getLoadPlanStatus()) /*(responses.get(0).getLoadPlanStatus() == "R"
+                            || responses.get(0).getLoadPlanStatus() == "Q"
+                            || responses.get(0).getLoadPlanStatus() == "W"
+                            || responses.get(0).getLoadPlanStatus() == "E")*/) {
                     // Ya está corriendo por tanto no puede volver a lanzarlo
 
-                    ResponseWrapper wraper = new ResponseWrapper(false, "No es posible ejecutar el paquete "+ request.getPaqueteWs() +" dado que esta en estado " + responses.get(0).getLoadPlanStatus(), 500);
+                    ResponseWrapper wraper = new ResponseWrapper(false, "No es posible ejecutar el paquete " + request.getPaqueteWs() + " dado que esta en estado " + responses.get(0).getLoadPlanStatus(), 500);
                     return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
                 }
 
@@ -518,11 +519,11 @@ public class ConciliacionREST {
         List<LoadPlanStartupParameterRequestDTO> params = new ArrayList<LoadPlanStartupParameterRequestDTO>();
         LoadPlanStartupParameterRequestDTO param = new LoadPlanStartupParameterRequestDTO();
         param.setNombre("GLOBAL.V_CTL_PAQUETE");
-        param.setValor("JP_NO_EXISTE");
+        param.setValor(parametroDAO.findByParametro("SISTEMA", "V_odiGLOBAL.V_CTL_PAQUETE"));
         params.add(param);
         LoadPlanStartupParameterRequestDTO param1 = new LoadPlanStartupParameterRequestDTO();
         param1.setNombre("GLOBAL.V_CTL_SESION");
-        param1.setValor("0");
+        param1.setValor(parametroDAO.findByParametro("SISTEMA", "V_odiGLOBAL.V_CTL_SESION"));
         params.add(param1);
 
         System.out.println("wsdlLocation:" + wsdlLocation);
@@ -624,12 +625,11 @@ public class ConciliacionREST {
         logAud.setNombre("INICIADA:" + entidadPadre.getNombre());
         logAud.setNombreConciliacion(entidadPadre.getNombre());
 
-    /*    logEjecucionDAO.create(logAud);
+        /*    logEjecucionDAO.create(logAud);
         logAud.setConciliacion(entidadPadre);
         logEjecucionDAO.edit(logAud);
         entidadPadre.addEjecucionProceso(logAud);
         managerDAO.edit(entidadPadre);*/
-
         // 2.1 Traer parámetros
         String wsdlLocation;
         try {
