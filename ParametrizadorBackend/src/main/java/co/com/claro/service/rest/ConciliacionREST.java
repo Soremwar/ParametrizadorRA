@@ -491,7 +491,8 @@ public class ConciliacionREST {
                 if (responses.size() > 0 && 
                         (responses.get(0).getLoadPlanStatus() == "R" || 
                             responses.get(0).getLoadPlanStatus() == "Q" || 
-                            responses.get(0).getLoadPlanStatus() == "W"
+                            responses.get(0).getLoadPlanStatus() == "W" ||
+                        responses.get(0).getLoadPlanStatus() == "E"
                         )
                 ) {
                     // Ya está corriendo por tanto no puede volver a lanzarlo
