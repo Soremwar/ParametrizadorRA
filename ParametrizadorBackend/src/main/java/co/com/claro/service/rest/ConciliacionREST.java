@@ -291,6 +291,7 @@ public class ConciliacionREST {
             }
             //Hallar La entidadDTO actual para actualizarla
             Conciliacion entidadJPA = managerDAO.find(entidadDTO.getId());
+            Politica oldPolitica = entidadJPA.getPolitica();
             if (entidadJPA != null) {
                 entidadJPA.setFechaActualizacion(Date.from(Instant.now()));
                 entidadJPA.setNombre(entidadDTO.getNombre() != null ? entidadDTO.getNombre() : entidadJPA.getNombre());
@@ -316,6 +317,10 @@ public class ConciliacionREST {
 
                 ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("conciliaciones.update", entidadJPA.getNombre()), entidadDTO);
                 return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+            }
+            
+            if(entidadPadreJPA != null){
+                padreDAO.detach(oldPolitica);
             }
 
             ResponseWrapper wraper = new ResponseWrapper(false, I18N.getMessage("conciliaciones.notfound", entidadJPA.getNombre()));

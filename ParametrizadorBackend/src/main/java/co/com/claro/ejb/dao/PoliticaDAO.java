@@ -42,6 +42,10 @@ public class PoliticaDAO extends AbstractJpaDAO<Politica>{
         return em;
     }
     
+    public void detach(Politica politica){
+        em.detach(politica);
+    }
+    
     /**
      * Buscar la misma cadena en todos los campos descriptivos
      * @param busqueda Campo por el cual va a buscar en todos los campos descriptivos
