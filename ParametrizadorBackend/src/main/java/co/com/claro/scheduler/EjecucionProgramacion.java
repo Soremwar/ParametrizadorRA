@@ -160,7 +160,7 @@ public class EjecucionProgramacion implements Job {
             List<LoadPlanStartupParameterRequestDTO> params = new ArrayList<LoadPlanStartupParameterRequestDTO>();
             LoadPlanStartupParameterRequestDTO param = new LoadPlanStartupParameterRequestDTO();
             param.setNombre("GLOBAL.V_CTL_PAQUETE");
-            param.setValor(parametroDAO.findByParametro("SISTEMA", "V_odiGLOBAL.V_CTL_PAQUETE"));
+            param.setValor(wsTransformacion.getPaqueteWs());
             params.add(param);
             LoadPlanStartupParameterRequestDTO param1 = new LoadPlanStartupParameterRequestDTO();
             param1.setNombre("GLOBAL.V_CTL_SESION");
@@ -170,7 +170,7 @@ public class EjecucionProgramacion implements Job {
             System.out.println("wsdlLocation:" + wsdlLocation);
             try {
                 // FacadeODI fachadaOdi = new FacadeODI();
-                OdiStartLoadPlanType response = fachadaOdi.startLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, wsTransformacion.getPaqueteWs(), odiContext, params);
+                OdiStartLoadPlanType response = fachadaOdi.startLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, parametroDAO.findByParametro("SISTEMA", "V_odiGLOBAL.V_CTL_PAQUETE"), odiContext, params);
                 System.out.println("después de starloadplan:**" + response.toString());
 
                 // 3. poner log
