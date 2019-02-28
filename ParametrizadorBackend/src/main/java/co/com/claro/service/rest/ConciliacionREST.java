@@ -40,8 +40,10 @@ import com.oracle.xmlns.odi.odiinvoke.StopLoadPlanRequestType;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import static java.util.Comparator.comparing;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -257,12 +259,22 @@ public class ConciliacionREST {
     }
 
     public void crearPaquete(ConciliacionDTO dto, Conciliacion entidadJPA) {
-        WsTransformacion transformacion = new WsTransformacion();
-        transformacion.setFechaCreacion(Date.from(Instant.now()));
-        transformacion.setNombreWs(dto.getPaquete());
-        transformacion.setPaqueteWs(dto.getPaquete());
-        transformacion.setConciliacion(entidadJPA);
-        entidadJPA.addTransformacion(transformacion);
+        // Borrar paquetes asociados a la conciliacion existentes previamente
+        Collection<WsTransformacion> lista = entidadJPA.getTransformaciones();
+        if (lista.isEmpty()){        
+            WsTransformacion transformacion = new WsTransformacion();
+            transformacion.setFechaCreacion(Date.from(Instant.now()));
+            transformacion.setNombreWs(dto.getPaquete());
+            transformacion.setPaqueteWs(dto.getPaquete());
+            transformacion.setConciliacion(entidadJPA);
+            entidadJPA.addTransformacion(transformacion);
+        } else{
+            WsTransformacion transformacion = lista.iterator().next();
+            transformacion.setFechaActualizacion(Date.from(Instant.now()));
+            transformacion.setPaqueteWs(dto.getPaquete());
+            transformacion.setNombreWs(dto.getPaquete());
+            transformacion.setConciliacion(entidadJPA);
+        }
     }
 
     /**
