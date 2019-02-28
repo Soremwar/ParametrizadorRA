@@ -259,7 +259,7 @@ public class ConciliacionREST {
     }
 
     public void crearPaquete(ConciliacionDTO dto, Conciliacion entidadJPA) {
-        // Borrar paquetes asociados a la conciliacion existentes previamente
+        // Si ya existe un paquete, debe actualizarlo
         Collection<WsTransformacion> lista = entidadJPA.getTransformaciones();
         if (lista.isEmpty()){        
             WsTransformacion transformacion = new WsTransformacion();
@@ -371,6 +371,14 @@ public class ConciliacionREST {
                 entidadPadreJPA = padreDAO.find(entidadJPA.getPolitica().getId());
                 entidadPadreJPA.removeConciliaciones(entidadJPA);
             }
+            
+            // Quitar paquete asociado a la conciliación
+            Collection<WsTransformacion> lista = entidadJPA.getTransformaciones();
+            if (!lista.isEmpty()){        
+                WsTransformacion transformacion = lista.iterator().next();
+                entidadJPA.removeTransformacion(transformacion);
+            }
+            
             managerDAO.remove(entidadJPA);
             LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
             logAuditoriaDAO.create(logAud);
