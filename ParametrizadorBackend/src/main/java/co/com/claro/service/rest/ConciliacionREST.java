@@ -218,7 +218,7 @@ public class ConciliacionREST {
             Politica entidadPadreJPA;
             Conciliacion entidadJPA = dto.toEntity();
             entidadPadreJPA = padreDAO.find(dto.getIdPolitica());
-            transformacionDAO.verificarSiExistePaqueteWs(dto.getPaquete());
+          //  transformacionDAO.verificarSiExistePaqueteWs(dto.getPaquete());
             if (entidadPadreJPA != null) {
                 entidadJPA.setPolitica(null);
                 managerDAO.create(entidadJPA);
@@ -292,7 +292,7 @@ public class ConciliacionREST {
 
         try {
             Politica entidadPadreJPA = null;
-            transformacionDAO.verificarSiExistePaqueteWs(entidadDTO.getPaquete());
+          // transformacionDAO.verificarSiExistePaqueteWs(entidadDTO.getPaquete());
             List<WsTransformacion> results = transformacionDAO.validPaqueteWs(entidadDTO.getPaquete());
             String paquete = (results != null && !results.isEmpty()) ? results.get(0).getPaqueteWs() : "";
             if (entidadDTO.getIdPolitica() != null) {
