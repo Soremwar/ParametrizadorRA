@@ -512,8 +512,9 @@ public class ConciliacionREST {
                 loadrequest.setLoadPlanInstanceId(idPlan);
                 loadrequest.setLoadPlanRunNumber(1);
                 lstLoadRequest.add(loadrequest);
+                logger.log(Level.INFO, "Ejecutando loadPlanStatus para el id plan: {0}", idPlan);
                 List<LoadPlanStatusType> responses = fachadaOdi.loadPlanStatus(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, lstLoadRequest);
-
+                logger.log(Level.INFO, "Ejecutando loadPlanStatus retornó {0} registros", responses.size());
                 String estadosNoEjecucion = parametroDAO.findByParametro("SISTEMA", "V_odiEstadosNoEjecucion");
                 String[] estados = estadosNoEjecucion.split(",");
 
