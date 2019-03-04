@@ -59,6 +59,7 @@ public class ValidadorAgendamientoJob implements Job {
     @Override
     public void execute(JobExecutionContext jec) throws JobExecutionException {
         try {
+       System.out.println("HERE in execution");
             JobDetail _jobDetail = jec.getJobDetail();
             IWsTransformacionDAO transformacionDAO = (IWsTransformacionDAO) _jobDetail.getJobDataMap().get("transformacionDAO");
             IEjecucionDAO logEjecucionDAO = (IEjecucionDAO) _jobDetail.getJobDataMap().get("logEjecucionDAO");

@@ -51,9 +51,6 @@ import org.quartz.JobExecutionException;
 
 public class EjecucionProgramacion implements Job {
 
-    @EJB
-    protected LogAuditoriaDAO logAuditoriaDAO;
-
     @Override
     public void execute(JobExecutionContext jec) throws JobExecutionException {
         try {
@@ -67,6 +64,7 @@ public class EjecucionProgramacion implements Job {
             Conciliacion conciliacion = (Conciliacion) _jobDetail.getJobDataMap().get("conciliacion");
             ConciliacionDAO conciliacionDAO = (ConciliacionDAO) _jobDetail.getJobDataMap().get("conciliacionDAO");
             ParametroDAO parametroDAO = (ParametroDAO) _jobDetail.getJobDataMap().get("parametroDAO");
+            LogAuditoriaDAO logAuditoriaDAO = (LogAuditoriaDAO) _jobDetail.getJobDataMap().get("logAuditoriaDAO");
             //conciliacionDAO.find()
             //Conciliacion conciliacion = wsTransformacion.getConciliacion();
             System.out.println("Conciliacion:" + conciliacion.getNombre());
@@ -195,6 +193,7 @@ public class EjecucionProgramacion implements Job {
                 System.out.println("ID PLAN: " + response.getStartedRunInformation().getOdiLoadPlanInstanceId());
                 logEjecucionDAO.create(_logAud);
                 _logAud.setConciliacion(_entidadPadre);
+                System.out.println("ENTIDDAD PADRE CONC: "+ _entidadPadre.getNombre());
                 logEjecucionDAO.edit(_logAud);
                 _entidadPadre.addEjecucionProceso(_logAud);
                 conciliacionDAO.edit(_entidadPadre);
@@ -205,9 +204,12 @@ public class EjecucionProgramacion implements Job {
                 entidadJPA.setNombre(entidadPadre.getNombre());
                 entidadJPA.setIdPlanInstance(planInstanceId.toString());
                 entidadJPA.setConciliacion(entidadPadre);
+                System.out.println("llegue hasta acá");
 
                 entidadPadreJPA = conciliacionDAO.find(entidadPadre.getId());
+                System.out.println("llegue hasta acá2");
                 if (entidadPadreJPA != null) {
+                    System.out.println("llegue hasta acá3");
                     entidadJPA.setConciliacion(null);
                     logEjecucionDAO.create(entidadJPA);
                     entidadJPA.setConciliacion(entidadPadreJPA);
@@ -215,8 +217,9 @@ public class EjecucionProgramacion implements Job {
                     entidadPadreJPA.addEjecucionProceso(entidadJPA);
                     conciliacionDAO.edit(entidadPadreJPA);
                 }
+                System.out.println("llegue hasta acá4 "+entidadJPA.toString());
                 LogAuditoria logAud_ = new LogAuditoria("EJECUCIONPROCESO", Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), "SISTEMA", entidadJPA.toString());
-                logAuditoriaDAO.create(logAud_);
+              //  logAuditoriaDAO.create(logAud_);
             } catch (Exception ex) {
                 Conciliacion _entidadPadre = conciliacionDAO.find(conciliacion.getId());
                 EjecucionProceso _logAud = new EjecucionProceso();
