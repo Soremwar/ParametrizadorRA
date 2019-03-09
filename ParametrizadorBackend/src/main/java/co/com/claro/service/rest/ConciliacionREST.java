@@ -40,6 +40,7 @@ import com.oracle.xmlns.odi.odiinvoke.StopLoadPlanRequestType;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import static java.util.Comparator.comparing;
 import java.util.Date;
@@ -218,7 +219,7 @@ public class ConciliacionREST {
             Politica entidadPadreJPA;
             Conciliacion entidadJPA = dto.toEntity();
             entidadPadreJPA = padreDAO.find(dto.getIdPolitica());
-          //  transformacionDAO.verificarSiExistePaqueteWs(dto.getPaquete());
+            //  transformacionDAO.verificarSiExistePaqueteWs(dto.getPaquete());
             if (entidadPadreJPA != null) {
                 entidadJPA.setPolitica(null);
                 managerDAO.create(entidadJPA);
@@ -261,14 +262,14 @@ public class ConciliacionREST {
     public void crearPaquete(ConciliacionDTO dto, Conciliacion entidadJPA) {
         // Si ya existe un paquete, debe actualizarlo
         Collection<WsTransformacion> lista = entidadJPA.getTransformaciones();
-        if (lista.isEmpty()){        
+        if (lista.isEmpty()) {
             WsTransformacion transformacion = new WsTransformacion();
             transformacion.setFechaCreacion(Date.from(Instant.now()));
             transformacion.setNombreWs(dto.getPaquete());
             transformacion.setPaqueteWs(dto.getPaquete());
             transformacion.setConciliacion(entidadJPA);
             entidadJPA.addTransformacion(transformacion);
-        } else{
+        } else {
             WsTransformacion transformacion = lista.iterator().next();
             transformacion.setFechaActualizacion(Date.from(Instant.now()));
             transformacion.setPaqueteWs(dto.getPaquete());
@@ -292,9 +293,12 @@ public class ConciliacionREST {
 
         try {
             Politica entidadPadreJPA = null;
-          // transformacionDAO.verificarSiExistePaqueteWs(entidadDTO.getPaquete());
-            List<WsTransformacion> results = transformacionDAO.validPaqueteWs(entidadDTO.getPaquete());
-            String paquete = (results != null && !results.isEmpty()) ? results.get(0).getPaqueteWs() : "";
+            // transformacionDAO.verificarSiExistePaqueteWs(entidadDTO.getPaquete());
+
+            // Se quitan las siguiente líneas dado que no se debe validar el paquete, se puede repetir sin restricción.
+            //   List<WsTransformacion> results = transformacionDAO.validPaqueteWs(entidadDTO.getPaquete());
+            //   String paquete = (results != null && !results.isEmpty()) ? results.get(0).getPaqueteWs() : "";
+            String paquete = entidadDTO.getPaquete();
             if (entidadDTO.getIdPolitica() != null) {
                 entidadPadreJPA = padreDAO.find(entidadDTO.getIdPolitica());
                 if (entidadPadreJPA == null) {
@@ -315,9 +319,9 @@ public class ConciliacionREST {
                 entidadJPA.setPolitica(entidadDTO.getIdPolitica() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getPolitica());
 
                 if (entidadDTO.getPaquete() != null) {
-                    if (!paquete.equalsIgnoreCase(entidadDTO.getPaquete())) {
-                        crearPaquete(entidadDTO, entidadJPA);
-                    }
+                    // if (!paquete.equalsIgnoreCase(entidadDTO.getPaquete())) {
+                    crearPaquete(entidadDTO, entidadJPA);
+                    // }
                 }
                 managerDAO.edit(entidadJPA);
                 if ((entidadPadreJPA != null)) {
@@ -330,8 +334,8 @@ public class ConciliacionREST {
                 ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("conciliaciones.update", entidadJPA.getNombre()), entidadDTO);
                 return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
             }
-            
-            if(entidadPadreJPA != null){
+
+            if (entidadPadreJPA != null) {
                 padreDAO.detach(oldPolitica);
             }
 
@@ -366,23 +370,23 @@ public class ConciliacionREST {
         try {
             Conciliacion entidadJPA = managerDAO.find(id);
             ConciliacionDTO dto = entidadJPA.toDTO();
-         /*   Politica entidadPadreJPA = null;
+            /*   Politica entidadPadreJPA = null;
             if (entidadJPA.getPolitica() != null) {
                 entidadPadreJPA = padreDAO.find(entidadJPA.getPolitica().getId());
                 entidadPadreJPA.removeConciliaciones(entidadJPA);
             }*/
-            
+
             // Quitar paquete asociado a la conciliación
             Collection<WsTransformacion> lista = entidadJPA.getTransformaciones();
-            if (!lista.isEmpty()){        
+            if (!lista.isEmpty()) {
                 WsTransformacion transformacion = lista.iterator().next();
                 entidadJPA.removeTransformacion(transformacion);
             }
-            
+
             managerDAO.remove(entidadJPA);
             LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
             logAuditoriaDAO.create(logAud);
-          /*  if (entidadPadreJPA != null) {
+            /*  if (entidadPadreJPA != null) {
                 padreDAO.edit(entidadPadreJPA);
             }*/
             ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("conciliaciones.delete"), entidadJPA.getNombre());
@@ -417,12 +421,31 @@ public class ConciliacionREST {
     public Response setProgramacionEjecucion(WsTransformacionDTO dto) {
         try {
             WsTransformacion entidadJPA = transformacionDAO.find(dto.getId());
-            entidadJPA.setFechaAgendamiento(dto.getFechaAgendamiento());
-            logger.log(Level.INFO, "fecha agendamiento:{0}", entidadJPA);
-            transformacionDAO.edit(entidadJPA);
 
-            ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("programaciones.programar"), entidadJPA.toDTO());
-            return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+            // Agregar restricción que no permita que la fecha de agendamiento sea superior a la fecha de la próxima ejecución del job
+            String horaEjecucionJob = parametroDAO.findByParametro("SISTEMA", "V_horaEjecucionJob");
+            int hora = 0;
+            int minuto = 0;
+            if (horaEjecucionJob != null) {
+                String[] partes = horaEjecucionJob.split(" ");
+                hora = Integer.parseInt(partes[2]);
+                minuto = Integer.parseInt(partes[1]);
+            }
+            logger.log(Level.INFO, "Parametrizados por base de datos: Hora:"+hora+", Minuto:"+ minuto);
+            Calendar cal = Calendar.getInstance();
+            cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH) + 1, hora, minuto);
+
+            if (dto.getFechaAgendamiento().before(cal.getTime())) {
+                ResponseWrapper wraper = new ResponseWrapper(false, I18N.getMessage("programaciones.error"), entidadJPA.toDTO());
+                return Response.ok(wraper).build();
+            } else {
+                entidadJPA.setFechaAgendamiento(dto.getFechaAgendamiento());
+                logger.log(Level.INFO, "fecha agendamiento:{0}", entidadJPA);
+                transformacionDAO.edit(entidadJPA);
+
+                ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("programaciones.programar"), entidadJPA.toDTO());
+                return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+            }
         } catch (Exception e) {
             if (e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
                 logger.log(Level.SEVERE, e.getMessage(), e);
