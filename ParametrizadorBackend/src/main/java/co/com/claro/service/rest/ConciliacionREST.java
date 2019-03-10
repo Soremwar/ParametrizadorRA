@@ -737,18 +737,20 @@ public class ConciliacionREST {
                 List<LoadPlanStatusType> responses = fachadaOdi.loadPlanStatus(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, lstLoadRequest);
                 
                 if (responses.size() > 0) {
+                    
                     String estado = responses.get(0).getLoadPlanStatus();
-                    //if (estado == "Q" || estado == "R" || estado == "W") {
-                        // Ya está corriendo por tanto no puede cancelarlo
-                        OdiStopLoadPlanType stopLoadPlan = fachadaOdi.stopLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, idPlan, 1, "IMMEDIATE");
+                    logger.log(Level.INFO, "La respuesta fue "+estado);
+                    if (estado.trim().toUpperCase().equals("E")){
+                        ResponseWrapper wraper = new ResponseWrapper(false, "El paquete que intenta detener " + entidadPadre.getNombre() + " ya finalizó ejecución!", 500);
+                        return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
+                    } else{
+                            OdiStopLoadPlanType stopLoadPlan = fachadaOdi.stopLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, idPlan, 1, "IMMEDIATE");
                         ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("odiinvoke.execute"), stopLoadPlan);
                         return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
-                    /*} else {
-                        // Está en un etado que no permite cancelación
-                        ResponseWrapper wraper = new ResponseWrapper(false, "El estado (" + estado + ") actual de " + entidadPadre.getNombre() + " no permite cancelación!", 500);
-                        return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
-                    }*/
+                    }
+                    
                 } else {
+                    logger.log(Level.INFO, "No hay ejecuciones anteriores ");
                     // No hay  nada que cancelar
                     ResponseWrapper wraper = new ResponseWrapper(false, "No se puede cancelar, dado que " + entidadPadre.getNombre() + " no se encuentra en ejecución.", 500);
                     return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
