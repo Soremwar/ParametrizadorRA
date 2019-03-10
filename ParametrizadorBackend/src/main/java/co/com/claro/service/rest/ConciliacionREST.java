@@ -378,16 +378,16 @@ public class ConciliacionREST {
             // Quitar paquete asociado a la conciliación
             Collection<WsTransformacion> lista = entidadJPA.getTransformaciones();
             WsTransformacion transformacion;
-            if (!lista.isEmpty()) {                
+            if (!lista.isEmpty()) {
                 transformacion = lista.iterator().next();
                 entidadJPA.removeTransformacion(transformacion);
                 WsTransformacion ws2 = transformacionDAO.findByCodWs(transformacion.getId()).iterator().next();
-                transformacionDAO.remove(ws2);                
+                transformacionDAO.remove(ws2);
             }
             managerDAO.remove(entidadJPA);
             LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
             logAuditoriaDAO.create(logAud);
-           
+
             ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("conciliaciones.delete"), entidadJPA.getNombre());
             return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
@@ -430,7 +430,7 @@ public class ConciliacionREST {
                 hora = Integer.parseInt(partes[2]);
                 minuto = Integer.parseInt(partes[1]);
             }
-            logger.log(Level.INFO, "Parametrizados por base de datos: Hora:"+hora+", Minuto:"+ minuto);
+            logger.log(Level.INFO, "Parametrizados por base de datos: Hora:" + hora + ", Minuto:" + minuto);
             Calendar cal = Calendar.getInstance();
             cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH) + 1, hora, minuto);
 
@@ -501,7 +501,7 @@ public class ConciliacionREST {
         }
 
         // 2.2 Consultar última ejecución en log
-         Conciliacion entidadPadre = managerDAO.find(request.getIdConciliacion());
+        Conciliacion entidadPadre = managerDAO.find(request.getIdConciliacion());
         ConciliacionDTO cdto_ = entidadPadre.toDTO();
         EjecucionProcesoDTO ejecucion = null;
         if (!cdto_.getEjecucionesProceso().isEmpty()) {
@@ -547,9 +547,8 @@ public class ConciliacionREST {
                 }
             }
         }
-        
+
         // 1. Registrar log de eventos para inicio de integración
-       
         EjecucionProceso logAud = new EjecucionProceso();
         logAud.setComponenteEjecutado("INTEGRACION_ODI"); // TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
         logAud.setConciliacion(null);
@@ -563,9 +562,6 @@ public class ConciliacionREST {
         logEjecucionDAO.edit(logAud);
         entidadPadre.addEjecucionProceso(logAud);
         managerDAO.edit(entidadPadre);
-        
-        
-        
 
         List<LoadPlanStartupParameterRequestDTO> params = new ArrayList<LoadPlanStartupParameterRequestDTO>();
         LoadPlanStartupParameterRequestDTO param = new LoadPlanStartupParameterRequestDTO();
@@ -676,11 +672,6 @@ public class ConciliacionREST {
         logAud.setNombre("INICIADA:" + entidadPadre.getNombre());
         logAud.setNombreConciliacion(entidadPadre.getNombre());
 
-        /*    logEjecucionDAO.create(logAud);
-        logAud.setConciliacion(entidadPadre);
-        logEjecucionDAO.edit(logAud);
-        entidadPadre.addEjecucionProceso(logAud);
-        managerDAO.edit(entidadPadre);*/
         // 2.1 Traer parámetros
         String wsdlLocation;
         try {
@@ -735,28 +726,52 @@ public class ConciliacionREST {
                 loadrequest.setLoadPlanRunNumber(1);
                 lstLoadRequest.add(loadrequest);
                 List<LoadPlanStatusType> responses = fachadaOdi.loadPlanStatus(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, lstLoadRequest);
-                
+
                 if (responses.size() > 0) {
-                    
+
                     String estado = responses.get(0).getLoadPlanStatus();
-                    logger.log(Level.INFO, "La respuesta fue "+estado);
-                    if (estado.trim().toUpperCase().equals("E")){
+                    logger.log(Level.INFO, "La respuesta fue " + estado);
+
+                    logAud.setRespuesta(responses.get(0).getLoadPlanMessage());
+                    logEjecucionDAO.create(logAud);
+                    logAud.setConciliacion(entidadPadre);
+                    logEjecucionDAO.edit(logAud);
+                    entidadPadre.addEjecucionProceso(logAud);
+                    managerDAO.edit(entidadPadre);
+
+                    if (estado.trim().toUpperCase().equals("E")) {
+
                         ResponseWrapper wraper = new ResponseWrapper(false, "El paquete que intenta detener " + entidadPadre.getNombre() + " ya finalizó ejecución!", 500);
                         return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
-                    } else{
-                            OdiStopLoadPlanType stopLoadPlan = fachadaOdi.stopLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, idPlan, 1, "IMMEDIATE");
+                    } else {
+                        OdiStopLoadPlanType stopLoadPlan = fachadaOdi.stopLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, idPlan, 1, "IMMEDIATE");
                         ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("odiinvoke.execute"), stopLoadPlan);
                         return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
                     }
-                    
+
                 } else {
+                    String msj = "No se puede cancelar, dado que " + entidadPadre.getNombre() + " no se encuentra en ejecución.";
+                    logAud.setRespuesta(msj);
+                    logEjecucionDAO.create(logAud);
+                    logAud.setConciliacion(entidadPadre);
+                    logEjecucionDAO.edit(logAud);
+                    entidadPadre.addEjecucionProceso(logAud);
+                    managerDAO.edit(entidadPadre);
+
                     logger.log(Level.INFO, "No hay ejecuciones anteriores ");
                     // No hay  nada que cancelar
-                    ResponseWrapper wraper = new ResponseWrapper(false, "No se puede cancelar, dado que " + entidadPadre.getNombre() + " no se encuentra en ejecución.", 500);
+                    ResponseWrapper wraper = new ResponseWrapper(false, msj, 500);
                     return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
                 }
 
             } catch (Exception e) {
+                logAud.setRespuesta(e.getMessage());
+                logEjecucionDAO.create(logAud);
+                logAud.setConciliacion(entidadPadre);
+                logEjecucionDAO.edit(logAud);
+                entidadPadre.addEjecucionProceso(logAud);
+                managerDAO.edit(entidadPadre);
+
                 if (e.getCause() != null && (e.getCause() instanceof DataAlreadyExistException || e.getCause() instanceof DataNotFoundException)) {
                     logger.log(Level.SEVERE, e.getMessage(), e);
                     ResponseWrapper wraper = new ResponseWrapper(false, e.getCause().getMessage(), 500);
@@ -769,6 +784,13 @@ public class ConciliacionREST {
                 }
             }
         } else {
+            logAud.setRespuesta("No se puede cancelar, dado que " + entidadPadre.getNombre() + " no se encuentra en ejecución.");
+            logEjecucionDAO.create(logAud);
+            logAud.setConciliacion(entidadPadre);
+            logEjecucionDAO.edit(logAud);
+            entidadPadre.addEjecucionProceso(logAud);
+            managerDAO.edit(entidadPadre);
+
             // No hay  nada que cancelar
             ResponseWrapper wraper = new ResponseWrapper(false, "No se puede cancelar, dado que " + entidadPadre.getNombre() + " no se encuentra en ejecución.", 500);
             return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
