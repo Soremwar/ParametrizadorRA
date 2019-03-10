@@ -465,22 +465,6 @@ public class ConciliacionREST {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     public Response ejecutar(WsTransformacionDTO request) {
-        // 1. Registrar log de eventos para inicio de integración
-        Conciliacion entidadPadre = managerDAO.find(request.getIdConciliacion());
-        EjecucionProceso logAud = new EjecucionProceso();
-        logAud.setComponenteEjecutado("INTEGRACION_ODI"); // TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
-        logAud.setConciliacion(null);
-        logAud.setEstadoEjecucion("INICIADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
-        logAud.setFechaEjecucion(new Date());
-        logAud.setNombre("EJECUTADA:" + entidadPadre.getNombre());
-        logAud.setNombreConciliacion(entidadPadre.getNombre());
-
-        logEjecucionDAO.create(logAud);
-        logAud.setConciliacion(entidadPadre);
-        logEjecucionDAO.edit(logAud);
-        entidadPadre.addEjecucionProceso(logAud);
-        managerDAO.edit(entidadPadre);
-
         // 2.1 Traer parámetros
         String wsdlLocation;
         try {
@@ -517,6 +501,7 @@ public class ConciliacionREST {
         }
 
         // 2.2 Consultar última ejecución en log
+         Conciliacion entidadPadre = managerDAO.find(request.getIdConciliacion());
         ConciliacionDTO cdto_ = entidadPadre.toDTO();
         EjecucionProcesoDTO ejecucion = null;
         if (!cdto_.getEjecucionesProceso().isEmpty()) {
@@ -524,7 +509,6 @@ public class ConciliacionREST {
         }
 
         FacadeODI fachadaOdi = new FacadeODI();
-
         // 2.3 Lanzar odi s i no hay última ejecución si su id plan es cero
         if (ejecucion != null && ejecucion.getIdPlanInstance() != null && ejecucion.getIdPlanInstance() != "0") {
             try {
@@ -563,6 +547,25 @@ public class ConciliacionREST {
                 }
             }
         }
+        
+        // 1. Registrar log de eventos para inicio de integración
+       
+        EjecucionProceso logAud = new EjecucionProceso();
+        logAud.setComponenteEjecutado("INTEGRACION_ODI"); // TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+        logAud.setConciliacion(null);
+        logAud.setEstadoEjecucion("INICIADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
+        logAud.setFechaEjecucion(new Date());
+        logAud.setNombre("EJECUTADA:" + entidadPadre.getNombre());
+        logAud.setNombreConciliacion(entidadPadre.getNombre());
+
+        logEjecucionDAO.create(logAud);
+        logAud.setConciliacion(entidadPadre);
+        logEjecucionDAO.edit(logAud);
+        entidadPadre.addEjecucionProceso(logAud);
+        managerDAO.edit(entidadPadre);
+        
+        
+        
 
         List<LoadPlanStartupParameterRequestDTO> params = new ArrayList<LoadPlanStartupParameterRequestDTO>();
         LoadPlanStartupParameterRequestDTO param = new LoadPlanStartupParameterRequestDTO();
@@ -732,19 +735,19 @@ public class ConciliacionREST {
                 loadrequest.setLoadPlanRunNumber(1);
                 lstLoadRequest.add(loadrequest);
                 List<LoadPlanStatusType> responses = fachadaOdi.loadPlanStatus(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, lstLoadRequest);
-
+                
                 if (responses.size() > 0) {
                     String estado = responses.get(0).getLoadPlanStatus();
-                    if (estado == "Q" || estado == "R" || estado == "W") {
+                    //if (estado == "Q" || estado == "R" || estado == "W") {
                         // Ya está corriendo por tanto no puede cancelarlo
                         OdiStopLoadPlanType stopLoadPlan = fachadaOdi.stopLoadPlan(wsdlLocation, odiUsuario, odiPassword, odiWorkRepository, idPlan, 1, "IMMEDIATE");
                         ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("odiinvoke.execute"), stopLoadPlan);
                         return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
-                    } else {
+                    /*} else {
                         // Está en un etado que no permite cancelación
                         ResponseWrapper wraper = new ResponseWrapper(false, "El estado (" + estado + ") actual de " + entidadPadre.getNombre() + " no permite cancelación!", 500);
                         return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
-                    }
+                    }*/
                 } else {
                     // No hay  nada que cancelar
                     ResponseWrapper wraper = new ResponseWrapper(false, "No se puede cancelar, dado que " + entidadPadre.getNombre() + " no se encuentra en ejecución.", 500);
