@@ -137,5 +137,15 @@ public class WsTransformacionDAO extends AbstractJpaDAO<WsTransformacion> implem
         }
         return results;
     }
+    
+    public List<WsTransformacion> findByCodWs(int id) {
+        TypedQuery<WsTransformacion> query = em.createNamedQuery("WsTransformacion.findByCodWs", WsTransformacion.class);
+        query.setParameter("codWs", id);
+        List<WsTransformacion> results = query.getResultList();
+       /* if (results == null || results.isEmpty()) {
+            throw new DataNotFoundException("No se encontraron datos de Busqueda");
+        }*/
+        return results;
+    }
 
 }

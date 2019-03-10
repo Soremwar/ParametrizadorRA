@@ -22,7 +22,9 @@ public interface IWsTransformacionDAO {
     public List<WsTransformacion> findRange(int[] range);
 
     public WsTransformacion find(Object id);
-
+    
+    public List<WsTransformacion> findByCodWs(int id);
+    
     public List<WsTransformacion> findByAnyColumn(String busqueda);
 
     public List<WsTransformacion> findAgendadas(); 

@@ -375,20 +375,19 @@ public class ConciliacionREST {
                 entidadPadreJPA = padreDAO.find(entidadJPA.getPolitica().getId());
                 entidadPadreJPA.removeConciliaciones(entidadJPA);
             }*/
-
             // Quitar paquete asociado a la conciliación
             Collection<WsTransformacion> lista = entidadJPA.getTransformaciones();
-            if (!lista.isEmpty()) {
-                WsTransformacion transformacion = lista.iterator().next();
+            WsTransformacion transformacion;
+            if (!lista.isEmpty()) {                
+                transformacion = lista.iterator().next();
                 entidadJPA.removeTransformacion(transformacion);
+                WsTransformacion ws2 = transformacionDAO.findByCodWs(transformacion.getId()).iterator().next();
+                transformacionDAO.remove(ws2);                
             }
-
             managerDAO.remove(entidadJPA);
             LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.BORRAR.name(), Date.from(Instant.now()), username, dto.toString());
             logAuditoriaDAO.create(logAud);
-            /*  if (entidadPadreJPA != null) {
-                padreDAO.edit(entidadPadreJPA);
-            }*/
+           
             ResponseWrapper wraper = new ResponseWrapper(true, I18N.getMessage("conciliaciones.delete"), entidadJPA.getNombre());
             return Response.ok(wraper, MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
