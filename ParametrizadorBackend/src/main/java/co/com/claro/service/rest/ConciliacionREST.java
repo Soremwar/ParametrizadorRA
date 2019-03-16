@@ -555,7 +555,7 @@ public class ConciliacionREST {
         logAud.setEstadoEjecucion("INICIADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
         logAud.setFechaEjecucion(new Date());
         logAud.setNombre("EJECUTADA:" + entidadPadre.getNombre());
-        logAud.setNombreConciliacion(entidadPadre.getNombre());
+        logAud.setNombreConciliacion(entidadPadre.getNombre()+"::"+request.getPaqueteWs());
 
         logEjecucionDAO.create(logAud);
         logAud.setConciliacion(entidadPadre);
@@ -586,13 +586,13 @@ public class ConciliacionREST {
             _logAud.setConciliacion(null);
             _logAud.setEstadoEjecucion("INTEGRADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
             _logAud.setFechaEjecucionExitosa(new Date());
-            _logAud.setNombreConciliacion(entidadPadre.getNombre());
+            _logAud.setNombreConciliacion(entidadPadre.getNombre()+"::"+request.getPaqueteWs());
 
             XmlMapper xmlMapper = new XmlMapper();
             String xml = xmlMapper.writeValueAsString(response.getStartedRunInformation());
 
             _logAud.setRespuesta(xml);
-            _logAud.setNombre("EJECUTADA:" + entidadPadre.getNombre());
+            _logAud.setNombre("EJECUTADA:" + entidadPadre.getNombre()+"::"+request.getPaqueteWs());
             Long planInstanceId = response.getStartedRunInformation().getOdiLoadPlanInstanceId();
             _logAud.setIdPlanInstance(planInstanceId.toString());
 
@@ -632,7 +632,7 @@ public class ConciliacionREST {
             _logAud.setNombre("EJECUTADA:" + entidadPadre.getNombre());
             _logAud.setEstadoEjecucion("FALLIDA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
             _logAud.setFechaEjecucion(new Date());
-            _logAud.setNombreConciliacion(entidadPadre.getNombre());
+            _logAud.setNombreConciliacion(entidadPadre.getNombre()+"::"+request.getPaqueteWs());
             _logAud.setRespuesta(e.toString());
 
             System.out.println("INTEGRACIÓN FALLIDA: " + e.toString());
@@ -670,7 +670,7 @@ public class ConciliacionREST {
         logAud.setEstadoEjecucion("CANCELADA");// TODO: VALIDAR SI EXISTE ENUMERACIÓN O ALGO DEFINIDO
         logAud.setFechaEjecucion(new Date());
         logAud.setNombre("INICIADA:" + entidadPadre.getNombre());
-        logAud.setNombreConciliacion(entidadPadre.getNombre());
+        logAud.setNombreConciliacion(entidadPadre.getNombre()+"::"+request.getPaqueteWs());
 
         // 2.1 Traer parámetros
         String wsdlLocation;
