@@ -231,7 +231,7 @@ public class ConciliacionREST {
                     //crearPaquete(dto, entidadJPA);
                     WsTransformacion transformacion = new WsTransformacion();
                     transformacion.setFechaCreacion(Date.from(Instant.now()));
-                    transformacion.setFechaAgendamiento(new Date());
+                    transformacion.setFechaAgendamiento(null);
                     transformacion.setNombreWs(dto.getPaquete());
                     transformacion.setPaqueteWs(dto.getPaquete());
                     transformacion.setConciliacion(entidadJPA);
