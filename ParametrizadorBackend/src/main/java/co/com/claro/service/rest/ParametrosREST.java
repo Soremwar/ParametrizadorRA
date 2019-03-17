@@ -221,6 +221,18 @@ public class ParametrosREST {
         List<ParametroDTO> lstFinal = (List<ParametroDTO>) (List<?>) lstDTO;
         return lstFinal;
     }
+    
+     @GET
+    @Path("/paraIndicadores")
+    @JWTTokenNeeded
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ParametroDTO> findByIndicadores(@QueryParam("tipo") String tipo, @QueryParam("codpadre") Integer codPadre) {
+        logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{tipo, codPadre});
+        List<Parametro> lst = managerDAO.findParaIndicadores(tipo, codPadre);
+        List<ParametroDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ParametroDTO::getId)).collect(toList());
+        List<ParametroDTO> lstFinal = (List<ParametroDTO>) (List<?>) lstDTO;
+        return lstFinal;
+    }
 
     /**
      * Crea una nueva entidad
