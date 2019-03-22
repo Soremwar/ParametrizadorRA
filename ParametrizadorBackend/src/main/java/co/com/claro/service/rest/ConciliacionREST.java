@@ -197,7 +197,7 @@ public class ConciliacionREST {
         //logger.log(Level.INFO, "tipo:{0}codPadre:{1}", new Object[]{requiereaprobacion});
 
         List<Conciliacion> lst = managerDAO.findByEjecutables();
-        List<ConciliacionDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ConciliacionDTO::getId)).collect(toList());
+        List<ConciliacionDTO> lstDTO = lst.stream().map(item -> item.toDTO()).sorted(comparing(ConciliacionDTO::getNombre)).collect(toList());
         List<ConciliacionDTO> lstFinal = (List<ConciliacionDTO>) (List<?>) lstDTO;
         return lstFinal;
     }
