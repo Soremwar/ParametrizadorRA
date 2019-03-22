@@ -7,6 +7,7 @@ package co.com.claro.model.entity;
 
 import co.com.claro.model.dto.IndicadorDTO;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -58,8 +61,33 @@ public class Indicador implements Serializable {
     @JoinColumn(name = "COD_ESCENARIO", referencedColumnName = "COD_ESCENARIO")
     @ManyToOne
     private Escenario escenario;
+    
+    @Column(name = "FECHA_CREACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
 
+    @Column(name = "FECHA_ACTUALIZACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaActualizacion;
+   
+    
     public Indicador() {
+    }
+    
+    public void setFechaCreacion(Date fecha){
+        this.fechaCreacion = fecha;
+    }
+    
+    public void setFechaActualizacion(Date fecha){
+        this.fechaActualizacion = fecha;
+    }
+    
+    public Date getFechaCreacion(){
+        return this.fechaCreacion;
+    }
+    
+    public Date getFechaActualizacion(){
+        return this.fechaActualizacion;
     }
 
     public Indicador(Integer codIndicador) {

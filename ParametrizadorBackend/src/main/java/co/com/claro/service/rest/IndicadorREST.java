@@ -21,6 +21,7 @@ import co.com.claro.service.rest.tokenFilter.JWTTokenNeeded;
 import co.com.claro.service.rest.util.ResponseWrapper;
 
 import java.time.Instant;
+import java.util.Calendar;
 import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.List;
@@ -134,6 +135,7 @@ public class IndicadorREST{
         	
         	Escenario entidadPadreJPA;
             Indicador entidadJPA = entidad.toEntity();
+            entidadJPA.setFechaCreacion(Calendar.getInstance().getTime());
             entidadJPA.setEscenario(null);
             if ( entidad.getIdEscenario() != null) {
                 entidadPadreJPA = padreDAO.find(entidad.getIdEscenario());
@@ -196,6 +198,7 @@ public class IndicadorREST{
                 entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion(): entidadJPA.getDescripcion());
                 entidadJPA.setTextoFormula(entidad.getTextoFormula() != null ? entidad.getTextoFormula(): entidadJPA.getTextoFormula());
                 entidadJPA.setEscenario(entidad.getIdEscenario() != null ?  (entidadPadreJPA != null ? entidadPadreJPA : null): entidadJPA.getEscenario());
+                entidadJPA.setFechaActualizacion(Calendar.getInstance().getTime());
                 managerDAO.edit(entidadJPA);
                 if ((entidadPadreJPA != null)){
                     entidadPadreJPA.addIndicador(entidadJPA);
