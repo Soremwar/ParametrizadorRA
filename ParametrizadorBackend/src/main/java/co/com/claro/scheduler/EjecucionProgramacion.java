@@ -199,26 +199,22 @@ public class EjecucionProgramacion implements Job {
                 conciliacionDAO.edit(_entidadPadre);
 
                 // 3.1 en la implementación actual desde el front auditan otra tabla --[TBL_GAI_LOG_AUDITORIA]                
-                Conciliacion entidadPadreJPA;
+               /* Conciliacion entidadPadreJPA;
                 EjecucionProceso entidadJPA = new EjecucionProceso();// entidad.toEntity();
                 entidadJPA.setNombre(entidadPadre.getNombre());
                 entidadJPA.setIdPlanInstance(planInstanceId.toString());
                 entidadJPA.setConciliacion(entidadPadre);
-                System.out.println("llegue hasta acá");
 
                 entidadPadreJPA = conciliacionDAO.find(entidadPadre.getId());
-                System.out.println("llegue hasta acá2");
                 if (entidadPadreJPA != null) {
-                    System.out.println("llegue hasta acá3");
                     entidadJPA.setConciliacion(null);
                     logEjecucionDAO.create(entidadJPA);
                     entidadJPA.setConciliacion(entidadPadreJPA);
                     logEjecucionDAO.edit(entidadJPA);
                     entidadPadreJPA.addEjecucionProceso(entidadJPA);
                     conciliacionDAO.edit(entidadPadreJPA);
-                }
-                System.out.println("llegue hasta acá4 "+entidadJPA.toString());
-                LogAuditoria logAud_ = new LogAuditoria("EJECUCIONPROCESO", Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), "SISTEMA", entidadJPA.toString());
+                }*/
+                LogAuditoria logAud_ = new LogAuditoria("EJECUCIONPROCESO", Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), "SISTEMA", _logAud.toString());
               //  logAuditoriaDAO.create(logAud_);
             } catch (Exception ex) {
                 Conciliacion _entidadPadre = conciliacionDAO.find(conciliacion.getId());

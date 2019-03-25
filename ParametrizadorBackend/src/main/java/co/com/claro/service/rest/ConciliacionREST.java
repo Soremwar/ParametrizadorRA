@@ -604,7 +604,7 @@ public class ConciliacionREST {
 
             // 3.1 en la implementación actual desde el front auditan otra tabla --[TBL_GAI_LOG_AUDITORIA]                
             Conciliacion entidadPadreJPA;
-            EjecucionProceso entidadJPA = new EjecucionProceso();// entidad.toEntity();
+          /*  EjecucionProceso entidadJPA = new EjecucionProceso();// entidad.toEntity();
             entidadJPA.setNombre(entidadPadre.getNombre());
             entidadJPA.setIdPlanInstance(planInstanceId.toString());
             entidadJPA.setConciliacion(entidadPadre);
@@ -617,8 +617,8 @@ public class ConciliacionREST {
                 logEjecucionDAO.edit(entidadJPA);
                 entidadPadreJPA.addEjecucionProceso(entidadJPA);
                 managerDAO.edit(entidadPadreJPA);
-            }
-            LogAuditoria logAud_ = new LogAuditoria("EJECUCIONPROCESO", Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), request.getUserName(), entidadJPA.toString());
+            }*/
+            LogAuditoria logAud_ = new LogAuditoria("EJECUCIONPROCESO", Constantes.Acciones.AGREGAR.name(), Date.from(Instant.now()), request.getUserName(), _logAud.toString());
             logAuditoriaDAO.create(logAud_);
 
             // 4 Todo en orden, retornando
