@@ -21,6 +21,7 @@ import java.time.Instant;
 import static java.util.Comparator.comparing;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
@@ -223,11 +224,26 @@ public class EscenarioREST {
                 entidadJPA.setNombre(entidad.getNombre() != null ? entidad.getNombre() : entidadJPA.getNombre());
                 entidadJPA.setImpacto(entidad.getImpacto() != null ? entidad.getImpacto() : entidadJPA.getImpacto());
                 entidadJPA.setDescripcion(entidad.getDescripcion() != null ? entidad.getDescripcion() : entidadJPA.getDescripcion());
-                entidadJPA.setConciliacion(entidad.getIdConciliacion() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getConciliacion());
+                
+                Boolean actualizarConciliacion = false;
+                 entidadJPA.setConciliacion(entidad.getIdConciliacion() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getConciliacion());
+                 
+                 Conciliacion conciliacionpadreactual = null;
+            
+                
+                if (entidadJPA.getConciliacion() != null && !Objects.equals(entidadJPA.getConciliacion().getId(), entidad.getIdConciliacion())){
+                     actualizarConciliacion = true;
+                     conciliacionpadreactual = padreDAO.find(entidadJPA.getConciliacion().getId());
+                }
+                //entidadJPA.setConciliacion(entidad.getIdConciliacion() != null ? (entidadPadreJPA != null ? entidadPadreJPA : null) : entidadJPA.getConciliacion());
                 managerDAO.edit(entidadJPA);
-                if ((entidadPadreJPA != null)) {
-                    entidadPadreJPA.addEscenario(entidadJPA);
-                    padreDAO.edit(entidadPadreJPA);
+                if (actualizarConciliacion){
+                    if ((entidadPadreJPA != null)) {
+                        entidadPadreJPA.addEscenario(entidadJPA);
+                        padreDAO.edit(entidadPadreJPA);
+                        conciliacionpadreactual.removeEscenario(entidadJPA);
+                        padreDAO.edit(conciliacionpadreactual);
+                    }
                 }
                 LogAuditoria logAud = new LogAuditoria(this.modulo, Constantes.Acciones.EDITAR.name(), Date.from(Instant.now()), entidad.getUsername(), entidadJPA.toString());
                 logAuditoriaDAO.create(logAud);
